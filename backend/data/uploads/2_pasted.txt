@@ -1,0 +1,4 @@
+165.245.137.16
+    127.0.0.1
+    awfulsecurity.org
+    intragin.awfulsecurity.org

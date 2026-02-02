@@ -1,0 +1,44 @@
+=== legacy_nmap ===
+Targets: 2 IPs, 2 domains
+
+=== nmap -sC -sV -p 21,53,389,445 localhost ===
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-02-02 00:08 -0500
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.000045s latency).
+Other addresses for localhost (not scanned): ::1
+
+PORT    STATE SERVICE     VERSION
+21/tcp  open  ftp         Pure-FTPd
+53/tcp  open  domain      ISC BIND 9.18.16-1~deb12u1 (Debian Linux)
+| dns-nsid: 
+|_  bind.version: 9.18.16-1~deb12u1-Debian
+389/tcp open  ldap        OpenLDAP 2.2.X - 2.3.X
+|_ssl-date: TLS randomness does not represent time
+445/tcp open  netbios-ssn Samba smbd 4
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Host script results:
+| smb2-security-mode: 
+|   3.1.1: 
+|_    Message signing enabled but not required
+| smb2-time: 
+|   date: 2026-02-02T05:08:16
+|_  start_date: N/A
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 19.69 seconds
+
+=== nmap -sC -sV -p 22 intragin.awfulsecurity.org ===
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-02-02 00:08 -0500
+Nmap scan report for intragin.awfulsecurity.org (165.245.137.16)
+Host is up (0.0045s latency).
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 9.6p1 Ubuntu 3ubuntu13.13 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 a3:e3:5e:05:30:c4:2e:fc:ed:99:55:16:31:11:68:f8 (ECDSA)
+|_  256 5e:40:c9:d1:42:14:ca:7d:6d:fe:01:1c:ae:17:f8:43 (ED25519)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 6.54 seconds

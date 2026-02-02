@@ -1,0 +1,5 @@
+=== legacy_ftp ===
+Targets: 2 IPs, 2 domains
+=== FTP anonymous login ===
+
+--- localhost:21 ---

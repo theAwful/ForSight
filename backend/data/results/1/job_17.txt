@@ -1,0 +1,3 @@
+# Email security (SPF/DKIM/DMARC)
+# Run Domain Security Scanner manually or integrate tool.
+# Domains: ['awfulsecurity.org', 'intragin.awfulsecurity.org']

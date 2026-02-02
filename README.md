@@ -61,7 +61,7 @@ Default login: **forsight** / **forsight**.
 |------|-------------|
 | `backend/` | FastAPI app: auth, projects, ROE/targets, checklist, jobs, runners (recon, nmap, ssl, legacy, web, CMS), hosts aggregation |
 | `backend/app/` | Core app: `main.py`, `config.py`, `auth.py`, `checklist.py`, `hosts_aggregator.py`, `runners/` |
-| `backend/data/` | Created at runtime: SQLite DB, uploads, results per project, wordlists (e.g. dirb) |
+| `backend/data/` | SQLite DB, uploads, results per project, wordlists. This repo includes **demo data** for presentation; remove or replace for production. |
 | `frontend/` | Vite + React UI: login, engagements, checklist, jobs, hosts, reporting, settings |
 | `backend/docs/TOOLS.md` | How tools are wired and how to add or swap them |
 

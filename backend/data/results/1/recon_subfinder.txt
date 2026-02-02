@@ -1,0 +1,16 @@
+intragin.awfulsecurity.org
+mail.awfulsecurity.org
+notes.awfulsecurity.org
+www.awfulsecurity.org
+deploy.awfulsecurity.org
+intragin.awfulsecurity.org
+mail.awfulsecurity.org
+notes.awfulsecurity.org
+www.awfulsecurity.org
+c2.awfulsecurity.org
+intragin.awfulsecurity.org
+mail.awfulsecurity.org
+notes.awfulsecurity.org
+www.awfulsecurity.org
+c2.awfulsecurity.org
+deploy.awfulsecurity.org

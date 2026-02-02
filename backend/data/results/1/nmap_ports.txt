@@ -1,0 +1,37 @@
+# Nmap 7.98 scan initiated Mon Feb  2 00:01:25 2026 as: /usr/lib/nmap/nmap --privileged -sS --top-ports 5000 -T4 -oN data/results/1/nmap_ports.txt --open 165.245.137.16 127.0.0.1 awfulsecurity.org intragin.awfulsecurity.org
+Nmap scan report for 165.245.137.16
+Host is up (0.084s latency).
+Not shown: 3294 filtered tcp ports (no-response), 1705 closed tcp ports (reset)
+Some closed ports may be reported as filtered due to --defeat-rst-ratelimit
+PORT   STATE SERVICE
+80/tcp open  http
+
+Nmap scan report for awfulsecurity.org (198.185.159.145)
+Host is up (0.00013s latency).
+Not shown: 4999 filtered tcp ports (no-response)
+Some closed ports may be reported as filtered due to --defeat-rst-ratelimit
+PORT   STATE SERVICE
+80/tcp open  http
+
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.0000070s latency).
+Not shown: 4993 closed tcp ports (reset)
+PORT     STATE SERVICE
+21/tcp   open  ftp
+53/tcp   open  domain
+389/tcp  open  ldap
+445/tcp  open  microsoft-ds
+3000/tcp open  ppp
+8000/tcp open  http-alt
+9000/tcp open  cslistener
+
+Nmap scan report for intragin.awfulsecurity.org (165.245.137.16)
+Host is up (0.034s latency).
+Not shown: 4987 filtered tcp ports (no-response), 10 closed tcp ports (reset)
+Some closed ports may be reported as filtered due to --defeat-rst-ratelimit
+PORT    STATE SERVICE
+22/tcp  open  ssh
+80/tcp  open  http
+443/tcp open  https
+
+# Nmap done at Mon Feb  2 00:06:39 2026 -- 4 IP addresses (4 hosts up) scanned in 313.88 seconds

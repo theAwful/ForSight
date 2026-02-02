@@ -1,0 +1,23 @@
+=== recon_subfinder ===
+Targets: 2 IPs, 2 domains
+=== subfinder ===
+
+               __    _____           __         
+   _______  __/ /_  / __(_)___  ____/ /__  _____
+  / ___/ / / / __ \/ /_/ / __ \/ __  / _ \/ ___/
+ (__  ) /_/ / /_/ / __/ / / / / /_/ /  __/ /    
+/____/\__,_/_.___/_/ /_/_/ /_/\__,_/\___/_/
+
+		projectdiscovery.io
+
+[[34mINF[0m] Loading provider config from /home/kali/.config/subfinder/provider-config.yaml
+[[34mINF[0m] Enumerating subdomains for awfulsecurity.org
+c2.awfulsecurity.org
+deploy.awfulsecurity.org
+intragin.awfulsecurity.org
+notes.awfulsecurity.org
+www.awfulsecurity.org
+mail.awfulsecurity.org
+[[34mINF[0m] Found 6 subdomains for awfulsecurity.org in 26 seconds 154 milliseconds
+[[34mINF[0m] Enumerating subdomains for intragin.awfulsecurity.org
+[[34mINF[0m] Found 0 subdomains for intragin.awfulsecurity.org in 16 seconds 968 milliseconds

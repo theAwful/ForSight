@@ -1,0 +1,346 @@
+=== recon_theharvester ===
+Targets: 2 IPs, 2 domains
+=== theHarvester -d awfulsecurity.org ===
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f7155095130>
+Read proxies.yaml from /home/kali/.theHarvester/proxies.yaml
+*******************************************************************
+*  _   _                                            _             *
+* | |_| |__   ___    /\  /\__ _ _ ____   _____  ___| |_ ___ _ __  *
+* | __|  _ \ / _ \  / /_/ / _` | '__\ \ / / _ \/ __| __/ _ \ '__| *
+* | |_| | | |  __/ / __  / (_| | |   \ V /  __/\__ \ ||  __/ |    *
+*  \__|_| |_|\___| \/ /_/ \__,_|_|    \_/ \___||___/\__\___|_|    *
+*                                                                 *
+* theHarvester 4.6.0                                              *
+* Coded by Christian Martorella                                   *
+* Edge-Security Research                                          *
+* cmartorella@edge-security.com                                   *
+*                                                                 *
+*******************************************************************
+
+[*] Target: awfulsecurity.org 
+
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for bevigil. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for binaryedge. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for bufferoverun. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for Censys ID and/or Secret. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for criminalip. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for fullhunt. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for Github. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for Hunter. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for hunterhow. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for Intelx. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for netlas. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for onyphe. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for PentestTools. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for ProjectDiscovery. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for RocketReach. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for Securitytrail. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for Tomba Key and/or Secret. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for virustotal. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for zoomeye. [0m
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+[94m[*] Searching Anubis. 
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+	Searching 0 results.
+[94m[*] Searching Bing. 
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+[94m[*] Searching Baidu. 
+An exception has occurred: 400, message:
+  Can not decode content-encoding: br
+	Searching results.
+[94m[*] Searching Certspotter. 
+An exception occurred: list index out of range
+[94m[*] Searching Dnsdumpster. 
+[94m[*] Searching Duckduckgo. 
+[94m[*] Searching CRTsh. 
+[94m[*] Searching Hackertarget. 
+[94m[*] Searching Rapiddns. 
+[94m[*] Searching Brave. 
+[94m[*] Searching Subdomaincenter. 
+An exception has occurred: 0, message='Attempt to decode JSON with unexpected mimetype: text/html; charset=utf-8', url=URL('https://api.threatminer.org/v2/domain.php?q=awfulsecurity.org&rt=5')
+[94m[*] Searching Subdomainfinderc99. 
+[94m[*] Searching Urlscan. 
+[94m[*] Searching Yahoo. 
+An exception has occurred: Cannot connect to host www.sitedossier.com:80 ssl:<ssl.SSLContext object at 0x7f71551240d0> [Connection refused]
+
+[*] ASNS found: 2
+--------------------
+AS13335
+AS15169
+
+[*] Interesting Urls found: 3
+--------------------
+https://notes.awfulsecurity.org/
+https://notes.awfulsecurity.org/osep-cheat-sheet
+https://www.awfulsecurity.org/
+
+[*] LinkedIn Links found: 0
+---------------------
+
+[*] IPs found: 11
+-------------------
+142.250.185.211
+142.250.186.83
+142.251.179.121
+142.251.208.19
+172.64.147.209
+2606:4700:4400::ac40:93d1
+2606:4700::6812:51
+2a00:1450:4001:80e::2013
+2a00:1450:4001:80f::2013
+2a00:1450:4001:828::2013
+2a00:1450:4001:82b::2013
+
+[*] No emails found.
+
+[*] Hosts found: 5
+---------------------
+c2.awfulsecurity.org
+deploy.awfulsecurity.org
+intragin.awfulsecurity.org
+mail.awfulsecurity.org
+notes.awfulsecurity.org
+=== theHarvester -d intragin.awfulsecurity.org ===
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f428d265a60>
+Read proxies.yaml from /home/kali/.theHarvester/proxies.yaml
+*******************************************************************
+*  _   _                                            _             *
+* | |_| |__   ___    /\  /\__ _ _ ____   _____  ___| |_ ___ _ __  *
+* | __|  _ \ / _ \  / /_/ / _` | '__\ \ / / _ \/ __| __/ _ \ '__| *
+* | |_| | | |  __/ / __  / (_| | |   \ V /  __/\__ \ ||  __/ |    *
+*  \__|_| |_|\___| \/ /_/ \__,_|_|    \_/ \___||___/\__\___|_|    *
+*                                                                 *
+* theHarvester 4.6.0                                              *
+* Coded by Christian Martorella                                   *
+* Edge-Security Research                                          *
+* cmartorella@edge-security.com                                   *
+*                                                                 *
+*******************************************************************
+
+[*] Target: intragin.awfulsecurity.org 
+
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for bevigil. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for binaryedge. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for bufferoverun. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for Censys ID and/or Secret. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for criminalip. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for fullhunt. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for Github. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for Hunter. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for hunterhow. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for Intelx. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for netlas. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for onyphe. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for PentestTools. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for ProjectDiscovery. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for RocketReach. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for Securitytrail. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for Tomba Key and/or Secret. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for virustotal. [0m
+Read api-keys.yaml from /home/kali/.theHarvester/api-keys.yaml
+
+[93m[!] Missing API key for zoomeye. [0m
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+	Searching 0 results.
+[94m[*] Searching Bing. 
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+An exception has occurred: Server disconnected
+[94m[*] Searching Baidu. 
+[94m[*] Searching Anubis. 
+[94m[*] Searching Brave. 
+An exception occurred: list index out of range
+[94m[*] Searching Dnsdumpster. 
+An exception has occurred: 0, message='Attempt to decode JSON with unexpected mimetype: text/html', url=URL('https://crt.sh/?q=%25.intragin.awfulsecurity.org&output=json')
+[94m[*] Searching CRTsh. 
+	Searching results.
+[94m[*] Searching Certspotter. 
+[94m[*] Searching Duckduckgo. 
+[94m[*] Searching Hackertarget. 
+[94m[*] Searching Rapiddns. 
+[94m[*] Searching Subdomaincenter. 
+An exception has occurred: 0, message='Attempt to decode JSON with unexpected mimetype: text/html; charset=utf-8', url=URL('https://api.threatminer.org/v2/domain.php?q=intragin.awfulsecurity.org&rt=5')
+[94m[*] Searching Subdomainfinderc99. 
+An exception has occurred: Cannot connect to host www.sitedossier.com:80 ssl:<ssl.SSLContext object at 0x7f428c4494d0> [Connection refused]
+An exception has occurred: 0, message='Attempt to decode JSON with unexpected mimetype: text/html', url=URL('https://urlscan.io/api/v1/search/?q=domain:intragin.awfulsecurity.org')
+[94m[*] Searching Yahoo. 
+
+[*] LinkedIn Links found: 0
+---------------------
+
+[*] No IPs found.
+
+[*] No emails found.
+
+[*] No hosts found.
+
+

@@ -1,0 +1,6 @@
+mail.awfulsecurity.org
+c2.awfulsecurity.org
+deploy.awfulsecurity.org
+intragin.awfulsecurity.org
+notes.awfulsecurity.org
+www.awfulsecurity.org

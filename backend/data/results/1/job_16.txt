@@ -1,0 +1,7 @@
+=== legacy_ldap ===
+Targets: 2 IPs, 2 domains
+=== LDAP (ldapsearch -x) ===
+
+--- localhost:389 ---
+dn:
+

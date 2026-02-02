@@ -1,0 +1,2 @@
+=== web_nikto ===
+Targets: 2 IPs, 2 domains

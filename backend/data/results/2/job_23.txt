@@ -1,0 +1,25 @@
+=== recon_dnsrecon ===
+Targets: 2 IPs, 2 domains
+=== dnsrecon -d awfulsecurity.org ===
+2026-02-02T01:30:23.788099-0500 INFO No dictionary file has been specified.
+2026-02-02T01:30:23.788913-0500 INFO Using the dictionary file: /usr/share/dnsrecon/dnsrecon/data/namelist.txt (provided by tool)
+2026-02-02T01:30:23.789193-0500 INFO Starting enumeration for domain: awfulsecurity.org
+2026-02-02T01:30:23.789549-0500 INFO brt: Performing host and subdomain brute force against awfulsecurity.org...
+2026-02-02T01:30:45.233634-0500 INFO 	 CNAME email.awfulsecurity.org mailgun.org
+2026-02-02T01:30:45.234021-0500 INFO 	 A mailgun.org 34.110.180.34
+2026-02-02T01:30:58.786162-0500 INFO 	 A mail.awfulsecurity.org 3.231.72.153
+2026-02-02T01:31:18.520792-0500 INFO 	 CNAME www.awfulsecurity.org ghs.googlehosted.com
+2026-02-02T01:31:18.521009-0500 INFO 	 A ghs.googlehosted.com 108.177.122.121
+2026-02-02T01:31:18.521072-0500 INFO 	 CNAME www.awfulsecurity.org ghs.googlehosted.com
+2026-02-02T01:31:18.521160-0500 INFO 	 AAAA ghs.googlehosted.com 2607:f8b0:4002:c02::79
+2026-02-02T01:31:24.802810-0500 INFO 7 Records Found
+2026-02-02T01:31:24.805274-0500 INFO Completed enumeration for domain: awfulsecurity.org
+
+=== dnsrecon -d intragin.awfulsecurity.org ===
+2026-02-02T01:31:25.459396-0500 INFO No dictionary file has been specified.
+2026-02-02T01:31:25.459942-0500 INFO Using the dictionary file: /usr/share/dnsrecon/dnsrecon/data/namelist.txt (provided by tool)
+2026-02-02T01:31:25.460579-0500 INFO Starting enumeration for domain: intragin.awfulsecurity.org
+2026-02-02T01:31:25.460955-0500 INFO brt: Performing host and subdomain brute force against intragin.awfulsecurity.org...
+2026-02-02T01:32:18.826476-0500 INFO 0 Records Found
+2026-02-02T01:32:18.828003-0500 INFO Completed enumeration for domain: intragin.awfulsecurity.org
+

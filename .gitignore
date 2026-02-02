@@ -25,11 +25,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# ForSight data (scans, DB, uploads) — keep out of repo
+# ForSight data — root /data/ only (backend/data/ is committed with demo data for presentation)
 /data/
-backend/data/results/
-backend/data/uploads/
-backend/data/*.db
 
 # IDE and OS
 .idea/

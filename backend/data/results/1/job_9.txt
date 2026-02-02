@@ -1,0 +1,116 @@
+=== nmap_services ===
+Targets: 2 IPs, 2 domains
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-02-02 00:01 -0500
+Nmap scan report for 165.245.137.16
+Host is up (0.00027s latency).
+All 1000 scanned ports on 165.245.137.16 are in ignored states.
+Not shown: 1000 filtered tcp ports (no-response)
+
+Nmap scan report for awfulsecurity.org (198.185.159.145)
+Host is up (0.00024s latency).
+All 1000 scanned ports on awfulsecurity.org (198.185.159.145) are in ignored states.
+Not shown: 1000 filtered tcp ports (no-response)
+
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.0000070s latency).
+Not shown: 993 closed tcp ports (reset)
+PORT     STATE SERVICE     VERSION
+21/tcp   open  ftp         Pure-FTPd
+53/tcp   open  domain      ISC BIND 9.18.16-1~deb12u1 (Debian Linux)
+389/tcp  open  ldap        OpenLDAP 2.2.X - 2.3.X
+445/tcp  open  netbios-ssn Samba smbd 4
+3000/tcp open  ppp?
+8000/tcp open  http        Uvicorn
+9000/tcp open  http        Golang net/http server
+2 services unrecognized despite returning data. If you know the service/version, please submit the following fingerprints at https://nmap.org/cgi-bin/submit.cgi?new-service :
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port3000-TCP:V=7.98%I=7%D=2/2%Time=69802FF4%P=x86_64-pc-linux-gnu%r(Get
+SF:Request,101B9,"HTTP/1\.1\x20200\x20OK\r\nAccess-Control-Allow-Origin:\x
+SF:20\*\r\nX-Content-Type-Options:\x20nosniff\r\nX-Frame-Options:\x20SAMEO
+SF:RIGIN\r\nFeature-Policy:\x20payment\x20'self'\r\nX-Recruiting:\x20/#/jo
+SF:bs\r\nAccept-Ranges:\x20bytes\r\nCache-Control:\x20public,\x20max-age=0
+SF:\r\nLast-Modified:\x20Mon,\x2002\x20Feb\x202026\x2003:18:00\x20GMT\r\nE
+SF:Tag:\x20W/\"1252f-19c1c5b7032\"\r\nContent-Type:\x20text/html;\x20chars
+SF:et=UTF-8\r\nContent-Length:\x2075055\r\nVary:\x20Accept-Encoding\r\nDat
+SF:e:\x20Mon,\x2002\x20Feb\x202026\x2005:02:44\x20GMT\r\nConnection:\x20cl
+SF:ose\r\n\r\n<!--\n\x20\x20~\x20Copyright\x20\(c\)\x202014-2026\x20Bjoern
+SF:\x20Kimminich\x20&\x20the\x20OWASP\x20Juice\x20Shop\x20contributors\.\n
+SF:\x20\x20~\x20SPDX-License-Identifier:\x20MIT\n\x20\x20-->\n\n<!doctype\
+SF:x20html>\n<html\x20lang=\"en\"\x20data-beasties-container>\n<head>\n\x2
+SF:0\x20<meta\x20charset=\"utf-8\">\n\x20\x20<title>OWASP\x20Juice\x20Shop
+SF:</title>\n\x20\x20<meta\x20name=\"description\"\x20content=\"Probably\x
+SF:20the\x20most\x20modern\x20and\x20sophisticated\x20insecure\x20web\x20a
+SF:pplication\">\n\x20\x20<meta\x20name=\"viewport\"\x20content=\"width=de
+SF:vice-width,\x20initial-scale=1\">\n\x20\x20<link\x20id=\"favicon\"\x20r
+SF:el=\"icon\"\x20")%r(Help,2F,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConn
+SF:ection:\x20close\r\n\r\n")%r(NCP,2F,"HTTP/1\.1\x20400\x20Bad\x20Request
+SF:\r\nConnection:\x20close\r\n\r\n")%r(HTTPOptions,EA,"HTTP/1\.1\x20204\x
+SF:20No\x20Content\r\nAccess-Control-Allow-Origin:\x20\*\r\nAccess-Control
+SF:-Allow-Methods:\x20GET,HEAD,PUT,PATCH,POST,DELETE\r\nVary:\x20Access-Co
+SF:ntrol-Request-Headers\r\nContent-Length:\x200\r\nDate:\x20Mon,\x2002\x2
+SF:0Feb\x202026\x2005:02:44\x20GMT\r\nConnection:\x20close\r\n\r\n")%r(RTS
+SF:PRequest,EA,"HTTP/1\.1\x20204\x20No\x20Content\r\nAccess-Control-Allow-
+SF:Origin:\x20\*\r\nAccess-Control-Allow-Methods:\x20GET,HEAD,PUT,PATCH,PO
+SF:ST,DELETE\r\nVary:\x20Access-Control-Request-Headers\r\nContent-Length:
+SF:\x200\r\nDate:\x20Mon,\x2002\x20Feb\x202026\x2005:02:44\x20GMT\r\nConne
+SF:ction:\x20close\r\n\r\n");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port9000-TCP:V=7.98%I=7%D=2/2%Time=69802FEF%P=x86_64-pc-linux-gnu%r(Gen
+SF:ericLines,67,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nContent-Type:\x20te
+SF:xt/plain;\x20charset=utf-8\r\nConnection:\x20close\r\n\r\n400\x20Bad\x2
+SF:0Request")%r(GetRequest,2B0,"HTTP/1\.0\x20400\x20Bad\x20Request\r\nAcce
+SF:pt-Ranges:\x20bytes\r\nContent-Length:\x20276\r\nContent-Type:\x20appli
+SF:cation/xml\r\nServer:\x20MinIO\r\nStrict-Transport-Security:\x20max-age
+SF:=31536000;\x20includeSubDomains\r\nVary:\x20Origin\r\nX-Amz-Id-2:\x20dd
+SF:9025bab4ad464b049177c95eb6ebf374d3b3fd1af9251148b658df7ac2e3e8\r\nX-Amz
+SF:-Request-Id:\x2018905568167592CC\r\nX-Content-Type-Options:\x20nosniff\
+SF:r\nX-Xss-Protection:\x201;\x20mode=block\r\nDate:\x20Mon,\x2002\x20Feb\
+SF:x202026\x2005:02:39\x20GMT\r\n\r\n<\?xml\x20version=\"1\.0\"\x20encodin
+SF:g=\"UTF-8\"\?>\n<Error><Code>InvalidRequest</Code><Message>Invalid\x20R
+SF:equest\x20\(invalid\x20argument\)</Message><Resource>/</Resource><Reque
+SF:stId>18905568167592CC</RequestId><HostId>dd9025bab4ad464b049177c95eb6eb
+SF:f374d3b3fd1af9251148b658df7ac2e3e8</HostId></Error>")%r(HTTPOptions,59,
+SF:"HTTP/1\.0\x20200\x20OK\r\nVary:\x20Origin\r\nDate:\x20Mon,\x2002\x20Fe
+SF:b\x202026\x2005:02:39\x20GMT\r\nContent-Length:\x200\r\n\r\n")%r(RTSPRe
+SF:quest,67,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nContent-Type:\x20text/p
+SF:lain;\x20charset=utf-8\r\nConnection:\x20close\r\n\r\n400\x20Bad\x20Req
+SF:uest")%r(Help,67,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nContent-Type:\x
+SF:20text/plain;\x20charset=utf-8\r\nConnection:\x20close\r\n\r\n400\x20Ba
+SF:d\x20Request")%r(SSLSessionReq,67,"HTTP/1\.1\x20400\x20Bad\x20Request\r
+SF:\nContent-Type:\x20text/plain;\x20charset=utf-8\r\nConnection:\x20close
+SF:\r\n\r\n400\x20Bad\x20Request")%r(FourOhFourRequest,2CB,"HTTP/1\.0\x204
+SF:00\x20Bad\x20Request\r\nAccept-Ranges:\x20bytes\r\nContent-Length:\x203
+SF:03\r\nContent-Type:\x20application/xml\r\nServer:\x20MinIO\r\nStrict-Tr
+SF:ansport-Security:\x20max-age=31536000;\x20includeSubDomains\r\nVary:\x2
+SF:0Origin\r\nX-Amz-Id-2:\x20dd9025bab4ad464b049177c95eb6ebf374d3b3fd1af92
+SF:51148b658df7ac2e3e8\r\nX-Amz-Request-Id:\x201890556B96FFEA58\r\nX-Conte
+SF:nt-Type-Options:\x20nosniff\r\nX-Xss-Protection:\x201;\x20mode=block\r\
+SF:nDate:\x20Mon,\x2002\x20Feb\x202026\x2005:02:54\x20GMT\r\n\r\n<\?xml\x2
+SF:0version=\"1\.0\"\x20encoding=\"UTF-8\"\?>\n<Error><Code>InvalidRequest
+SF:</Code><Message>Invalid\x20Request\x20\(invalid\x20argument\)</Message>
+SF:<Resource>/nice\x20ports,/Trinity\.txt\.bak</Resource><RequestId>189055
+SF:6B96FFEA58</RequestId><HostId>dd9025bab4ad464b049177c95eb6ebf374d3b3fd1
+SF:af9251148b658df7ac2e3e8</HostId></Error>");
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Nmap scan report for intragin.awfulsecurity.org (165.245.137.16)
+Host is up (0.039s latency).
+Not shown: 986 filtered tcp ports (no-response)
+PORT      STATE  SERVICE        VERSION
+37/tcp    closed time
+524/tcp   closed ncp
+687/tcp   closed asipregistry
+911/tcp   closed xact-backup
+1079/tcp  closed asprovatalk
+1271/tcp  closed excw
+2608/tcp  closed wag-service
+3371/tcp  closed satvid-datalnk
+5510/tcp  closed secureidprop
+8009/tcp  closed ajp13
+9001/tcp  closed tor-orport
+9010/tcp  closed sdr
+22939/tcp closed unknown
+64623/tcp closed unknown
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 4 IP addresses (4 hosts up) scanned in 104.75 seconds

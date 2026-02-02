@@ -1,0 +1,5 @@
+=== legacy_banners ===
+Targets: 2 IPs, 2 domains
+
+=== SSH banner grab ===
+intragin.awfulsecurity.org:22 -> SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.13
