@@ -1,0 +1,222 @@
+=== web_dirb ===
+Targets: 2 IPs, 2 domains
+--- dirb https://awfulsecurity.org ---
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Tue Feb 24 10:31:17 2026
+URL_BASE: https://awfulsecurity.org/
+WORDLIST_FILES: data/wordlists/dirb-small.txt
+
+-----------------
+
+*** Generating Wordlist...                                                                               GENERATED WORDS: 22
+
+---- Scanning URL: https://awfulsecurity.org/ ----
+*** Calculating NOT_FOUND code...(!) WARNING: NOT_FOUND[] not stable, unable to determine correct URLs {30X}.
+    (Try using FineTunning: '-f')
+                                                                                                                                                              
+-----------------
+END_TIME: Tue Feb 24 10:31:17 2026
+DOWNLOADED: 0 - FOUND: 0
+--- dirb http://awfulsecurity.org ---
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Tue Feb 24 10:31:17 2026
+URL_BASE: http://awfulsecurity.org/
+WORDLIST_FILES: data/wordlists/dirb-small.txt
+
+-----------------
+
+*** Generating Wordlist...                                                                               GENERATED WORDS: 22
+
+---- Scanning URL: http://awfulsecurity.org/ ----
+*** Calculating NOT_FOUND code...(!) WARNING: NOT_FOUND[] not stable, unable to determine correct URLs {30X}.
+    (Try using FineTunning: '-f')
+                                                                                                                                                              
+-----------------
+END_TIME: Tue Feb 24 10:31:17 2026
+DOWNLOADED: 0 - FOUND: 0
+--- dirb https://intragin.awfulsecurity.org ---
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Tue Feb 24 10:31:17 2026
+URL_BASE: https://intragin.awfulsecurity.org/
+WORDLIST_FILES: data/wordlists/dirb-small.txt
+
+-----------------
+
+*** Generating Wordlist...                                                                               GENERATED WORDS: 22
+
+---- Scanning URL: https://intragin.awfulsecurity.org/ ----
+*** Calculating NOT_FOUND code...                                                                                                                                                                                                  --> Testing: https://intragin.awfulsecurity.org/admin                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/login                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/api                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/backup                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/.git                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/.env                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/config                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/wp-admin                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/wp-login.php                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/administrator                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/dashboard                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/test                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/debug                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/storage                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/uploads                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/images                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/static                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets                                                                               ==> DIRECTORY: https://intragin.awfulsecurity.org/assets/
+                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/css                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/js                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/vendor                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/node_modules                                                                                                                   
+---- Entering directory: https://intragin.awfulsecurity.org/assets/ ----
+*** Calculating NOT_FOUND code...                                                                                                                                                                                                  --> Testing: https://intragin.awfulsecurity.org/assets/admin                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/login                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/api                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/backup                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/.git                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/.env                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/config                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/wp-admin                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/wp-login.php                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/administrator                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/dashboard                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/test                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/debug                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/storage                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/uploads                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/images                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/static                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/assets                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/css                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/js                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/vendor                                                                                                                   --> Testing: https://intragin.awfulsecurity.org/assets/node_modules                                                                               
+-----------------
+END_TIME: Tue Feb 24 10:31:22 2026
+DOWNLOADED: 44 - FOUND: 0
+--- dirb http://intragin.awfulsecurity.org ---
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Tue Feb 24 10:31:22 2026
+URL_BASE: http://intragin.awfulsecurity.org/
+WORDLIST_FILES: data/wordlists/dirb-small.txt
+
+-----------------
+
+*** Generating Wordlist...                                                                               GENERATED WORDS: 22
+
+---- Scanning URL: http://intragin.awfulsecurity.org/ ----
+*** Calculating NOT_FOUND code...(!) WARNING: NOT_FOUND[] not stable, unable to determine correct URLs {30X}.
+    (Try using FineTunning: '-f')
+                                                                                                                                                              
+-----------------
+END_TIME: Tue Feb 24 10:31:23 2026
+DOWNLOADED: 0 - FOUND: 0
+--- dirb http://165.245.137.16 ---
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Tue Feb 24 10:31:23 2026
+URL_BASE: http://165.245.137.16/
+WORDLIST_FILES: data/wordlists/dirb-small.txt
+
+-----------------
+
+*** Generating Wordlist...                                                                               GENERATED WORDS: 22
+
+---- Scanning URL: http://165.245.137.16/ ----
+*** Calculating NOT_FOUND code...                                                                                                                                                                                                  --> Testing: http://165.245.137.16/admin                                                                                                                   --> Testing: http://165.245.137.16/login                                                                                                                   --> Testing: http://165.245.137.16/api                                                                                                                   --> Testing: http://165.245.137.16/backup                                                                                                                   --> Testing: http://165.245.137.16/.git                                                                                                                   --> Testing: http://165.245.137.16/.env                                                                                                                   --> Testing: http://165.245.137.16/config                                                                                                                   --> Testing: http://165.245.137.16/wp-admin                                                                                                                   --> Testing: http://165.245.137.16/wp-login.php                                                                                                                   --> Testing: http://165.245.137.16/administrator                                                                                                                   --> Testing: http://165.245.137.16/dashboard                                                                                                                   --> Testing: http://165.245.137.16/test                                                                                                                   --> Testing: http://165.245.137.16/debug                                                                                                                   --> Testing: http://165.245.137.16/storage                                                                                                                   --> Testing: http://165.245.137.16/uploads                                                                                                                   --> Testing: http://165.245.137.16/images                                                                                                                   --> Testing: http://165.245.137.16/static                                                                                                                   --> Testing: http://165.245.137.16/assets                                                                                                                   --> Testing: http://165.245.137.16/css                                                                                                                   --> Testing: http://165.245.137.16/js                                                                                                                   --> Testing: http://165.245.137.16/vendor                                                                                                                   --> Testing: http://165.245.137.16/node_modules                                                                               
+-----------------
+END_TIME: Tue Feb 24 10:31:25 2026
+DOWNLOADED: 22 - FOUND: 0
+--- dirb https://165.245.137.16 ---
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Tue Feb 24 10:31:25 2026
+URL_BASE: https://165.245.137.16/
+WORDLIST_FILES: data/wordlists/dirb-small.txt
+
+-----------------
+
+*** Generating Wordlist...                                                                               GENERATED WORDS: 22
+
+---- Scanning URL: https://165.245.137.16/ ----
+*** Calculating NOT_FOUND code...                                                                                                                                                                                                  --> Testing: https://165.245.137.16/admin                                                                                                                   --> Testing: https://165.245.137.16/login                                                                                                                   --> Testing: https://165.245.137.16/api                                                                                                                   --> Testing: https://165.245.137.16/backup                                                                                                                   --> Testing: https://165.245.137.16/.git                                                                                                                   --> Testing: https://165.245.137.16/.env                                                                                                                   --> Testing: https://165.245.137.16/config                                                                                                                   --> Testing: https://165.245.137.16/wp-admin                                                                                                                   --> Testing: https://165.245.137.16/wp-login.php                                                                                                                   --> Testing: https://165.245.137.16/administrator                                                                                                                   --> Testing: https://165.245.137.16/dashboard                                                                                                                   --> Testing: https://165.245.137.16/test                                                                                                                   --> Testing: https://165.245.137.16/debug                                                                                                                   --> Testing: https://165.245.137.16/storage                                                                                                                   --> Testing: https://165.245.137.16/uploads                                                                                                                   --> Testing: https://165.245.137.16/images                                                                                                                   --> Testing: https://165.245.137.16/static                                                                                                                   --> Testing: https://165.245.137.16/assets                                                                               ==> DIRECTORY: https://165.245.137.16/assets/
+                                                                                                                   --> Testing: https://165.245.137.16/css                                                                                                                   --> Testing: https://165.245.137.16/js                                                                                                                   --> Testing: https://165.245.137.16/vendor                                                                                                                   --> Testing: https://165.245.137.16/node_modules                                                                                                                   
+---- Entering directory: https://165.245.137.16/assets/ ----
+*** Calculating NOT_FOUND code...                                                                                                                                                                                                  --> Testing: https://165.245.137.16/assets/admin                                                                                                                   --> Testing: https://165.245.137.16/assets/login                                                                                                                   --> Testing: https://165.245.137.16/assets/api                                                                                                                   --> Testing: https://165.245.137.16/assets/backup                                                                                                                   --> Testing: https://165.245.137.16/assets/.git                                                                                                                   --> Testing: https://165.245.137.16/assets/.env                                                                                                                   --> Testing: https://165.245.137.16/assets/config                                                                                                                   --> Testing: https://165.245.137.16/assets/wp-admin                                                                                                                   --> Testing: https://165.245.137.16/assets/wp-login.php                                                                                                                   --> Testing: https://165.245.137.16/assets/administrator                                                                                                                   --> Testing: https://165.245.137.16/assets/dashboard                                                                                                                   --> Testing: https://165.245.137.16/assets/test                                                                                                                   --> Testing: https://165.245.137.16/assets/debug                                                                                                                   --> Testing: https://165.245.137.16/assets/storage                                                                                                                   --> Testing: https://165.245.137.16/assets/uploads                                                                                                                   --> Testing: https://165.245.137.16/assets/images                                                                                                                   --> Testing: https://165.245.137.16/assets/static                                                                                                                   --> Testing: https://165.245.137.16/assets/assets                                                                                                                   --> Testing: https://165.245.137.16/assets/css                                                                                                                   --> Testing: https://165.245.137.16/assets/js                                                                                                                   --> Testing: https://165.245.137.16/assets/vendor                                                                                                                   --> Testing: https://165.245.137.16/assets/node_modules                                                                               
+-----------------
+END_TIME: Tue Feb 24 10:31:27 2026
+DOWNLOADED: 44 - FOUND: 0
+--- dirb http://127.0.0.1 ---
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Tue Feb 24 10:31:27 2026
+URL_BASE: http://127.0.0.1/
+WORDLIST_FILES: data/wordlists/dirb-small.txt
+
+-----------------
+
+*** Generating Wordlist...                                                                               GENERATED WORDS: 22
+
+---- Scanning URL: http://127.0.0.1/ ----
+*** Calculating NOT_FOUND code...                                                                               
+(!) FATAL: Too many errors connecting to host
+    (Possible cause: COULDNT CONNECT)
+                                                                               
+-----------------
+END_TIME: Tue Feb 24 10:31:27 2026
+DOWNLOADED: 0 - FOUND: 0
+--- dirb https://127.0.0.1 ---
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Tue Feb 24 10:31:27 2026
+URL_BASE: https://127.0.0.1/
+WORDLIST_FILES: data/wordlists/dirb-small.txt
+
+-----------------
+
+*** Generating Wordlist...                                                                               GENERATED WORDS: 22
+
+---- Scanning URL: https://127.0.0.1/ ----
+*** Calculating NOT_FOUND code...                                                                               
+(!) FATAL: Too many errors connecting to host
+    (Possible cause: COULDNT CONNECT)
+                                                                               
+-----------------
+END_TIME: Tue Feb 24 10:31:27 2026
+DOWNLOADED: 0 - FOUND: 0
+--- dirb http://localhost:8000 ---
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Tue Feb 24 10:31:27 2026
+URL_BASE: http://localhost:8000/
+WORDLIST_FILES: data/wordlists/dirb-small.txt
+
+-----------------
+
+*** Generating Wordlist...                                                                               GENERATED WORDS: 22
+
+---- Scanning URL: http://localhost:8000/ ----
+*** Calculating NOT_FOUND code...                                                                                                                                                                                                  --> Testing: http://localhost:8000/admin                                                                                                                   --> Testing: http://localhost:8000/login                                                                                                                   --> Testing: http://localhost:8000/api                                                                                                                   --> Testing: http://localhost:8000/backup                                                                                                                   --> Testing: http://localhost:8000/.git                                                                                                                   --> Testing: http://localhost:8000/.env                                                                                                                   --> Testing: http://localhost:8000/config                                                                                                                   --> Testing: http://localhost:8000/wp-admin                                                                                                                   --> Testing: http://localhost:8000/wp-login.php                                                                                                                   --> Testing: http://localhost:8000/administrator                                                                                                                   --> Testing: http://localhost:8000/dashboard                                                                                                                   --> Testing: http://localhost:8000/test                                                                                                                   --> Testing: http://localhost:8000/debug                                                                                                                   --> Testing: http://localhost:8000/storage                                                                                                                   --> Testing: http://localhost:8000/uploads                                                                                                                   --> Testing: http://localhost:8000/images                                                                                                                   --> Testing: http://localhost:8000/static                                                                                                                   --> Testing: http://localhost:8000/assets                                                                                                                   --> Testing: http://localhost:8000/css                                                                                                                   --> Testing: http://localhost:8000/js                                                                                                                   --> Testing: http://localhost:8000/vendor                                                                                                                   --> Testing: http://localhost:8000/node_modules                                                                               
+-----------------
+END_TIME: Tue Feb 24 10:31:27 2026
+DOWNLOADED: 22 - FOUND: 0
+--- dirb http://localhost:8080 ---
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Tue Feb 24 10:31:27 2026
+URL_BASE: http://localhost:8080/
+WORDLIST_FILES: data/wordlists/dirb-small.txt
+
+-----------------
+
+*** Generating Wordlist...                                                                               GENERATED WORDS: 22
+
+---- Scanning URL: http://localhost:8080/ ----
+*** Calculating NOT_FOUND code...(!) WARNING: NOT_FOUND[] page not stable, unable to determine the correct URLs {200}.
+    (Try using FineTunning: '-f')
+                                                                                                                                                              
+-----------------
+END_TIME: Tue Feb 24 10:31:27 2026
+DOWNLOADED: 0 - FOUND: 0

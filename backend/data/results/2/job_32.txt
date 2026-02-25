@@ -1,0 +1,27 @@
+=== web_nikto ===
+Targets: 2 IPs, 2 domains
+--- nikto https://awfulsecurity.org ---
+- Nikto v2.5.0
+---------------------------------------------------------------------------
++ Target IP:          198.185.159.145
++ Target Hostname:    awfulsecurity.org
++ Target Port:        443
+---------------------------------------------------------------------------
++ SSL Info:        Subject:  /CN=awfulsecurity.org
+                   Ciphers:  TLS_AES_128_GCM_SHA256
+                   Issuer:   /C=US/O=Let's Encrypt/CN=R12
++ Start Time:         2026-02-24 10:31:18 (GMT-5)
+---------------------------------------------------------------------------
++ Server: Squarespace
++ /: The anti-clickjacking X-Frame-Options header is not present. See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
++ /: Uncommon header 'x-contextid' found, with contents: RaBjPxst/IyZBXUwy.
++ /: The site uses TLS and the Strict-Transport-Security HTTP header is not defined. See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
++ /: The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type. See: https://www.netsparker.com/web-vulnerability-scanner/vulnerabilities/missing-content-type-header/
++ /: Cookie crumb created without the httponly flag. See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
++ Root page / redirects to: http://www.awfulsecurity.org
++ /.YZgwxCCE: Uncommon header 'x-sqsp-edge' found, with contents: true.
++ ERROR: Error limit (20) reached for host, giving up. Last error: 
++ Scan terminated: 6 error(s) and 6 item(s) reported on remote host
++ End Time:           2026-02-24 10:50:02 (GMT-5) (1124 seconds)
+---------------------------------------------------------------------------
++ 1 host(s) tested

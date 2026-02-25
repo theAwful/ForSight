@@ -1,0 +1,10 @@
+https://awfulsecurity.org
+http://awfulsecurity.org
+https://intragin.awfulsecurity.org
+http://intragin.awfulsecurity.org
+http://165.245.137.16
+https://165.245.137.16
+http://127.0.0.1
+https://127.0.0.1
+http://localhost:8000
+http://localhost:8080

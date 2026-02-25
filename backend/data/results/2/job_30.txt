@@ -1,0 +1,64 @@
+=== nmap_services ===
+Targets: 2 IPs, 2 domains
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-02-24 10:21 -0500
+Nmap scan report for 165.245.137.16
+Host is up (0.0048s latency).
+Not shown: 997 filtered tcp ports (no-response)
+PORT    STATE SERVICE    VERSION
+22/tcp  open  tcpwrapped
+80/tcp  open  tcpwrapped
+443/tcp open  tcpwrapped
+
+Nmap scan report for awfulsecurity.org (198.185.159.145)
+Host is up (0.0038s latency).
+Not shown: 998 filtered tcp ports (no-response)
+PORT    STATE SERVICE    VERSION
+80/tcp  open  tcpwrapped
+443/tcp open  tcpwrapped
+
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.0000090s latency).
+Not shown: 998 closed tcp ports (reset)
+PORT     STATE SERVICE    VERSION
+8000/tcp open  http       Uvicorn
+8080/tcp open  http-proxy
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port8080-TCP:V=7.98%I=7%D=2/24%Time=699DC203%P=x86_64-pc-linux-gnu%r(Ge
+SF:tRequest,64B,"HTTP/1\.1\x20200\x20OK\r\nConnection:\x20close\r\nCache-c
+SF:ontrol:\x20no-cache,\x20no-store\r\nPragma:\x20no-cache\r\nX-Frame-Opti
+SF:ons:\x20DENY\r\nContent-Type:\x20text/html;\x20charset=utf-8\r\nX-Conte
+SF:nt-Type-Options:\x20nosniff\r\n\r\n<html><head><title>Burp\x20Suite\x20
+SF:Community\x20Edition</title>\r\n<style\x20type=\"text/css\">\r\nbody\x2
+SF:0{\x20background:\x20#dedede;\x20font-family:\x20Arial,\x20sans-serif;\
+SF:x20color:\x20#404042;\x20-webkit-font-smoothing:\x20antialiased;\x20}\r
+SF:\n#container\x20{\x20padding:\x200\x2015px;\x20margin:\x2010px\x20auto;
+SF:\x20background-color:\x20#ffffff;\x20}\r\na\x20{\x20word-wrap:\x20break
+SF:-word;\x20}\r\na:link,\x20a:visited\x20{\x20color:\x20#e06228;\x20text-
+SF:decoration:\x20none;\x20}\r\na:hover,\x20a:active\x20{\x20color:\x20#40
+SF:4042;\x20text-decoration:\x20underline;\x20}\r\nh1\x20{\x20font-size:\x
+SF:201\.6em;\x20line-height:\x201\.2em;\x20font-weight:\x20normal;\x20colo
+SF:r:\x20#404042;\x20}\r\nh2\x20{\x20font-size:\x201\.3em;\x20line-height:
+SF:\x201\.2em;\x20padding:\x200;\x20margin:\x200\.8em\x200\x200\.3em\x200;
+SF:\x20font-weight:\x20normal;\x20color:\x20#404042;}\r\n\.title,\x20\.nav
+SF:bar\x20{\x20color:\x20#ffffff;\x20background:\x20#e06228;\x20padding:\x
+SF:2010px\x2015px;\x20")%r(HTTPOptions,64B,"HTTP/1\.1\x20200\x20OK\r\nConn
+SF:ection:\x20close\r\nCache-control:\x20no-cache,\x20no-store\r\nPragma:\
+SF:x20no-cache\r\nX-Frame-Options:\x20DENY\r\nContent-Type:\x20text/html;\
+SF:x20charset=utf-8\r\nX-Content-Type-Options:\x20nosniff\r\n\r\n<html><he
+SF:ad><title>Burp\x20Suite\x20Community\x20Edition</title>\r\n<style\x20ty
+SF:pe=\"text/css\">\r\nbody\x20{\x20background:\x20#dedede;\x20font-family
+SF::\x20Arial,\x20sans-serif;\x20color:\x20#404042;\x20-webkit-font-smooth
+SF:ing:\x20antialiased;\x20}\r\n#container\x20{\x20padding:\x200\x2015px;\
+SF:x20margin:\x2010px\x20auto;\x20background-color:\x20#ffffff;\x20}\r\na\
+SF:x20{\x20word-wrap:\x20break-word;\x20}\r\na:link,\x20a:visited\x20{\x20
+SF:color:\x20#e06228;\x20text-decoration:\x20none;\x20}\r\na:hover,\x20a:a
+SF:ctive\x20{\x20color:\x20#404042;\x20text-decoration:\x20underline;\x20}
+SF:\r\nh1\x20{\x20font-size:\x201\.6em;\x20line-height:\x201\.2em;\x20font
+SF:-weight:\x20normal;\x20color:\x20#404042;\x20}\r\nh2\x20{\x20font-size:
+SF:\x201\.3em;\x20line-height:\x201\.2em;\x20padding:\x200;\x20margin:\x20
+SF:0\.8em\x200\x200\.3em\x200;\x20font-weight:\x20normal;\x20color:\x20#40
+SF:4042;}\r\n\.title,\x20\.navbar\x20{\x20color:\x20#ffffff;\x20background
+SF::\x20#e06228;\x20padding:\x2010px\x2015px;\x20");
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 4 IP addresses (3 hosts up) scanned in 158.14 seconds

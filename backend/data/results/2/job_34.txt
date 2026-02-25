@@ -1,0 +1,83 @@
+=== web_gowitness ===
+Targets: 2 IPs, 2 domains
+=== gowitness scan file ===
+2026/02/24 10:31:17 WARN no writers have been configured. to persist probe results, add writers using --write-* flags
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:18 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:19 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:19 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:19 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:19 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:19 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:19 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:19 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:19 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:19 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:19 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:19 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:19 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:19 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:19 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:19 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:19 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:19 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:19 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:20 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:20 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:20 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:20 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:20 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:20 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:20 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:21 INFO result 🤖 target=http://awfulsecurity.org:443 status-code=400 title="" have-screenshot=true
+2026/02/24 10:31:22 INFO result 🤖 target=http://intragin.awfulsecurity.org:443 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/02/24 10:31:22 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:22 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:22 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:23 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:23 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:23 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:23 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:24 INFO result 🤖 target=https://awfulsecurity.org:443 status-code=200 title=@theAwful_ have-screenshot=true
+2026/02/24 10:31:24 INFO result 🤖 target=http://awfulsecurity.org:80 status-code=200 title=@theAwful_ have-screenshot=true
+2026/02/24 10:31:24 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:24 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:24 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:24 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:24 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:25 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:25 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:25 INFO result 🤖 target=http://165.245.137.16:80 status-code=200 title="Apache2 Ubuntu Default Page: It works" have-screenshot=true
+2026/02/24 10:31:25 ERROR: could not unmarshal event: json: cannot unmarshal JSON string into Go network.CookiePartitionKey within "/cookiePartitionKey"
+2026/02/24 10:31:25 INFO result 🤖 target=http://165.245.137.16:443 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/02/24 10:31:25 INFO result 🤖 target=http://intragin.awfulsecurity.org:80 status-code=200 title="Intragin – Your Partner in Construction and Renewable Energy" have-screenshot=true
+2026/02/24 10:31:25 INFO result 🤖 target=https://intragin.awfulsecurity.org:443 status-code=200 title="Intragin – Your Partner in Construction and Renewable Energy" have-screenshot=true
+2026/02/24 10:31:28 INFO result 🤖 target=http://localhost:8000 status-code=404 title="" have-screenshot=true
+2026/02/24 10:31:28 INFO result 🤖 target=http://localhost:8080 status-code=200 title="Burp Suite Community Edition" have-screenshot=true
+2026/02/24 10:31:29 INFO result 🤖 target=https://165.245.137.16:443 status-code=200 title="Intragin – Your Partner in Construction and Renewable Energy" have-screenshot=true
