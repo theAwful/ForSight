@@ -238,3 +238,8 @@ textarea:focus {
 .download-btn:hover {
   filter: brightness(1.05);
 }
+
+/* Nessus findings table row hover */
+.findings-table tbody tr:hover {
+  background: var(--border-light);
+}

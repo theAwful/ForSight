@@ -1,0 +1,36 @@
+# ForSight: backend (FastAPI + tools) + frontend (nginx)
+# Run: docker compose up -d
+# App: http://localhost:80  (login: forsight / forsight)
+#
+# If build fails with "Temporary failure resolving" (no DNS in build):
+#   docker compose build --network=host
+#   docker compose up -d
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: forsight-backend
+    environment:
+      - FORSIGHT_DATA_DIR=/app/data
+      - FORSIGHT_SECRET_KEY=${FORSIGHT_SECRET_KEY:-change-me-in-production}
+    volumes:
+      - forsight_data:/app/data
+    expose:
+      - "8000"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: forsight-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  forsight_data:

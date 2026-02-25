@@ -2,7 +2,9 @@
 
 import json
 import shutil
+import time
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Optional
 
@@ -14,6 +16,7 @@ from app.checklist import CHECKLIST, get_checklist_by_phase, get_item_id_by_runn
 from app.database import get_db, init_database
 from app.jobs import get_project_results_dir, get_project_targets, run_runner_sync, init_job_output_file
 from app.nmap_parse import nmap_output_exists
+from app.nessus_parse import parse_nessus_xml
 from app.models import ChecklistStatus, Project, ProjectExcludedHost, ScanJob, RoadmapItem, Feedback
 from app.roe import parse_roe_content
 from pydantic import BaseModel
@@ -32,23 +35,53 @@ from app.schemas import (
 init_database()
 
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.auth import get_current_user, verify_credentials
 from app.config import settings
+from app import tenable_client
+from app.tenable_client import TenableAPIError
+from app import nessus_web_launch
+
+
+def _sanitize_nessus_web_error(msg: str) -> str:
+    """Avoid sending raw Chrome/Selenium crash stacktraces to the client."""
+    if not msg or len(msg) < 500:
+        return msg or "Web automation failed."
+    if "Stacktrace" in msg or "#0 0x" in msg or "<unknown>" in msg:
+        return (
+            "Create via web failed (browser automation error). "
+            "Try \"Create scan (API)\" or create the scan in Nessus and use Launch/Import here."
+        )
+    return msg[:500] + "…"
 
 app = FastAPI(
     title="ForSight",
     description="Automated external penetration testing – wrapper for pentesting tools",
     version="0.1.0",
 )
+# CORS: allow frontend origin(s). With credentials, browsers require an explicit origin (not "*").
+# The CORS error for data.nessus-telemetry.tenable.com is from the Nessus UI in another tab, not ForSight.
+_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
+]
+if settings.debug:
+    _origins.extend(["http://localhost:5000", "http://127.0.0.1:5000"])
+if getattr(settings, "cors_origins", None):
+    _origins.extend(o.strip() for o in settings.cors_origins.split(",") if o.strip())
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 
@@ -703,6 +736,608 @@ def exclude_project_host(project_id: int, body: ExcludeHostBody, db: Session = D
         db.add(ProjectExcludedHost(project_id=project_id, host=canonical))
         db.commit()
     return {"ok": True, "host": canonical}
+
+
+# ---- Nessus / Tenable VM ----
+@app.get("/api/nessus/configured")
+def nessus_configured():
+    """Whether Tenable API is configured (Nessus tab is usable)."""
+    return {"configured": tenable_client.is_configured()}
+
+
+@app.get("/api/projects/{project_id}/nessus/templates")
+def nessus_list_templates(project_id: int, db: Session = Depends(get_db)):
+    """List Nessus scan templates and policies (built-in + user-defined) for the create-scan dropdown."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    if not tenable_client.is_configured():
+        raise HTTPException(503, "Tenable API is not configured")
+    try:
+        return tenable_client.list_templates_and_policies()
+    except TenableAPIError as e:
+        if e.status_code == 401:
+            raise HTTPException(401, "Tenable API: Unauthorized. Check your API keys in .env.")
+        raise HTTPException(502, str(e))
+    except Exception as e:
+        raise HTTPException(502, str(e))
+
+
+@app.get("/api/projects/{project_id}/nessus/scanners")
+def nessus_list_scanners(project_id: int, db: Session = Depends(get_db)):
+    """List Tenable scanners."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    if not tenable_client.is_configured():
+        raise HTTPException(503, "Tenable API is not configured")
+    try:
+        return tenable_client.list_scanners()
+    except TenableAPIError as e:
+        if e.status_code == 401:
+            raise HTTPException(401, "Tenable API: Unauthorized. Check your API keys in .env.")
+        raise HTTPException(502, str(e))
+    except Exception as e:
+        raise HTTPException(502, str(e))
+
+
+@app.get("/api/projects/{project_id}/nessus/scans")
+def nessus_list_scans(project_id: int, db: Session = Depends(get_db)):
+    """List Tenable scans (proxy). Project is validated but scans are global. No cache so refresh shows current list."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    if not tenable_client.is_configured():
+        raise HTTPException(503, "Tenable API is not configured (set FORSIGHT_TENABLE_ACCESS_KEY and SECRET_KEY)")
+    try:
+        data = tenable_client.list_scans()
+        return JSONResponse(
+            content=data,
+            headers={"Cache-Control": "no-store, no-cache, must-revalidate", "Pragma": "no-cache"},
+        )
+    except TenableAPIError as e:
+        if e.status_code == 401:
+            raise HTTPException(401, "Tenable API: Unauthorized. Check FORSIGHT_TENABLE_ACCESS_KEY and FORSIGHT_TENABLE_SECRET_KEY in .env and that keys are valid in Tenable.io.")
+        raise HTTPException(502, str(e))
+    except Exception as e:
+        raise HTTPException(502, str(e))
+
+
+class NessusCreateScanBody(BaseModel):
+    name: str
+    template_uuid: str  # UUID for template, or "policy:123" to use policy id
+    use_project_targets: bool = True
+    text_targets: Optional[str] = None  # optional override; if use_project_targets, we append to project targets
+
+
+@app.post("/api/projects/{project_id}/nessus/scans")
+def nessus_create_scan(
+    project_id: int,
+    body: NessusCreateScanBody,
+    db: Session = Depends(get_db),
+):
+    """Create a Tenable scan. Targets come from project ROE when use_project_targets is true."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    if not tenable_client.is_configured():
+        raise HTTPException(503, "Tenable API is not configured")
+    ips, domains = get_project_targets(p)
+    targets_list = ips + domains
+    if body.text_targets and body.text_targets.strip():
+        # Optional extra targets (comma/newline separated)
+        extra = [t.strip() for t in body.text_targets.replace("\n", ",").split(",") if t.strip()]
+        targets_list = list(dict.fromkeys(targets_list + extra))
+    text_targets = ",".join(targets_list) if targets_list else (body.text_targets or "")
+    if not text_targets.strip():
+        raise HTTPException(400, "No targets. Add IPs/domains in project ROE or in the targets field.")
+    template_uuid: Optional[str] = None
+    policy_id: Optional[int] = None
+    if body.template_uuid.startswith("policy:"):
+        try:
+            policy_id = int(body.template_uuid.replace("policy:", "").strip())
+        except ValueError:
+            raise HTTPException(400, "Invalid policy id")
+    else:
+        template_uuid = body.template_uuid.strip() or None
+    if not template_uuid and policy_id is None:
+        raise HTTPException(400, "Select a template or policy.")
+    try:
+        return tenable_client.create_scan(
+            name=body.name,
+            text_targets=text_targets,
+            template_uuid=template_uuid,
+            policy_id=policy_id,
+        )
+    except TenableAPIError as e:
+        if e.status_code == 401:
+            raise HTTPException(401, "Tenable API: Unauthorized. Check your API keys in .env.")
+        if e.status_code and 400 <= e.status_code < 500:
+            detail = str(e)
+            if e.response_text:
+                try:
+                    err_body = json.loads(e.response_text)
+                    if isinstance(err_body, dict) and err_body.get("error"):
+                        detail = err_body["error"]
+                except Exception:
+                    pass
+            raise HTTPException(400, detail)
+        raise HTTPException(502, str(e))
+    except Exception as e:
+        raise HTTPException(502, str(e))
+
+
+@app.get("/api/projects/{project_id}/nessus/scans/{scan_id}")
+def nessus_get_scan(project_id: int, scan_id: int, db: Session = Depends(get_db)):
+    """Get Tenable scan details."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    if not tenable_client.is_configured():
+        raise HTTPException(503, "Tenable API is not configured")
+    try:
+        return tenable_client.get_scan(scan_id)
+    except TenableAPIError as e:
+        if e.status_code == 401:
+            raise HTTPException(401, "Tenable API: Unauthorized. Check your API keys in .env.")
+        raise HTTPException(502, str(e))
+    except Exception as e:
+        raise HTTPException(502, str(e))
+
+
+class NessusLaunchBody(BaseModel):
+    use_project_targets: bool = False
+
+
+@app.post("/api/projects/{project_id}/nessus/scans/{scan_id}/launch")
+def nessus_launch_scan(
+    project_id: int,
+    scan_id: int,
+    body: NessusLaunchBody = Body(default=NessusLaunchBody()),
+    db: Session = Depends(get_db),
+):
+    """Launch a Tenable scan. If use_project_targets is true, pass project IPs/domains as alt_targets."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    if not tenable_client.is_configured():
+        raise HTTPException(503, "Tenable API is not configured")
+    alt_targets = None
+    if body.use_project_targets:
+        ips, domains = get_project_targets(p)
+        alt_targets = ips + domains
+    try:
+        data = tenable_client.launch_scan(scan_id, alt_targets=alt_targets)
+        return data
+    except TenableAPIError as e:
+        if e.status_code == 401:
+            raise HTTPException(401, "Tenable API: Unauthorized. Check your API keys in .env.")
+        if e.status_code and 400 <= e.status_code < 500:
+            detail = str(e)
+            if e.response_text:
+                try:
+                    err_body = json.loads(e.response_text)
+                    if isinstance(err_body, dict) and err_body.get("error"):
+                        detail = err_body["error"]
+                except Exception:
+                    pass
+            raise HTTPException(400, detail)
+        raise HTTPException(502, str(e))
+    except Exception as e:
+        raise HTTPException(502, str(e))
+
+
+@app.get("/api/nessus/web-launch-available")
+def nessus_web_launch_available():
+    """
+    Whether launch-via-web is available (Selenium + username/password).
+    Returns open_url so frontend can offer "Open in Nessus" when web launch isn't used.
+    """
+    base = (settings.tenable_base_url or "").rstrip("/")
+    has_creds = bool(settings.tenable_username and settings.tenable_password)
+    selenium_ok = nessus_web_launch.is_available()
+    return {
+        "available": has_creds and selenium_ok,
+        "open_url": f"{base}/#/scans/folders/my-scans" if base else None,
+        "reason": None if (has_creds and selenium_ok) else (
+            "Set FORSIGHT_TENABLE_USERNAME and FORSIGHT_TENABLE_PASSWORD for web launch."
+            if not has_creds else "Selenium not installed (pip install selenium)."
+        ),
+    }
+
+
+class NessusLaunchWebBody(BaseModel):
+    scan_name: Optional[str] = None  # prefer finding row by name (ID may not be set until scan runs)
+
+
+class NessusLaunchWebByNameBody(BaseModel):
+    scan_name: str  # required: find row by name, click launch in that row (ID not needed until scan runs)
+
+
+@app.post("/api/projects/{project_id}/nessus/launch-web")
+def nessus_launch_scan_via_web_by_name(
+    project_id: int,
+    body: NessusLaunchWebByNameBody,
+    db: Session = Depends(get_db),
+):
+    """
+    Launch via Selenium: find the scan row by name (datatable tr data-name / td.scan-visible-name),
+    then click the launch button in that row. The row's data-id is the scan id we're launching.
+    """
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    if not settings.tenable_username or not settings.tenable_password:
+        raise HTTPException(
+            400,
+            "Web launch requires FORSIGHT_TENABLE_USERNAME and FORSIGHT_TENABLE_PASSWORD",
+        )
+    if not nessus_web_launch.is_available():
+        raise HTTPException(
+            503,
+            "Selenium is not installed. Install with: pip install selenium. Chrome or Chromium must be available.",
+        )
+    name = (body.scan_name or "").strip()
+    if not name:
+        raise HTTPException(400, "scan_name is required")
+    try:
+        result = nessus_web_launch.launch_scan_via_web(
+            base_url=settings.tenable_base_url or "https://127.0.0.1:8834",
+            username=settings.tenable_username,
+            password=settings.tenable_password,
+            scan_id=None,
+            scan_name=name,
+            verify_ssl=settings.tenable_verify_ssl,
+        )
+        return result
+    except nessus_web_launch.NessusWebLaunchError as e:
+        raise HTTPException(502, _sanitize_nessus_web_error(str(e)))
+
+
+@app.post("/api/projects/{project_id}/nessus/scans/{scan_id}/launch-web")
+def nessus_launch_scan_via_web(
+    project_id: int,
+    scan_id: int,
+    body: Optional[NessusLaunchWebBody] = Body(None),
+    db: Session = Depends(get_db),
+):
+    """Launch via Selenium: find row by scan_name in body, click launch in that row. Path scan_id is ignored."""
+    scan_name = (body.scan_name or "").strip() if body else None
+    if not scan_name:
+        raise HTTPException(400, "scan_name required in body")
+    return nessus_launch_scan_via_web_by_name(
+        project_id=project_id,
+        body=NessusLaunchWebByNameBody(scan_name=scan_name),
+        db=db,
+    )
+
+
+class NessusDeleteWebBody(BaseModel):
+    scan_name: Optional[str] = None  # prefer finding row by name
+
+
+class NessusDeleteWebByNameBody(BaseModel):
+    scan_name: str  # required: find row by name, click trash in that row
+
+
+@app.post("/api/projects/{project_id}/nessus/delete-web")
+def nessus_delete_scan_via_web_by_name(
+    project_id: int,
+    body: NessusDeleteWebByNameBody,
+    db: Session = Depends(get_db),
+):
+    """Delete a Nessus scan via the web UI by scan name. Finds the row by name and clicks trash."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    if not settings.tenable_username or not settings.tenable_password:
+        raise HTTPException(400, "Web delete requires FORSIGHT_TENABLE_USERNAME and FORSIGHT_TENABLE_PASSWORD")
+    if not nessus_web_launch.is_available():
+        raise HTTPException(503, "Selenium is not installed. Install with: pip install selenium.")
+    name = (body.scan_name or "").strip()
+    if not name:
+        raise HTTPException(400, "scan_name is required")
+    try:
+        result = nessus_web_launch.delete_scan_via_web(
+            base_url=settings.tenable_base_url or "https://127.0.0.1:8834",
+            username=settings.tenable_username,
+            password=settings.tenable_password,
+            scan_id=None,
+            scan_name=name,
+            verify_ssl=settings.tenable_verify_ssl,
+        )
+        return result
+    except nessus_web_launch.NessusWebLaunchError as e:
+        raise HTTPException(502, _sanitize_nessus_web_error(str(e)))
+
+
+@app.post("/api/projects/{project_id}/nessus/scans/{scan_id}/delete-web")
+def nessus_delete_scan_via_web(
+    project_id: int,
+    scan_id: int,
+    body: Optional[NessusDeleteWebBody] = Body(None),
+    db: Session = Depends(get_db),
+):
+    """Delete via web UI: find row by scan_name in body, click trash in that row. Prefer POST /nessus/delete-web."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    if not settings.tenable_username or not settings.tenable_password:
+        raise HTTPException(400, "Web delete requires FORSIGHT_TENABLE_USERNAME and FORSIGHT_TENABLE_PASSWORD")
+    if not nessus_web_launch.is_available():
+        raise HTTPException(503, "Selenium is not installed. Install with: pip install selenium.")
+    scan_name = (body.scan_name or "").strip() if body else None
+    if not scan_name:
+        raise HTTPException(400, "scan_name required in body (find row by name, click trash in that row)")
+    try:
+        result = nessus_web_launch.delete_scan_via_web(
+            base_url=settings.tenable_base_url or "https://127.0.0.1:8834",
+            username=settings.tenable_username,
+            password=settings.tenable_password,
+            scan_id=None,
+            scan_name=scan_name,
+            verify_ssl=settings.tenable_verify_ssl,
+        )
+        return result
+    except nessus_web_launch.NessusWebLaunchError as e:
+        raise HTTPException(502, _sanitize_nessus_web_error(str(e)))
+
+
+class NessusCreateScanWebBody(BaseModel):
+    name: str
+    template_key: str = "advanced"  # e.g. "advanced", "Basic", "Web App" – matched in Nessus UI
+    use_project_targets: bool = True
+    text_targets: Optional[str] = None  # optional override or extra; if use_project_targets, merged with project targets
+
+
+@app.post("/api/projects/{project_id}/nessus/create-scan-web")
+def nessus_create_scan_via_web(
+    project_id: int,
+    body: NessusCreateScanWebBody,
+    db: Session = Depends(get_db),
+):
+    """Create a new Nessus scan via the web UI (Selenium): New Scan → template → name → targets."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    if not settings.tenable_username or not settings.tenable_password:
+        raise HTTPException(
+            400,
+            "Web create requires FORSIGHT_TENABLE_USERNAME and FORSIGHT_TENABLE_PASSWORD",
+        )
+    if not nessus_web_launch.is_available():
+        raise HTTPException(
+            503,
+            "Selenium is not installed. Install with: pip install selenium.",
+        )
+    name = (body.name or "").strip()
+    if not name:
+        raise HTTPException(400, "Scan name is required")
+    ips, domains = get_project_targets(p)
+    targets_list = ips + domains
+    if body.text_targets and body.text_targets.strip():
+        extra = [t.strip() for t in body.text_targets.replace("\n", ",").split(",") if t.strip()]
+        targets_list = list(dict.fromkeys(targets_list + extra))
+    text_targets = "\n".join(targets_list) if targets_list else (body.text_targets or "").strip()
+    if not text_targets:
+        raise HTTPException(400, "No targets. Add IPs/domains in project ROE or in the targets field.")
+    try:
+        result = nessus_web_launch.create_scan_via_web(
+            base_url=settings.tenable_base_url or "https://127.0.0.1:8834",
+            username=settings.tenable_username,
+            password=settings.tenable_password,
+            scan_name=name,
+            targets_text=text_targets,
+            template_key=body.template_key or "advanced",
+            verify_ssl=settings.tenable_verify_ssl,
+        )
+        return result
+    except nessus_web_launch.NessusWebLaunchError as e:
+        raise HTTPException(502, _sanitize_nessus_web_error(str(e)))
+
+
+class NessusExportBody(BaseModel):
+    format: str = "nessus"
+
+
+@app.post("/api/projects/{project_id}/nessus/scans/{scan_id}/export")
+def nessus_export_scan(
+    project_id: int,
+    scan_id: int,
+    body: NessusExportBody = Body(default=NessusExportBody()),
+    db: Session = Depends(get_db),
+):
+    """Request scan export (async). Returns file id to poll status and download."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    if not tenable_client.is_configured():
+        raise HTTPException(503, "Tenable API is not configured")
+    try:
+        return tenable_client.export_scan(scan_id, format=body.format)
+    except TenableAPIError as e:
+        if e.status_code == 401:
+            raise HTTPException(401, "Tenable API: Unauthorized. Check your API keys in .env.")
+        raise HTTPException(502, str(e))
+    except Exception as e:
+        raise HTTPException(502, str(e))
+
+
+@app.get("/api/projects/{project_id}/nessus/scans/{scan_id}/export/{file_id}/status")
+def nessus_export_status(
+    project_id: int,
+    scan_id: int,
+    file_id: int,
+    db: Session = Depends(get_db),
+):
+    """Poll export job status until ready."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    if not tenable_client.is_configured():
+        raise HTTPException(503, "Tenable API is not configured")
+    try:
+        return tenable_client.export_status(scan_id, file_id)
+    except TenableAPIError as e:
+        if e.status_code == 401:
+            raise HTTPException(401, "Tenable API: Unauthorized. Check your API keys in .env.")
+        raise HTTPException(502, str(e))
+    except Exception as e:
+        raise HTTPException(502, str(e))
+
+
+@app.get("/api/projects/{project_id}/nessus/scans/{scan_id}/export/{file_id}/download")
+def nessus_export_download(
+    project_id: int,
+    scan_id: int,
+    file_id: int,
+    db: Session = Depends(get_db),
+):
+    """Download exported scan file."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    if not tenable_client.is_configured():
+        raise HTTPException(503, "Tenable API is not configured")
+    try:
+        content = tenable_client.export_download(scan_id, file_id)
+    except TenableAPIError as e:
+        if e.status_code == 401:
+            raise HTTPException(401, "Tenable API: Unauthorized. Check your API keys in .env.")
+        raise HTTPException(502, str(e))
+    except Exception as e:
+        raise HTTPException(502, str(e))
+    ext = "nessus"  # or from query param if we add format
+    return Response(
+        content=content,
+        media_type="application/octet-stream",
+        headers={"Content-Disposition": f'attachment; filename="scan-{scan_id}-export.{ext}"'},
+    )
+
+
+def _nessus_imports_path(project_id: int) -> Path:
+    return get_project_results_dir(project_id) / "nessus_imports.json"
+
+
+def _load_nessus_imports(project_id: int) -> dict:
+    path = _nessus_imports_path(project_id)
+    if not path.exists():
+        return {"scans": {}}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) and "scans" in data else {"scans": {}}
+    except Exception:
+        return {"scans": {}}
+
+
+def _save_nessus_imports(project_id: int, data: dict) -> None:
+    path = _nessus_imports_path(project_id)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+
+
+@app.post("/api/projects/{project_id}/nessus/import/{scan_id}")
+def nessus_import_scan_results(project_id: int, scan_id: int, db: Session = Depends(get_db)):
+    """Export scan from Nessus, parse results, and store in project. Use this to pull findings into ForSight."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    if not tenable_client.is_configured():
+        raise HTTPException(503, "Tenable API is not configured")
+    try:
+        export_resp = tenable_client.export_scan(scan_id, format="nessus")
+        file_id = export_resp.get("file")
+        if file_id is None:
+            raise HTTPException(502, "Nessus export did not return a file id")
+        for _ in range(60):
+            status_resp = tenable_client.export_status(scan_id, file_id)
+            if status_resp.get("status") == "ready":
+                break
+            time.sleep(2)
+        else:
+            raise HTTPException(504, "Nessus export timed out")
+        content = tenable_client.export_download(scan_id, file_id)
+    except TenableAPIError as e:
+        if e.status_code == 401:
+            raise HTTPException(401, "Tenable API: Unauthorized. Check your API keys in .env.")
+        raise HTTPException(502, str(e))
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(502, str(e))
+
+    try:
+        parsed = parse_nessus_xml(content)
+    except Exception as e:
+        raise HTTPException(400, f"Failed to parse Nessus export: {e}")
+
+    scan_name = parsed.get("scan_name") or f"Scan {scan_id}"
+    hosts = parsed.get("hosts") or []
+    vulns_count = sum(len(h.get("vulns") or []) for h in hosts)
+
+    data = _load_nessus_imports(project_id)
+    data["scans"][str(scan_id)] = {
+        "scan_id": scan_id,
+        "scan_name": scan_name,
+        "imported_at": datetime.now(timezone.utc).isoformat(),
+        "hosts": hosts,
+        "hosts_count": len(hosts),
+        "vulns_count": vulns_count,
+    }
+    _save_nessus_imports(project_id, data)
+
+    return {
+        "scan_id": scan_id,
+        "scan_name": scan_name,
+        "hosts_count": len(hosts),
+        "vulns_count": vulns_count,
+        "imported_at": data["scans"][str(scan_id)]["imported_at"],
+    }
+
+
+@app.get("/api/projects/{project_id}/nessus/imports")
+def nessus_list_imports(project_id: int, db: Session = Depends(get_db)):
+    """List imported Nessus scan results for this project."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    data = _load_nessus_imports(project_id)
+    scans = []
+    for sid, s in data.get("scans", {}).items():
+        scans.append({
+            "scan_id": int(sid) if str(sid).isdigit() else sid,
+            "scan_name": s.get("scan_name", ""),
+            "imported_at": s.get("imported_at", ""),
+            "hosts_count": s.get("hosts_count", len(s.get("hosts", []))),
+            "vulns_count": s.get("vulns_count", 0),
+        })
+    return {"scans": scans}
+
+
+@app.get("/api/projects/{project_id}/nessus/imports/{scan_id}")
+def nessus_get_import(project_id: int, scan_id: int, db: Session = Depends(get_db)):
+    """Get full imported scan results (hosts and vulns) for Nessus tab detail view."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    data = _load_nessus_imports(project_id)
+    scan_data = data.get("scans", {}).get(str(scan_id))
+    if not scan_data:
+        raise HTTPException(404, "Imported scan not found")
+    return scan_data
+
+
+@app.delete("/api/projects/{project_id}/nessus/imports/{scan_id}")
+def nessus_delete_import(project_id: int, scan_id: int, db: Session = Depends(get_db)):
+    """Remove an imported scan from this project."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    data = _load_nessus_imports(project_id)
+    if str(scan_id) in data.get("scans", {}):
+        del data["scans"][str(scan_id)]
+        _save_nessus_imports(project_id, data)
+    return {"deleted": scan_id}
 
 
 @app.get("/api/health")

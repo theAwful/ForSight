@@ -5,6 +5,7 @@ import Checklist from './Checklist'
 import Jobs from './Jobs'
 import Logs from './Logs'
 import Hosts from './Hosts'
+import Nessus from './Nessus'
 import ConfirmModal from './ConfirmModal'
 
 const PHASE_LABELS = {
@@ -216,7 +217,7 @@ export default function ProjectDetail() {
       <div style={styles.mainRow}>
         <div style={styles.tabContentArea}>
           <div className="tabs-row" style={styles.tabs}>
-            {['checklist', 'jobs', 'hosts', 'reporting'].map((t) => (
+            {['checklist', 'jobs', 'hosts', 'nessus', 'reporting'].map((t) => (
               <button
                 key={t}
                 type="button"
@@ -224,7 +225,7 @@ export default function ProjectDetail() {
                 onClick={() => setTab(t)}
                 style={{ ...styles.tab, ...(tab === t ? styles.tabActive : {}) }}
               >
-                {t === 'checklist' ? 'Checklist' : t === 'jobs' ? 'Jobs' : t === 'hosts' ? 'Hosts' : 'Reporting'}
+                {t === 'checklist' ? 'Checklist' : t === 'jobs' ? 'Jobs' : t === 'hosts' ? 'Hosts' : t === 'nessus' ? 'Nessus' : 'Reporting'}
               </button>
             ))}
           </div>
@@ -246,6 +247,7 @@ export default function ProjectDetail() {
               <Logs projectId={projectId} jobs={jobs} onRefresh={load} />
             )}
             {tab === 'hosts' && <Hosts projectId={projectId} onRefresh={load} />}
+            {tab === 'nessus' && <Nessus projectId={projectId} onRefresh={load} />}
             {tab === 'reporting' && (
               <div className="card" style={styles.reportingCard}>
                 <h2 style={styles.reportingTitle}>Reporting & wrap-up</h2>

@@ -17,7 +17,34 @@
 
 ---
 
-## Quick start
+## Quick start (Docker)
+
+**Easiest way to run ForSight** — backend (Kali + tools) and frontend in one go:
+
+```bash
+git clone https://github.com/theAwful/ForSight.git
+cd ForSight
+docker compose up -d
+```
+
+If the build fails with **"Temporary failure resolving 'deb.debian.org'"**, the build sandbox has no DNS. Use the host network for the build so it can resolve and fetch packages:
+
+```bash
+docker compose build --network=host
+docker compose up -d
+```
+
+- **App:** http://localhost (port 80)  
+- **Login:** `forsight` / `forsight`  
+- Backend uses **Debian Bookworm** and installs tools from Debian repos (nmap, nikto, dirb, whois, sslscan, masscan, curl). For more tools (subfinder, nuclei, amass, etc.) install them inside the container or use a Kali-based image when your build environment can reach Kali mirrors.
+- Data (DB, uploads, results) is stored in a Docker volume `forsight_data` and persists across restarts.
+- Optional: set `FORSIGHT_SECRET_KEY` in the environment or a `.env` file before `docker compose up`.
+
+To stop: `docker compose down`. To rebuild after code changes: `docker compose up -d --build`.
+
+---
+
+## Quick start (local)
 
 ### Prerequisites
 
@@ -63,6 +90,7 @@ Default login: **forsight** / **forsight**.
 | `backend/app/` | Core app: `main.py`, `config.py`, `auth.py`, `checklist.py`, `hosts_aggregator.py`, `runners/` |
 | `backend/data/` | SQLite DB, uploads, results per project, wordlists. This repo includes **demo data** for presentation; remove or replace for production. |
 | `frontend/` | Vite + React UI: login, engagements, checklist, jobs, hosts, reporting, settings |
+| `docker-compose.yml` | Runs backend (Kali + tools) + frontend (nginx); single command to spin up. |
 | `backend/docs/TOOLS.md` | How tools are wired and how to add or swap them |
 
 ---

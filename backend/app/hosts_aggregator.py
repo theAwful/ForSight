@@ -154,6 +154,35 @@ def _port_from_screenshot(s: dict) -> int | None:
     return None
 
 
+def _load_nessus_findings_by_host(results_dir: Path) -> dict[str, list[dict]]:
+    """Load Nessus imports and return canonical_host -> list of vuln dicts (with scan_id, scan_name)."""
+    path = results_dir / "nessus_imports.json"
+    out: dict[str, list[dict]] = {}
+    if not path.exists():
+        return out
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        scans = data.get("scans") or {}
+        for sid, scan in scans.items():
+            scan_id = scan.get("scan_id") or sid
+            scan_name = scan.get("scan_name") or ""
+            for h in scan.get("hosts") or []:
+                host_ip = (h.get("host_ip") or h.get("name") or "").strip()
+                c = canonical_host(host_ip)
+                if not c:
+                    continue
+                for v in h.get("vulns") or []:
+                    out.setdefault(c, []).append({
+                        **v,
+                        "scan_id": scan_id,
+                        "scan_name": scan_name,
+                        "source": "nessus",
+                    })
+    except Exception:
+        pass
+    return out
+
+
 def _parse_nuclei_findings(results_dir: Path) -> list[dict]:
     """Parse web_nuclei.json for findings (host, template, etc.)."""
     path = results_dir / "web_nuclei.json"
@@ -324,6 +353,7 @@ def aggregate_hosts(project_id: int, results_dir: Path) -> list[dict]:
     ports_by_host_raw = get_ports_by_host(results_dir)
     ports_with_versions_raw = get_ports_with_versions(results_dir)
     nuclei_findings = _parse_nuclei_findings(results_dir)
+    nessus_findings_by_host = _load_nessus_findings_by_host(results_dir)
     screenshots_dir = results_dir / "screenshots"
     url_to_host = _parse_gowitness_targets_from_job_outputs(results_dir)
     manifest_path = screenshots_dir / "manifest.json"
@@ -375,6 +405,7 @@ def aggregate_hosts(project_id: int, results_dir: Path) -> list[dict]:
         h = (s.get("host") or _extract_host_from_url(s.get("url") or "")).strip()
         if h:
             hosts_set.add(canonical_host(h))
+    hosts_set.update(nessus_findings_by_host.keys())
 
     result = []
     for host in sorted(hosts_set):
@@ -440,6 +471,7 @@ def aggregate_hosts(project_id: int, results_dir: Path) -> list[dict]:
             "by_port": by_port,
             "screenshots": host_screenshots,
             "findings": host_findings,
+            "nessus_findings": nessus_findings_by_host.get(host, []),
             "insights": insights,
         })
     return result

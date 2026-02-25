@@ -97,4 +97,64 @@ export const api = {
     list: (kind) => request(kind ? `/feedback?kind=${kind}` : '/feedback'),
     create: (body) => request('/feedback', { method: 'POST', body: JSON.stringify(body) }),
   },
+  nessus: {
+    configured: () => request('/nessus/configured'),
+    webLaunchAvailable: () => request('/nessus/web-launch-available'),
+    templates: (projectId) => request(`/projects/${projectId}/nessus/templates`),
+    listScans: (projectId, cacheBust = false) =>
+      request(`/projects/${projectId}/nessus/scans${cacheBust ? `?_=${Date.now()}` : ''}`),
+    getScan: (projectId, scanId) => request(`/projects/${projectId}/nessus/scans/${scanId}`),
+    createScan: (projectId, body) =>
+      request(`/projects/${projectId}/nessus/scans`, {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+    launchScan: (projectId, scanId, options = {}) =>
+      request(`/projects/${projectId}/nessus/scans/${scanId}/launch`, {
+        method: 'POST',
+        body: JSON.stringify(options),
+      }),
+    launchScanViaWeb: (projectId, scanId, body = {}) =>
+      request(`/projects/${projectId}/nessus/scans/${scanId}/launch-web`, {
+        method: 'POST',
+        body: JSON.stringify(body || {}),
+      }),
+    /** Launch by scan name (row name). Use when ID may not exist yet. */
+    launchScanViaWebByName: (projectId, scanName) =>
+      request(`/projects/${projectId}/nessus/launch-web`, {
+        method: 'POST',
+        body: JSON.stringify({ scan_name: scanName }),
+      }),
+    deleteScanViaWeb: (projectId, scanId, body = {}) =>
+      request(`/projects/${projectId}/nessus/scans/${scanId}/delete-web`, {
+        method: 'POST',
+        body: JSON.stringify(body || {}),
+      }),
+    /** Delete by scan name (row name). Use when ID may not exist yet. */
+    deleteScanViaWebByName: (projectId, scanName) =>
+      request(`/projects/${projectId}/nessus/delete-web`, {
+        method: 'POST',
+        body: JSON.stringify({ scan_name: scanName }),
+      }),
+    createScanViaWeb: (projectId, body) =>
+      request(`/projects/${projectId}/nessus/create-scan-web`, {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+    exportScan: (projectId, scanId, format = 'nessus') =>
+      request(`/projects/${projectId}/nessus/scans/${scanId}/export`, {
+        method: 'POST',
+        body: JSON.stringify({ format }),
+      }),
+    exportStatus: (projectId, scanId, fileId) =>
+      request(`/projects/${projectId}/nessus/scans/${scanId}/export/${fileId}/status`),
+    downloadExportUrl: (projectId, scanId, fileId) =>
+      `${BASE}/projects/${projectId}/nessus/scans/${scanId}/export/${fileId}/download`,
+    listImports: (projectId) => request(`/projects/${projectId}/nessus/imports`),
+    importScan: (projectId, scanId) =>
+      request(`/projects/${projectId}/nessus/import/${scanId}`, { method: 'POST' }),
+    getImport: (projectId, scanId) => request(`/projects/${projectId}/nessus/imports/${scanId}`),
+    deleteImport: (projectId, scanId) =>
+      request(`/projects/${projectId}/nessus/imports/${scanId}`, { method: 'DELETE' }),
+  },
 }

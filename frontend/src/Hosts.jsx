@@ -5,7 +5,8 @@ import ConfirmModal from './ConfirmModal'
 function exposureLevel(host) {
   const ports = (host?.ports && host.ports.length) || 0
   const findings = (host?.findings && host.findings.length) || 0
-  if (findings > 0) return { level: 'high', color: 'var(--danger)', label: 'Findings' }
+  const nessusFindings = (host?.nessus_findings && host.nessus_findings.length) || 0
+  if (findings > 0 || nessusFindings > 0) return { level: 'high', color: 'var(--danger)', label: 'Findings' }
   if (ports >= 10) return { level: 'medium', color: 'var(--warn)', label: `${ports} ports` }
   if (ports > 0) return { level: 'low', color: 'var(--accent)', label: `${ports} ports` }
   return { level: 'minimal', color: 'var(--text-muted)', label: 'No ports' }
@@ -299,9 +300,44 @@ export default function Hosts({ projectId, onRefresh }) {
                     </div>
                   </section>
                 )}
+                {current.nessus_findings?.length > 0 && (
+                  <section style={styles.block}>
+                    <h3 style={styles.blockTitle}>
+                      Nessus <span style={styles.blockCount}>{current.nessus_findings.length}</span>
+                    </h3>
+                    <div style={styles.findingsBlock}>
+                      <h4 style={styles.findingsSubtitle}>Nessus findings</h4>
+                      {current.nessus_findings.map((f, i) => (
+                        <div key={i} style={styles.findingCard}>
+                          <div style={styles.findingCardHeader}>
+                            <span style={styles.findingTitle}>{f.plugin_name || f.plugin_id || 'Nessus finding'}</span>
+                            {f.severity != null && (
+                              <span
+                                style={{
+                                  ...styles.findingSeverity,
+                                  ...styles[`severity_${['info', 'low', 'medium', 'high', 'critical'][Number(f.severity)] || String(f.severity).toLowerCase()}`],
+                                }}
+                              >
+                                {['None', 'Low', 'Medium', 'High', 'Critical'][Number(f.severity)] ?? f.severity}
+                              </span>
+                            )}
+                          </div>
+                          {(f.port || f.protocol) && (
+                            <div style={styles.findingTemplate}>
+                              {f.port ? `${f.port}/${f.protocol || 'tcp'}` : f.protocol}
+                            </div>
+                          )}
+                          {f.synopsis && (
+                            <div style={styles.findingSynopsis}>{f.synopsis}</div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
               </>
             )}
-            {!current.ports?.length && !current.screenshots?.length && !current.findings?.length && (
+            {!current.ports?.length && !current.screenshots?.length && !current.findings?.length && !current.nessus_findings?.length && (
               <p style={styles.empty}>No ports, screenshots, or findings for this host yet.</p>
             )}
           </>
@@ -591,6 +627,13 @@ const styles = {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
+  },
+  findingSynopsis: {
+    marginTop: '0.35rem',
+    fontSize: '0.8rem',
+    color: 'var(--text-muted)',
+    whiteSpace: 'pre-wrap',
+    wordBreak: 'break-word',
   },
   empty: { margin: 0, color: 'var(--text-muted)', fontSize: '0.875rem' },
   lightboxOverlay: {
