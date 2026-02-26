@@ -1,0 +1,68 @@
+# ForSight Documentation — Material for MkDocs (same style as KrakenHashes)
+site_name: ForSight Documentation
+site_description: External penetration testing checklist & tool wrapper
+# Set to your Gitea repo URL and docs URL (if you publish the built site):
+# site_url: https://your-gitea.example.com/youruser/ForSight
+# repo_name: youruser/ForSight
+# repo_url: https://your-gitea.example.com/youruser/ForSight
+# edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  language: en
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+  icon:
+    repo: fontawesome/brands/git-alt
+
+plugins:
+  - search
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - User Guide:
+    - User Guide: user-guide/index.md
+    - Core Concepts: user-guide/core-concepts.md
+    - Projects & ROE: user-guide/projects-and-roe.md
+    - Checklist & Jobs: user-guide/checklist-and-jobs.md
+    - Hosts & Findings: user-guide/hosts-and-findings.md
+    - Nessus Integration: user-guide/nessus.md
+    - Reporting: user-guide/reporting.md
+    - Troubleshooting: user-guide/troubleshooting.md
+  - Reference:
+    - Configuration: reference/configuration.md
+    - API: reference/api.md
+    - Project Layout: reference/project-layout.md
+  - Deployment: deployment.md
+  - Contributing: contributing.md

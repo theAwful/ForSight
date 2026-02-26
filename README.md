@@ -91,7 +91,21 @@ Default login: **forsight** / **forsight**.
 | `backend/data/` | SQLite DB, uploads, results per project, wordlists. This repo includes **demo data** for presentation; remove or replace for production. |
 | `frontend/` | Vite + React UI: login, engagements, checklist, jobs, hosts, reporting, settings |
 | `docker-compose.yml` | Runs backend (Kali + tools) + frontend (nginx); single command to spin up. |
+| `docs/` | **User guide & reference** — [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) (same style as [KrakenHashes](https://zerkereod.github.io/krakenhashes/latest/user-guide/)). Run `pip install -r docs/requirements.txt && mkdocs serve -a 127.0.0.1:8001` then open http://127.0.0.1:8001. |
 | `backend/docs/TOOLS.md` | How tools are wired and how to add or swap them |
+
+---
+
+## Documentation
+
+Full user guide, reference, and deployment docs are in **`docs/`**, built with **Material for MkDocs**:
+
+```bash
+pip install -r docs/requirements.txt
+mkdocs serve
+```
+
+Open **http://127.0.0.1:8001** (use `mkdocs serve -a 127.0.0.1:8001` to avoid port conflict with the backend on 8000). See `docs/` and `mkdocs.yml` for structure.
 
 ---
 
