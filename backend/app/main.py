@@ -70,9 +70,22 @@ app = FastAPI(
     version="0.1.0",
 )
 
-# Serve built MkDocs site at /docs (Docker builds docs into /app/site)
-_docs_dir = Path("/app/site")
-if _docs_dir.is_dir():
+def _resolve_docs_static_dir() -> Optional[Path]:
+    """MkDocs build output for /docs — Docker uses /app/site; native install can set FORSIGHT_DOCS_SITE_DIR."""
+    if getattr(settings, "docs_site_dir", None):
+        p = Path(settings.docs_site_dir)
+        return p if p.is_dir() else None
+    for candidate in (
+        Path("/app/site"),
+        Path(__file__).resolve().parent.parent / "site",
+    ):
+        if candidate.is_dir():
+            return candidate
+    return None
+
+
+_docs_dir = _resolve_docs_static_dir()
+if _docs_dir is not None:
     app.mount("/docs", StaticFiles(directory=str(_docs_dir), html=True), name="docs")
 
 # CORS: allow frontend origin(s). With credentials, browsers require an explicit origin (not "*").
@@ -84,14 +97,34 @@ _origins = [
     "http://127.0.0.1:3000",
     "http://localhost:8080",
     "http://127.0.0.1:8080",
+    "https://localhost",
+    "https://127.0.0.1",
 ]
 if settings.debug:
     _origins.extend(["http://localhost:5000", "http://127.0.0.1:5000"])
 if getattr(settings, "cors_origins", None):
     _origins.extend(o.strip() for o in settings.cors_origins.split(",") if o.strip())
+
+# Optional: match https://192.168.x.x, http://10.x, etc. (with optional port) for team servers reached by IP.
+_LAN_CORS_REGEX = (
+    r"^https?://("
+    r"localhost|127\.0\.0\.1|\[::1\]"
+    r"|10(\.\d{1,3}){3}"
+    r"|192\.168(\.\d{1,3}){2}"
+    r"|172\.(1[6-9]|2\d|3[0-1])(\.\d{1,3}){2}"
+    r")(?::\d+)?$"
+)
+if settings.cors_origin_regex:
+    _cors_regex = settings.cors_origin_regex
+elif settings.trust_lan_cors:
+    _cors_regex = _LAN_CORS_REGEX
+else:
+    _cors_regex = None
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_origins,
+    allow_origin_regex=_cors_regex,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
@@ -128,7 +161,7 @@ app.add_middleware(
     session_cookie="forsight_session",
     max_age=86400 * 7,  # 7 days
     same_site="lax",
-    https_only=False,
+    https_only=bool(settings.session_https_only),
 )
 
 executor = ThreadPoolExecutor(max_workers=16)

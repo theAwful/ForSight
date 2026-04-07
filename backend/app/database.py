@@ -4,6 +4,7 @@ from collections.abc import Generator
 from pathlib import Path
 
 from sqlalchemy import create_engine
+from sqlalchemy.engine.url import URL
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.config import settings
@@ -14,7 +15,8 @@ settings.data_dir.mkdir(parents=True, exist_ok=True)
 settings.uploads_dir.mkdir(parents=True, exist_ok=True)
 settings.results_dir.mkdir(parents=True, exist_ok=True)
 
-DATABASE_URL = "sqlite:///./data/forsight.db"
+_db_file = (settings.data_dir / "forsight.db").resolve()
+DATABASE_URL = URL.create(drivername="sqlite", database=str(_db_file))
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

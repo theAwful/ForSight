@@ -2,6 +2,7 @@
 from pathlib import Path
 from typing import Optional
 
+from pydantic import model_validator
 from pydantic_settings import BaseSettings
 
 
@@ -53,10 +54,28 @@ class Settings(BaseSettings):
     tenable_verify_ssl: bool = False  # Set true for production; false skips verification (e.g. Nessus Pro self-signed)
     # CORS: comma-separated extra origins (e.g. https://app.example.com). Defaults include localhost:5173, 3000, 8080.
     cors_origins: Optional[str] = None
+    # When true, allow browser Origin matching RFC1918 + localhost (HTTPS or HTTP, any port). Handy for https://<LAN-IP>.
+    trust_lan_cors: bool = False
+    # Optional regex (e.g. ^https://(app\.example\.com|10\.0\.0\.5)(:\\d+)?$) — overrides trust_lan_cors pattern when set.
+    cors_origin_regex: Optional[str] = None
+    # Session cookie Secure flag — use true when the app is only used over HTTPS (e.g. nginx TLS).
+    session_https_only: bool = False
+    # Built MkDocs site directory (index under this path). If unset, backend checks /app/site (Docker) then backend/site.
+    docs_site_dir: Optional[Path] = None
 
     class Config:
         env_prefix = "FORSIGHT_"
         env_file = ".env"
+
+    @model_validator(mode="after")
+    def anchor_uploads_and_results_under_data_dir(self):
+        """If uploads/results are left as relative paths, place them under data_dir (needed for systemd + FORSIGHT_DATA_DIR)."""
+        root = self.data_dir
+        if not self.uploads_dir.is_absolute():
+            self.uploads_dir = root / "uploads"
+        if not self.results_dir.is_absolute():
+            self.results_dir = root / "results"
+        return self
 
 
 settings = Settings()

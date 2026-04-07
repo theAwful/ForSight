@@ -1,0 +1,28 @@
+[Unit]
+Description=ForSight API (FastAPI / uvicorn)
+After=network.target
+
+[Service]
+Type=simple
+User=forsight
+Group=forsight
+WorkingDirectory=/opt/forsight/backend
+EnvironmentFile=-/etc/forsight/environment
+Environment=FORSIGHT_APP_ROOT=/opt/forsight
+# DB, uploads, and results live here (matches prestart.sh)
+Environment=FORSIGHT_DATA_DIR=/var/lib/forsight
+# TLS is terminated by nginx; trust forwarded proto from the reverse proxy.
+Environment=FORSIGHT_TRUST_LAN_CORS=true
+Environment=FORSIGHT_SESSION_HTTPS_ONLY=true
+# Optional: built docs for /docs (mkdocs build -d /opt/forsight/site from repo root)
+# Environment=FORSIGHT_DOCS_SITE_DIR=/opt/forsight/site
+ExecStartPre=/opt/forsight/deploy/forsight-prestart.sh
+ExecStart=/opt/forsight/backend/.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --proxy-headers "--forwarded-allow-ips=*"
+Restart=on-failure
+RestartSec=5
+
+# Pentest runners invoke many external tools; keep a sensible file limit.
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

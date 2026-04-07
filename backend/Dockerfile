@@ -52,4 +52,5 @@ ENV FORSIGHT_DATA_DIR=/app/data
 EXPOSE 8000
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Trust X-Forwarded-Proto / Host from nginx so sessions and redirects see HTTPS.
+CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*"]

@@ -1,0 +1,11 @@
+# Copy to /etc/forsight/environment (chmod 640, root:forsight) and customize.
+# systemd loads this via EnvironmentFile=-/etc/forsight/environment
+#
+# Data root (SQLite DB, uploads, scan results). The unit file also sets this;
+# you can override here if needed.
+
+FORSIGHT_DATA_DIR=/var/lib/forsight
+FORSIGHT_SECRET_KEY=change-me-use-openssl-rand-hex-32
+# FORSIGHT_DEFAULT_PASSWORD_HASH=   # optional: bcrypt hash instead of default forsight/forsight
+# FORSIGHT_CORS_ORIGINS=https://your.public.ip
+# FORSIGHT_DOCS_SITE_DIR=/opt/forsight/site

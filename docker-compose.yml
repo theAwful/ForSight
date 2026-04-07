@@ -1,6 +1,14 @@
-# ForSight: backend (FastAPI + tools) + frontend (nginx)
-# Run: docker compose up -d
-# App: http://localhost:80  (login: forsight / forsight)
+# ForSight — optional Docker stack (see deploy/README.txt for systemd + nginx on the host).
+#
+# ForSight: backend (FastAPI + tools) + frontend (nginx TLS)
+#
+# 1) Generate TLS cert (include your server LAN IP so browsers trust the name):
+#      chmod +x scripts/gen-self-signed-cert.sh
+#      ./scripts/gen-self-signed-cert.sh YOUR_SERVER_IP
+# 2) docker compose up -d --build
+# 3) Open https://YOUR_SERVER_IP/  (accept the self-signed warning; login: forsight / forsight)
+#
+# Listens on all interfaces (0.0.0.0): ports 80 (redirect) and 443.
 #
 # If build fails with "Temporary failure resolving" (no DNS in build):
 #   docker compose build --network=host
@@ -15,6 +23,10 @@ services:
     environment:
       - FORSIGHT_DATA_DIR=/app/data
       - FORSIGHT_SECRET_KEY=${FORSIGHT_SECRET_KEY:-change-me-in-production}
+      # Trust X-Forwarded-Proto from nginx (uvicorn flags in Dockerfile).
+      - FORSIGHT_TRUST_LAN_CORS=${FORSIGHT_TRUST_LAN_CORS:-true}
+      - FORSIGHT_SESSION_HTTPS_ONLY=${FORSIGHT_SESSION_HTTPS_ONLY:-true}
+      - FORSIGHT_CORS_ORIGINS=${FORSIGHT_CORS_ORIGINS:-}
     volumes:
       - forsight_data:/app/data
     expose:
@@ -27,7 +39,10 @@ services:
       dockerfile: Dockerfile
     container_name: forsight-frontend
     ports:
-      - "80:80"
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
+    volumes:
+      - ./deploy/certs:/etc/nginx/certs:ro
     depends_on:
       - backend
     restart: unless-stopped
