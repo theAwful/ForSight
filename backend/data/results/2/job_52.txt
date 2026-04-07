@@ -1,0 +1,12 @@
+=== legacy_nmap ===
+Targets: 2 IPs, 2 domains
+
+=== nmap -sC -sV -p 22 165.245.137.16 ===
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-04-07 18:23 -0400
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 6.11 seconds
+
+=== nmap -sC -sV -p 22 intragin.awfulsecurity.org ===
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-04-07 18:23 -0400
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 7.51 seconds

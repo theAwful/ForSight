@@ -1,0 +1,2 @@
+# Leaked creds (Dehashed, H8mail, TCM) – run manually per ROE.
+# Domains: ['intragin.awfulsecurity.org']

@@ -116,12 +116,12 @@ const styles = {
   },
   card: {
     width: '100%',
-    maxWidth: 400,
+    maxWidth: 420,
     background: 'var(--surface)',
     border: '1px solid var(--border)',
-    borderRadius: 'var(--radius)',
-    boxShadow: 'var(--shadow)',
-    padding: '2rem',
+    borderRadius: 'var(--radius-lg)',
+    boxShadow: 'var(--shadow-md)',
+    padding: '2.25rem',
   },
   banner: {
     textAlign: 'center',
@@ -159,8 +159,8 @@ const styles = {
     color: 'var(--text)',
   },
   input: {
-    padding: '0.5rem 0.75rem',
-    borderRadius: 'var(--radius)',
+    padding: '0.625rem 0.875rem',
+    borderRadius: 'var(--radius-sm)',
     border: '1px solid var(--border)',
     background: 'var(--bg)',
     color: 'var(--text)',

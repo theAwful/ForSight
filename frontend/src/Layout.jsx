@@ -103,9 +103,9 @@ export default function Layout({ children }) {
             <span style={styles.footerLabel}>Resources</span>
             <ul style={styles.footerList}>
               <li>
-                <Link to="/docs" className="sidebar-link" style={styles.footerLink} title="How to use ForSight">
+                <a href="/docs/" className="sidebar-link" style={styles.footerLink} title="How to use ForSight">
                   <span style={styles.footerIcon}>📄</span> Documentation
-                </Link>
+                </a>
               </li>
               <li>
                 <Link to="/roadmap" className="sidebar-link" style={styles.footerLink} title="Planned updates">
@@ -171,12 +171,13 @@ const styles = {
     display: 'flex',
   },
   sidebar: {
-    width: 260,
+    width: 272,
     flexShrink: 0,
     background: 'var(--sidebar-bg)',
     display: 'flex',
     flexDirection: 'column',
     borderRight: '1px solid var(--sidebar-border)',
+    boxShadow: '4px 0 24px rgba(15, 23, 42, 0.06)',
   },
   sidebarHeader: {
     padding: '1rem 1rem 0.75rem',
@@ -186,14 +187,16 @@ const styles = {
     color: 'var(--sidebar-text)',
     textDecoration: 'none',
     fontWeight: 700,
-    fontSize: '1.1rem',
+    fontSize: '1.0625rem',
+    letterSpacing: '-0.02em',
     display: 'flex',
     alignItems: 'center',
     gap: '0.5rem',
   },
   logoIcon: {
     color: 'var(--sidebar-accent)',
-    fontSize: '1rem',
+    fontSize: '1.125rem',
+    filter: 'drop-shadow(0 0 10px rgba(99, 102, 241, 0.45))',
   },
   nav: {
     flex: 1,
@@ -235,16 +238,17 @@ const styles = {
   },
   newBtn: {
     display: 'block',
-    padding: '0.5rem 0.75rem',
+    padding: '0.55rem 0.875rem',
     marginBottom: '0.5rem',
     background: 'var(--primary)',
     color: 'var(--primary-text)',
-    borderRadius: 'var(--radius)',
+    borderRadius: 'var(--radius-sm)',
     textDecoration: 'none',
-    fontSize: '0.9rem',
-    fontWeight: 500,
+    fontSize: '0.8125rem',
+    fontWeight: 600,
     textAlign: 'center',
-    transition: 'background-color 0.15s ease',
+    transition: 'background-color 0.18s ease, box-shadow 0.18s ease',
+    boxShadow: '0 2px 8px rgba(5, 150, 105, 0.25)',
   },
   projectList: {
     listStyle: 'none',
@@ -254,7 +258,7 @@ const styles = {
   projectLink: {
     display: 'block',
     padding: '0.5rem 0.75rem',
-    borderRadius: 'var(--radius)',
+    borderRadius: 'var(--radius-sm)',
     color: 'var(--sidebar-text)',
     textDecoration: 'none',
     fontSize: '0.9rem',
@@ -264,6 +268,7 @@ const styles = {
   projectLinkActive: {
     background: 'var(--sidebar-accent)',
     color: '#fff',
+    boxShadow: '0 2px 12px rgba(99, 102, 241, 0.35)',
   },
   projectMeta: {
     display: 'block',
@@ -364,8 +369,8 @@ const styles = {
   },
   main: {
     flex: 1,
-    padding: '1.5rem',
-    maxWidth: 1200,
+    padding: '1.75rem 2rem',
+    maxWidth: 1280,
     margin: '0 auto',
     width: '100%',
   },

@@ -12,7 +12,14 @@ from fastapi import BackgroundTasks, Depends, File, HTTPException, UploadFile, B
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
-from app.checklist import CHECKLIST, get_checklist_by_phase, get_item_id_by_runner_key, get_runner_keys_for_phase, Phase
+from app.checklist import (
+    CHECKLIST,
+    PRE_ENGAGEMENT_GATE_ITEM_IDS,
+    get_checklist_by_phase,
+    get_item_id_by_runner_key,
+    get_runner_keys_for_phase,
+    Phase,
+)
 from app.database import get_db, init_database
 from app.jobs import get_project_results_dir, get_project_targets, run_runner_sync, init_job_output_file
 from app.nmap_parse import nmap_output_exists
@@ -36,6 +43,7 @@ init_database()
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.auth import get_current_user, verify_credentials
@@ -61,6 +69,12 @@ app = FastAPI(
     description="Automated external penetration testing – wrapper for pentesting tools",
     version="0.1.0",
 )
+
+# Serve built MkDocs site at /docs (Docker builds docs into /app/site)
+_docs_dir = Path("/app/site")
+if _docs_dir.is_dir():
+    app.mount("/docs", StaticFiles(directory=str(_docs_dir), html=True), name="docs")
+
 # CORS: allow frontend origin(s). With credentials, browsers require an explicit origin (not "*").
 # The CORS error for data.nessus-telemetry.tenable.com is from the Nessus UI in another tab, not ForSight.
 _origins = [
@@ -157,6 +171,27 @@ def ensure_checklist_status(project_id: int, db: Session) -> None:
         if item.id not in existing:
             db.add(ChecklistStatus(project_id=project_id, item_id=item.id, status="not_started"))
     db.commit()
+
+
+def pre_engagement_gate_passed(project_id: int, db: Session) -> bool:
+    """Both Scope and Client-notified checklist items must be marked completed."""
+    ensure_checklist_status(project_id, db)
+    rows = {
+        r.item_id: (r.status or "")
+        for r in db.query(ChecklistStatus).filter(
+            ChecklistStatus.project_id == project_id,
+            ChecklistStatus.item_id.in_(PRE_ENGAGEMENT_GATE_ITEM_IDS),
+        )
+    }
+    return all(rows.get(iid) == "completed" for iid in PRE_ENGAGEMENT_GATE_ITEM_IDS)
+
+
+def require_pre_engagement_for_scans(project_id: int, db: Session) -> None:
+    if not pre_engagement_gate_passed(project_id, db):
+        raise HTTPException(
+            status_code=403,
+            detail="Confirm Scope and Client notified (Pre-engagement) before running scans.",
+        )
 
 
 @app.post("/api/projects", response_model=ProjectOut)
@@ -407,6 +442,7 @@ def run_scan(
     p = db.query(Project).filter(Project.id == project_id).first()
     if not p:
         raise HTTPException(404, "Project not found")
+    require_pre_engagement_for_scans(project_id, db)
     if runner_key not in RUNNERS:
         raise HTTPException(400, f"Unknown runner: {runner_key}")
     job = ScanJob(
@@ -500,6 +536,7 @@ def run_phase(
     p = db.query(Project).filter(Project.id == project_id).first()
     if not p:
         raise HTTPException(404, "Project not found")
+    require_pre_engagement_for_scans(project_id, db)
     run_options = {}
     if body and getattr(body, "use_nmap", None) is not None:
         run_options["use_nmap"] = bool(body.use_nmap)

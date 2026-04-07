@@ -1,0 +1,6 @@
+=== legacy_smb ===
+Targets: 2 IPs, 2 domains
+=== SMB (smbclient -N -L, enum4linux) ===
+
+# No SMB ports (139/445) found by Nmap.
+

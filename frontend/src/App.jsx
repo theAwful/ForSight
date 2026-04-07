@@ -6,7 +6,6 @@ import Login from './Login'
 import ProjectList from './ProjectList'
 import ProjectDetail from './ProjectDetail'
 import Settings from './Settings'
-import Docs from './Docs'
 import Roadmap from './Roadmap'
 import Feedback from './Feedback'
 import ErrorBoundary from './ErrorBoundary'
@@ -51,7 +50,7 @@ export default function App() {
                 }
               />
               <Route path="/settings" element={<Settings />} />
-              <Route path="/docs" element={<Docs />} />
+              <Route path="/docs" element={<Navigate to="/docs/" replace />} />
               <Route path="/roadmap" element={<Roadmap />} />
               <Route path="/feedback" element={<Feedback />} />
             </Route>

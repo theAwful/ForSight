@@ -1,0 +1,6 @@
+=== recon_amass ===
+Targets: 0 IPs, 1 domains
+=== amass ===
+No assets were discovered
+
+The enumeration has finished

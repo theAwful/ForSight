@@ -1,0 +1,10 @@
+=== recon_dnsrecon ===
+Targets: 0 IPs, 1 domains
+=== dnsrecon -d intragin.awfulsecurity.org ===
+2026-04-07T17:45:00.392823-0400 INFO No dictionary file has been specified.
+2026-04-07T17:45:00.394166-0400 INFO Using the dictionary file: /usr/share/dnsrecon/dnsrecon/data/namelist.txt (provided by tool)
+2026-04-07T17:45:00.394309-0400 INFO Starting enumeration for domain: intragin.awfulsecurity.org
+2026-04-07T17:45:00.394600-0400 INFO brt: Performing host and subdomain brute force against intragin.awfulsecurity.org...
+2026-04-07T17:45:17.836133-0400 INFO 0 Records Found
+2026-04-07T17:45:17.836878-0400 INFO Completed enumeration for domain: intragin.awfulsecurity.org
+

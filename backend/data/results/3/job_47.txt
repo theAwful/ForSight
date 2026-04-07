@@ -1,0 +1,47 @@
+=== web_dirb ===
+Targets: 0 IPs, 1 domains
+--- dirb https://intragin.awfulsecurity.org ---
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Tue Apr  7 17:51:13 2026
+URL_BASE: https://intragin.awfulsecurity.org/
+WORDLIST_FILES: data/wordlists/dirb-small.txt
+
+-----------------
+
+*** Generating Wordlist...                                                                               GENERATED WORDS: 22
+
+---- Scanning URL: https://intragin.awfulsecurity.org/ ----
+*** Calculating NOT_FOUND code...                                                                                                                                                          --> Testing: https://intragin.awfulsecurity.org/admin                                                                           --> Testing: https://intragin.awfulsecurity.org/login                                                                           --> Testing: https://intragin.awfulsecurity.org/api                                                                           --> Testing: https://intragin.awfulsecurity.org/backup                                                                           --> Testing: https://intragin.awfulsecurity.org/.git                                                                           --> Testing: https://intragin.awfulsecurity.org/.env                                                                           --> Testing: https://intragin.awfulsecurity.org/config                                                                           --> Testing: https://intragin.awfulsecurity.org/wp-admin                                                                           --> Testing: https://intragin.awfulsecurity.org/wp-login.php                                                                           --> Testing: https://intragin.awfulsecurity.org/administrator                                                                           --> Testing: https://intragin.awfulsecurity.org/dashboard                                                                           --> Testing: https://intragin.awfulsecurity.org/test                                                                           --> Testing: https://intragin.awfulsecurity.org/debug                                                                           --> Testing: https://intragin.awfulsecurity.org/storage                                                                           --> Testing: https://intragin.awfulsecurity.org/uploads                                                                           --> Testing: https://intragin.awfulsecurity.org/images                                                                           --> Testing: https://intragin.awfulsecurity.org/static                                                                           --> Testing: https://intragin.awfulsecurity.org/assets                                                                               ==> DIRECTORY: https://intragin.awfulsecurity.org/assets/
+                                                                           --> Testing: https://intragin.awfulsecurity.org/css                                                                           --> Testing: https://intragin.awfulsecurity.org/js                                                                           --> Testing: https://intragin.awfulsecurity.org/vendor                                                                           --> Testing: https://intragin.awfulsecurity.org/node_modules                                                                           
+---- Entering directory: https://intragin.awfulsecurity.org/assets/ ----
+*** Calculating NOT_FOUND code...                                                                                                                                                          --> Testing: https://intragin.awfulsecurity.org/assets/admin                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/login                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/api                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/backup                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/.git                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/.env                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/config                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/wp-admin                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/wp-login.php                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/administrator                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/dashboard                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/test                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/debug                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/storage                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/uploads                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/images                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/static                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/assets                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/css                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/js                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/vendor                                                                           --> Testing: https://intragin.awfulsecurity.org/assets/node_modules                                                                               
+-----------------
+END_TIME: Tue Apr  7 17:51:16 2026
+DOWNLOADED: 44 - FOUND: 0
+--- dirb http://intragin.awfulsecurity.org ---
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Tue Apr  7 17:51:16 2026
+URL_BASE: http://intragin.awfulsecurity.org/
+WORDLIST_FILES: data/wordlists/dirb-small.txt
+
+-----------------
+
+*** Generating Wordlist...                                                                               GENERATED WORDS: 22
+
+---- Scanning URL: http://intragin.awfulsecurity.org/ ----
+*** Calculating NOT_FOUND code...(!) WARNING: NOT_FOUND[] not stable, unable to determine correct URLs {30X}.
+    (Try using FineTunning: '-f')
+                                                                                                                                                              
+-----------------
+END_TIME: Tue Apr  7 17:51:17 2026
+DOWNLOADED: 0 - FOUND: 0

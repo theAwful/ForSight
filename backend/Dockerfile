@@ -1,5 +1,6 @@
 # ForSight backend: Kali base so all wrapped pentest tools are available from apt
 # https://www.kali.org/docs/containers/official-kalilinux-docker-images/
+# Build context: repo root (.) so we can copy docs/ for the /docs endpoint
 FROM kalilinux/kali-rolling:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -23,17 +24,27 @@ WORKDIR /app
 RUN python3 -m venv /app/.venv
 ENV PATH="/app/.venv/bin:$PATH"
 
-COPY requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 # droopescan not in Kali apt; install via pip for CMS scanner runner
 RUN pip install --no-cache-dir droopescan
 
+# Build MkDocs site for /docs endpoint (served by FastAPI at port 8000)
+COPY docs/ ./docs/
+COPY mkdocs.yml .
+COPY docs/requirements.txt ./docs-requirements.txt
+# So built assets load from /docs/ when served at that path
+RUN echo "site_url: http://localhost/docs/" >> mkdocs.yml \
+    && pip install --no-cache-dir -r docs-requirements.txt \
+    && mkdocs build \
+    && rm -rf docs docs-requirements.txt mkdocs.yml
+
 # Default wordlists (copied into volume on first run by entrypoint)
-COPY data/wordlists/ /app/wordlists-default/
+COPY backend/data/wordlists/ /app/wordlists-default/
 
 # App
-COPY app/ ./app/
-COPY entrypoint.sh /entrypoint.sh
+COPY backend/app/ ./app/
+COPY backend/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Data dir: use volume at runtime; entrypoint seeds wordlists if empty

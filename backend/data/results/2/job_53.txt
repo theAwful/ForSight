@@ -1,0 +1,6 @@
+=== legacy_snmp ===
+Targets: 2 IPs, 2 domains
+=== SNMP (snmpwalk, default community strings) ===
+
+# No SNMP ports (161/162) found by Nmap.
+

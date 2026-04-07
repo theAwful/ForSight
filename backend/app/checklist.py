@@ -10,12 +10,14 @@ class Phase(str, Enum):
     NMAP = "nmap"
     ENUMERATION = "enumeration"
     WEB_HOST = "web_host"
-    EXPLOITATION = "exploitation"
     REPORTING = "reporting"
 
 
 # Phases that require Nmap results before Run all / individual runners are enabled
 PHASES_REQUIRING_NMAP = {Phase.ENUMERATION, Phase.WEB_HOST}
+
+# Both must be checklist "completed" before any scan jobs can run (API-enforced)
+PRE_ENGAGEMENT_GATE_ITEM_IDS = ("roe_scope", "roe_comm")
 
 
 class ChecklistItem:
@@ -38,38 +40,37 @@ class ChecklistItem:
 
 CHECKLIST = [
     # 1. Pre-engagement
-    ChecklistItem("roe_scope", Phase.PRE_ENGAGEMENT, "Scope (IPs, domains, exclusions)", runner_key=None),
-    ChecklistItem("roe_comm", Phase.PRE_ENGAGEMENT, "Communication & escalation", runner_key=None),
-    # 2. Recon — domains only; no Nmap required
-    ChecklistItem("recon_subfinder", Phase.RECON, "Subfinder", runner_key="recon_subfinder", tools=["subfinder"]),
-    ChecklistItem("recon_dnsrecon", Phase.RECON, "dnsrecon", runner_key="recon_dnsrecon", tools=["dnsrecon"]),
-    ChecklistItem("recon_amass", Phase.RECON, "Amass", runner_key="recon_amass", tools=["amass"]),
-    ChecklistItem("recon_theharvester", Phase.RECON, "theHarvester", runner_key="recon_theharvester", tools=["theHarvester"]),
+    ChecklistItem("roe_scope", Phase.PRE_ENGAGEMENT, "Scope verified", runner_key=None),
+    ChecklistItem("roe_comm", Phase.PRE_ENGAGEMENT, "Client notified", runner_key=None),
+    # 2. Recon — domains only; no Nmap required (description = service area; tools listed in UI)
+    ChecklistItem("recon_subfinder", Phase.RECON, "Subdomains", runner_key="recon_subfinder", tools=["subfinder"]),
+    ChecklistItem("recon_dnsrecon", Phase.RECON, "DNS reconnaissance", runner_key="recon_dnsrecon", tools=["dnsrecon"]),
+    ChecklistItem("recon_amass", Phase.RECON, "DNS enumeration", runner_key="recon_amass", tools=["amass"]),
+    ChecklistItem("recon_theharvester", Phase.RECON, "OSINT & emails", runner_key="recon_theharvester", tools=["theHarvester"]),
     ChecklistItem("recon_whois", Phase.RECON, "WHOIS", runner_key="recon_whois", tools=["whois"]),
-    ChecklistItem("recon_cloud", Phase.RECON, "Cloud storage (S3, Azure, GCP)", runner_key="recon_cloud", tools=["CloudEnum"]),
-    ChecklistItem("recon_leaked", Phase.RECON, "Leaked creds (Dehashed, H8mail, TCM)", runner_key="recon_leaked", tools=["Dehashed", "H8mail", "TCM"]),
-    # 3. Nmap — run first; Enumeration & Web host use results
-    ChecklistItem("enum_nmap_tcp_udp", Phase.NMAP, "TCP top 5000 ports", runner_key="nmap_ports", tools=["nmap"]),
-    ChecklistItem("enum_fingerprint", Phase.NMAP, "Service fingerprint (-sV)", runner_key="nmap_services", tools=["nmap"]),
+    ChecklistItem("recon_cloud", Phase.RECON, "Cloud object storage", runner_key="recon_cloud", tools=["CloudEnum"]),
+    ChecklistItem("recon_leaked", Phase.RECON, "Leaked credentials", runner_key="recon_leaked", tools=["Dehashed", "H8mail", "TCM"]),
+    # 3. Nmap
+    ChecklistItem("enum_nmap_tcp_udp", Phase.NMAP, "Port discovery", runner_key="nmap_ports", tools=["nmap"]),
+    ChecklistItem("enum_fingerprint", Phase.NMAP, "Service fingerprinting", runner_key="nmap_services", tools=["nmap"]),
     # 4. Enumeration — requires Nmap
-    ChecklistItem("enum_ssl", Phase.ENUMERATION, "SSL/TLS (testssl, sslscan)", runner_key="ssl_enum", tools=["testssl.sh", "sslscan"]),
-    ChecklistItem("enum_vpn", Phase.ENUMERATION, "VPN gateways (SSL VPN, Citrix, RDP, SSH)", runner_key=None),
-    ChecklistItem("enum_vpn_exposure", Phase.ENUMERATION, "VPN exposures (IKE, weak PSKs)", runner_key=None),
-    ChecklistItem("enum_legacy_nmap", Phase.ENUMERATION, "Legacy ports: Nmap -sC -sV", runner_key="legacy_nmap", tools=["nmap"]),
-    ChecklistItem("enum_legacy_snmp", Phase.ENUMERATION, "SNMP (snmpwalk)", runner_key="legacy_snmp", tools=["snmpwalk"]),
-    ChecklistItem("enum_legacy_ftp", Phase.ENUMERATION, "FTP anonymous", runner_key="legacy_ftp", tools=["curl"]),
-    ChecklistItem("enum_legacy_smb", Phase.ENUMERATION, "SMB (smbclient, enum4linux)", runner_key="legacy_smb", tools=["smbclient", "enum4linux"]),
-    ChecklistItem("enum_legacy_banners", Phase.ENUMERATION, "SMTP/Telnet/SSH banner grab", runner_key="legacy_banners", tools=[]),
-    ChecklistItem("enum_legacy_ldap", Phase.ENUMERATION, "LDAP (ldapsearch)", runner_key="legacy_ldap", tools=["ldapsearch"]),
-    ChecklistItem("enum_email", Phase.ENUMERATION, "Email (SPF/DKIM/DMARC)", runner_key="email_security", tools=["Domain Security Scanner"]),
+    ChecklistItem("enum_ssl", Phase.ENUMERATION, "SSL / TLS", runner_key="ssl_enum", tools=["testssl.sh", "sslscan"]),
+    ChecklistItem("enum_vpn", Phase.ENUMERATION, "VPN gateways", runner_key=None),
+    ChecklistItem("enum_vpn_exposure", Phase.ENUMERATION, "VPN exposure", runner_key=None),
+    ChecklistItem("enum_legacy_nmap", Phase.ENUMERATION, "Legacy services", runner_key="legacy_nmap", tools=["nmap"]),
+    ChecklistItem("enum_legacy_snmp", Phase.ENUMERATION, "SNMP", runner_key="legacy_snmp", tools=["snmpwalk"]),
+    ChecklistItem("enum_legacy_ftp", Phase.ENUMERATION, "FTP", runner_key="legacy_ftp", tools=["curl"]),
+    ChecklistItem("enum_legacy_smb", Phase.ENUMERATION, "SMB", runner_key="legacy_smb", tools=["smbclient", "enum4linux"]),
+    ChecklistItem("enum_legacy_banners", Phase.ENUMERATION, "Mail & remote banners", runner_key="legacy_banners", tools=[]),
+    ChecklistItem("enum_legacy_ldap", Phase.ENUMERATION, "LDAP", runner_key="legacy_ldap", tools=["ldapsearch"]),
+    ChecklistItem("enum_email", Phase.ENUMERATION, "Email authentication", runner_key="email_security", tools=["Domain Security Scanner"]),
     # 5. Web host — requires Nmap
-    ChecklistItem("web_nuclei", Phase.WEB_HOST, "Nuclei", runner_key="web_nuclei", tools=["nuclei"]),
-    ChecklistItem("web_nikto", Phase.WEB_HOST, "Nikto", runner_key="web_nikto", tools=["nikto"]),
-    ChecklistItem("web_dirb", Phase.WEB_HOST, "Dirb (directory busting)", runner_key="web_dirb", tools=["dirb"]),
-    ChecklistItem("web_gowitness", Phase.WEB_HOST, "Gowitness", runner_key="web_gowitness", tools=["gowitness"]),
-    ChecklistItem("web_cms", Phase.WEB_HOST, "CMS (wpscan, droopescan, CMSeek)", runner_key="cms_enum", tools=["wpscan", "droopescan", "CMSeek"]),
-    # 6. Exploitation
-    ChecklistItem("exploit_spray", Phase.EXPLOITATION, "Password spray", runner_key="password_spray", tools=["Burp", "medusa"]),
+    ChecklistItem("web_nuclei", Phase.WEB_HOST, "Web vulnerability scan", runner_key="web_nuclei", tools=["nuclei"]),
+    ChecklistItem("web_nikto", Phase.WEB_HOST, "Web server audit", runner_key="web_nikto", tools=["nikto"]),
+    ChecklistItem("web_dirb", Phase.WEB_HOST, "Directory brute-force", runner_key="web_dirb", tools=["dirb"]),
+    ChecklistItem("web_gowitness", Phase.WEB_HOST, "Screenshots", runner_key="web_gowitness", tools=["gowitness"]),
+    ChecklistItem("web_cms", Phase.WEB_HOST, "CMS assessment", runner_key="cms_enum", tools=["wpscan", "droopescan", "CMSeek"]),
+    # Exploitation (password spray) omitted from v1 checklist
 ]
 
 

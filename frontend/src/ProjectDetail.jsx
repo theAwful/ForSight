@@ -11,9 +11,9 @@ import ConfirmModal from './ConfirmModal'
 const PHASE_LABELS = {
   pre_engagement: 'Pre-engagement',
   recon: 'Recon',
+  nmap: 'Nmap',
   enumeration: 'Enumeration',
   web_host: 'Web host',
-  exploitation: 'Exploitation',
   reporting: 'Reporting',
 }
 
@@ -188,34 +188,80 @@ export default function ProjectDetail() {
         </button>
       </div>
 
-      <div style={styles.roe}>
-        <label style={styles.roeLabel}>
-          <span>Upload ROE (IPs / domains):</span>
-          <input
-            type="file"
-            accept=".txt,.csv,.json"
-            onChange={onRoeUpload}
-            disabled={uploading}
-            style={styles.fileInput}
-          />
-          <span style={styles.roeBtn}>{uploading ? 'Uploading…' : 'Choose file'}</span>
-        </label>
-        <div style={styles.pasteRow}>
-          <textarea
-            placeholder="Or paste IPs/domains (one per line)."
-            value={pasteText}
-            onChange={(e) => setPasteText(e.target.value)}
-            style={styles.pasteInput}
-            rows={3}
-          />
-          <button onClick={onPasteRoe} disabled={pasting || !pasteText.trim()} style={styles.pasteBtn}>
-            {pasting ? 'Saving…' : 'Save as ROE'}
-          </button>
+      <div className="roe-targets-grid" style={styles.roeTargetsRow}>
+        <div style={styles.roeColumn}>
+          <div style={styles.roe}>
+            <label style={styles.roeLabel}>
+              <span>Upload ROE (IPs / domains):</span>
+              <input
+                type="file"
+                accept=".txt,.csv,.json"
+                onChange={onRoeUpload}
+                disabled={uploading}
+                style={styles.fileInput}
+              />
+              <span style={styles.roeBtn}>{uploading ? 'Uploading…' : 'Choose file'}</span>
+            </label>
+            <div style={styles.pasteRow}>
+              <textarea
+                placeholder="Or paste IPs/domains (one per line)."
+                value={pasteText}
+                onChange={(e) => setPasteText(e.target.value)}
+                style={styles.pasteInput}
+                rows={4}
+              />
+              <button onClick={onPasteRoe} disabled={pasting || !pasteText.trim()} style={styles.pasteBtn}>
+                {pasting ? 'Saving…' : 'Save as ROE'}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="card" style={styles.targetsPanel}>
+          <h3 style={styles.targetsTitle}>Current targets</h3>
+          {editingTargets ? (
+            <div style={styles.targetsEditor}>
+              <textarea
+                value={editTargetsText}
+                onChange={(e) => setEditTargetsText(e.target.value)}
+                placeholder="One IP or domain per line"
+                style={styles.targetsTextarea}
+                rows={10}
+              />
+              <div style={styles.targetsEditorActions}>
+                <button type="button" className="btn-secondary" onClick={cancelEditTargets} style={styles.targetsBtn}>
+                  Cancel
+                </button>
+                <button type="button" className="btn-primary" onClick={saveTargets} disabled={savingTargets} style={styles.targetsBtn}>
+                  {savingTargets ? 'Saving…' : 'Save'}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div style={styles.targetsScroll}>
+                {((targets.ips || []).length + (targets.domains || []).length) === 0 ? (
+                  <p style={styles.targetsEmpty}>No targets. Upload ROE or paste on the left.</p>
+                ) : (
+                  <ul style={styles.targetsList}>
+                    {(targets.ips || []).map((ip, i) => (
+                      <li key={`ip-${i}`} style={styles.targetsItem}>{ip}</li>
+                    ))}
+                    {(targets.domains || []).map((d, i) => (
+                      <li key={`dom-${i}`} style={styles.targetsItem}>{d}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <button type="button" className="btn-secondary" onClick={startEditTargets} style={styles.editTargetsBtn}>
+                Edit targets
+              </button>
+            </>
+          )}
         </div>
       </div>
 
-      <div style={styles.mainRow}>
-        <div style={styles.tabContentArea}>
+      <div style={styles.tabContentArea}>
           <div className="tabs-row" style={styles.tabs}>
             {['checklist', 'jobs', 'hosts', 'nessus', 'reporting'].map((t) => (
               <button
@@ -264,50 +310,6 @@ export default function ProjectDetail() {
               </div>
             )}
           </div>
-        </div>
-
-        <div className="card" style={styles.targetsPanel}>
-          <h3 style={styles.targetsTitle}>Current targets</h3>
-          {editingTargets ? (
-            <div style={styles.targetsEditor}>
-              <textarea
-                value={editTargetsText}
-                onChange={(e) => setEditTargetsText(e.target.value)}
-                placeholder="One IP or domain per line"
-                style={styles.targetsTextarea}
-                rows={12}
-              />
-              <div style={styles.targetsEditorActions}>
-                <button type="button" className="btn-secondary" onClick={cancelEditTargets} style={styles.targetsBtn}>
-                  Cancel
-                </button>
-                <button type="button" className="btn-primary" onClick={saveTargets} disabled={savingTargets} style={styles.targetsBtn}>
-                  {savingTargets ? 'Saving…' : 'Save'}
-                </button>
-              </div>
-            </div>
-          ) : (
-            <>
-              <div style={styles.targetsScroll}>
-                {((targets.ips || []).length + (targets.domains || []).length) === 0 ? (
-                  <p style={styles.targetsEmpty}>No targets. Upload ROE or paste above.</p>
-                ) : (
-                  <ul style={styles.targetsList}>
-                    {(targets.ips || []).map((ip, i) => (
-                      <li key={`ip-${i}`} style={styles.targetsItem}>{ip}</li>
-                    ))}
-                    {(targets.domains || []).map((d, i) => (
-                      <li key={`dom-${i}`} style={styles.targetsItem}>{d}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-              <button type="button" className="btn-secondary" onClick={startEditTargets} style={styles.editTargetsBtn}>
-                Edit targets
-              </button>
-            </>
-          )}
-        </div>
       </div>
       <ConfirmModal
         open={showDeleteConfirm}
@@ -331,7 +333,9 @@ const styles = {
   title: { margin: 0, fontSize: '1.5rem', fontWeight: 600 },
   summary: { color: 'var(--text-muted)', fontSize: '0.9rem', display: 'block', marginTop: '0.25rem' },
   deleteProjectBtn: { color: 'var(--danger)', borderColor: 'var(--danger)' },
-  roe: { marginBottom: '1.5rem' },
+  roeTargetsRow: { marginBottom: '1.5rem' },
+  roeColumn: { minWidth: 0 },
+  roe: {},
   roeLabel: { display: 'inline-flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' },
   fileInput: { width: 0, height: 0, opacity: 0, position: 'absolute' },
   roeBtn: {
@@ -341,23 +345,31 @@ const styles = {
     borderRadius: 'var(--radius)',
     cursor: 'pointer',
   },
-  pasteRow: { marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', maxWidth: 500 },
+  pasteRow: { marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', maxWidth: '100%' },
   pasteInput: { padding: '0.5rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)', resize: 'vertical', fontFamily: 'var(--font-mono)', fontSize: '0.9rem' },
   pasteBtn: { alignSelf: 'flex-start', background: 'var(--accent)', color: 'var(--accent-text)' },
-  mainRow: { display: 'flex', gap: '1.5rem', alignItems: 'flex-start' },
-  tabContentArea: { flex: 1, minWidth: 0 },
+  tabContentArea: { minWidth: 0 },
   tabs: { display: 'flex', gap: '0.25rem', marginBottom: '1rem' },
   tab: { background: 'transparent', color: 'var(--text-muted)', padding: '0.5rem 1rem', borderRadius: 'var(--radius)', transition: 'background-color 0.15s ease, color 0.15s ease' },
   tabActive: { color: 'var(--accent)', background: 'var(--surface)', border: '1px solid var(--border)' },
-  targetsPanel: { flexShrink: 0, width: 280, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '0.75rem', display: 'flex', flexDirection: 'column' },
+  targetsPanel: {
+    background: 'var(--surface)',
+    border: '1px solid var(--border)',
+    borderRadius: 'var(--radius)',
+    padding: '0.75rem',
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: 0,
+    height: '100%',
+  },
   targetsTitle: { margin: '0 0 0.5rem 0', fontSize: '0.9rem', fontWeight: 600 },
-  targetsScroll: { flex: 1, minHeight: 120, maxHeight: 320, overflowY: 'auto', marginBottom: '0.5rem', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '0.5rem', background: 'var(--bg)' },
+  targetsScroll: { flex: 1, minHeight: 80, overflowY: 'auto', marginBottom: '0.5rem', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '0.5rem', background: 'var(--bg)' },
   targetsList: { listStyle: 'none', margin: 0, padding: 0, fontFamily: 'var(--font-mono)', fontSize: '0.8rem' },
   targetsItem: { padding: '0.2rem 0', borderBottom: '1px solid var(--border)', wordBreak: 'break-all' },
   targetsEmpty: { margin: 0, color: 'var(--text-muted)', fontSize: '0.85rem' },
   editTargetsBtn: { width: '100%' },
-  targetsEditor: { display: 'flex', flexDirection: 'column', gap: '0.5rem' },
-  targetsTextarea: { padding: '0.5rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', resize: 'vertical', fontFamily: 'var(--font-mono)', fontSize: '0.85rem', minHeight: 200 },
+  targetsEditor: { display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1, minHeight: 0 },
+  targetsTextarea: { padding: '0.5rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', resize: 'vertical', fontFamily: 'var(--font-mono)', fontSize: '0.85rem', minHeight: 140, flex: 1 },
   targetsEditorActions: { display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' },
   targetsBtn: { padding: '0.35rem 0.75rem' },
   reportingCard: { padding: '1.5rem', maxWidth: 480 },

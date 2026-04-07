@@ -1,0 +1,12 @@
+# Nmap 7.98 scan initiated Tue Apr  7 17:45:28 2026 as: /usr/lib/nmap/nmap --privileged -sV -T4 -oN data/results/3/nmap_services.txt intragin.awfulsecurity.org
+Nmap scan report for intragin.awfulsecurity.org (165.245.137.16)
+Host is up (0.0067s latency).
+Not shown: 997 filtered tcp ports (no-response)
+PORT    STATE SERVICE  VERSION
+22/tcp  open  ssh      OpenSSH 9.6p1 Ubuntu 3ubuntu13.15 (Ubuntu Linux; protocol 2.0)
+80/tcp  open  http     nginx 1.24.0 (Ubuntu)
+443/tcp open  ssl/http nginx 1.24.0 (Ubuntu)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue Apr  7 17:45:57 2026 -- 1 IP address (1 host up) scanned in 29.21 seconds

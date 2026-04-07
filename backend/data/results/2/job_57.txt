@@ -1,0 +1,6 @@
+=== legacy_ldap ===
+Targets: 2 IPs, 2 domains
+=== LDAP (ldapsearch -x) ===
+
+# No LDAP ports (389/636) found by Nmap.
+
