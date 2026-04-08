@@ -1,0 +1,189 @@
+ForSight + nginx + HTTPS — step by step (Ubuntu)
+==================================================
+
+Use this when the repo is already on your machine. Replace YOUR_REPO below
+with the full path to the ForSight folder (e.g. /home/you/ForSight).
+
+Throughout this guide:
+  YOUR_REPO = full path to the git clone (the folder that contains backend/, frontend/, deploy/)
+
+--------------------------------------------------------------------
+0) One-line summary
+--------------------------------------------------------------------
+nginx listens on 443 with your certificate, serves the React build from disk,
+and forwards /api/ and /docs/ to uvicorn on http://127.0.0.1:8000 .
+Uvicorn does NOT use TLS.
+
+--------------------------------------------------------------------
+1) Install nginx (if you do not have it)
+--------------------------------------------------------------------
+  sudo apt update
+  sudo apt install -y nginx
+
+Check it exists:
+  nginx -v
+
+--------------------------------------------------------------------
+2) Build the frontend (creates YOUR_REPO/frontend/dist)
+--------------------------------------------------------------------
+  cd YOUR_REPO/frontend
+  npm ci
+  npm run build
+
+If build succeeds you should see YOUR_REPO/frontend/dist/index.html .
+
+--------------------------------------------------------------------
+3) Create TLS certificate (self-signed)
+--------------------------------------------------------------------
+From YOUR_REPO (repo root):
+
+  chmod +x scripts/gen-self-signed-cert.sh
+
+Use the IP you will type in the browser (this machine’s LAN IP is fine):
+
+  hostname -I
+  ./scripts/gen-self-signed-cert.sh FIRST_IP_FROM_ABOVE
+
+That writes:
+  YOUR_REPO/deploy/certs/forsight.crt
+  YOUR_REPO/deploy/certs/forsight.key
+
+--------------------------------------------------------------------
+4) Put certificates where nginx expects them
+--------------------------------------------------------------------
+  sudo mkdir -p /etc/nginx/certs
+  sudo cp YOUR_REPO/deploy/certs/forsight.crt /etc/nginx/certs/
+  sudo cp YOUR_REPO/deploy/certs/forsight.key /etc/nginx/certs/
+  sudo chmod 644 /etc/nginx/certs/forsight.crt
+  sudo chmod 600 /etc/nginx/certs/forsight.key
+
+--------------------------------------------------------------------
+5) Install the ForSight nginx site file
+--------------------------------------------------------------------
+Copy the sample config into nginx’s “available sites” folder:
+
+  sudo cp YOUR_REPO/deploy/nginx/forsight-site.conf /etc/nginx/sites-available/forsight
+
+You MUST edit one line: the path to your built frontend.
+
+  sudo nano /etc/nginx/sites-available/forsight
+
+Find this line:
+  root /opt/forsight/frontend/dist;
+
+Change it to YOUR actual dist folder, for example:
+  root /home/you/ForSight/frontend/dist;
+
+Save and exit (Ctrl+O, Enter, Ctrl+X in nano).
+
+Do NOT change ssl_certificate paths unless you put the .crt/.key somewhere else.
+
+--------------------------------------------------------------------
+6) Enable this site and turn off Ubuntu’s default site (important)
+--------------------------------------------------------------------
+Both “default” and ForSight use default_server on 80/443 — only one can win.
+
+  sudo ln -sf /etc/nginx/sites-available/forsight /etc/nginx/sites-enabled/forsight
+  sudo rm -f /etc/nginx/sites-enabled/default
+
+Check that the link exists:
+  ls -l /etc/nginx/sites-enabled/
+
+--------------------------------------------------------------------
+7) Test the config and reload nginx
+--------------------------------------------------------------------
+  sudo nginx -t
+
+You want: "syntax is ok" and "test is successful".
+
+Then start nginx (first time) or reload (if already running):
+  sudo systemctl start nginx          # use this if nginx was never started
+  sudo systemctl reload nginx         # only works if nginx is already active
+
+If "cannot reload" / not active:
+  sudo systemctl enable --now nginx   # start now and on boot
+
+If reload fails:
+  sudo systemctl status nginx
+  sudo journalctl -u nginx -n 30 --no-pager
+
+--------------------------------------------------------------------
+8) Firewall (if ufw is enabled)
+--------------------------------------------------------------------
+  sudo ufw allow 'Nginx Full'
+  sudo ufw status
+
+Or at least: sudo ufw allow 443/tcp && sudo ufw allow 80/tcp
+
+--------------------------------------------------------------------
+9) Run the backend (second terminal)
+--------------------------------------------------------------------
+  cd YOUR_REPO/backend
+  source .venv/bin/activate    # or: . .venv/bin/activate
+  pip install -r requirements.txt   # once, if not done
+
+Run uvicorn bound to localhost so only nginx (same machine) talks to it:
+
+  python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 \
+    --proxy-headers --forwarded-allow-ips='*' --reload
+
+Leave this terminal open.
+
+--------------------------------------------------------------------
+10) Verify
+--------------------------------------------------------------------
+From the same machine:
+
+  curl -k https://127.0.0.1/api/health
+
+-k means “ignore self-signed certificate warning”. You should see JSON.
+
+From a browser on another device on your LAN:
+  https://YOUR_LAN_IP/
+
+The browser will warn about the certificate — that is normal for self-signed.
+Proceed / Advanced → continue. Then you should see the ForSight login page.
+
+--------------------------------------------------------------------
+Troubleshooting
+--------------------------------------------------------------------
+• 500 Internal Server Error on https://YOUR_IP/ (main page)
+  Almost always nginx cannot read `root` (permissions). The worker runs as
+  www-data (Debian/Ubuntu/Kali) and must be able to *traverse* every directory
+  from / down to frontend/dist and read files there. Home dirs are often 750,
+  so www-data cannot enter /home/kali → nginx errors → 500.
+
+  Fix A — open only the path components (minimal):
+    sudo chmod o+x /home /home/YOURUSER /home/YOURUSER/Desktop /home/YOURUSER/Desktop/ForSight /home/YOURUSER/Desktop/ForSight/frontend
+    sudo chmod -R a+rX /home/YOURUSER/Desktop/ForSight/frontend/dist
+
+  Fix B — better: copy dist where nginx expects it (no home perms issue):
+    sudo mkdir -p /var/www/forsight
+    sudo cp -r YOUR_REPO/frontend/dist/* /var/www/forsight/
+    sudo chown -R root:root /var/www/forsight
+    sudo chmod -R a+rX /var/www/forsight
+    # In /etc/nginx/sites-available/forsight set:  root /var/www/forsight;
+    sudo nginx -t && sudo systemctl reload nginx
+
+  See the real error:
+    sudo tail -30 /var/log/nginx/error.log
+
+• curl: (7) Failed to connect — nginx not listening: sudo systemctl start nginx
+
+• 502 Bad Gateway — uvicorn not running, or not on 127.0.0.1:8000 .
+  Check: curl http://127.0.0.1:8000/api/health  (should work with backend up)
+
+• 404 or blank page on / — wrong `root` in forsight (not pointing to frontend/dist)
+
+• “This site can’t provide a secure connection” / connection refused on 443 —
+  nginx not reloaded, firewall, or another program using 443:
+  sudo ss -tlnp | grep 443
+
+• Permission denied reading key — chmod 600 on forsight.key; nginx master runs
+  as root so it can read /etc/nginx/certs/
+
+--------------------------------------------------------------------
+Later: systemd instead of a terminal for uvicorn
+--------------------------------------------------------------------
+See deploy/README.txt and deploy/systemd/forsight-backend.service — set User=
+to your Ubuntu username and paths to YOUR_REPO.

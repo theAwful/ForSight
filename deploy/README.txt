@@ -1,6 +1,41 @@
 Native install (systemd + nginx) — recommended when Docker networking is problematic
 ===================================================================================
 
+Beginner nginx walkthrough (copy/paste commands):
+  deploy/NGINX_STEP_BY_STEP.txt
+
+Quick HTTPS smoke test (you did not miss a step)
+-------------------------------------------------
+SSL is NOT provided by uvicorn. Nginx terminates TLS on port 443 and proxies
+to the API as plain HTTP on port 8000. If you only run:
+
+  uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+you will only ever get HTTP on :8000 — that is expected.
+
+To verify nginx + TLS + proxy (adjust paths to your clone):
+
+  1) Build the SPA:  cd frontend && npm run build
+  2) Generate certs:  ./scripts/gen-self-signed-cert.sh YOUR_LAN_IP
+  3) sudo mkdir -p /etc/nginx/certs
+     sudo cp deploy/certs/forsight.crt deploy/certs/forsight.key /etc/nginx/certs/
+  4) Copy deploy/nginx/forsight-site.conf to /etc/nginx/sites-available/forsight
+     Edit the file: set  root  to the absolute path of .../frontend/dist
+     sudo ln -sf /etc/nginx/sites-available/forsight /etc/nginx/sites-enabled/
+     sudo rm -f /etc/nginx/sites-enabled/default    # if it conflicts on 80/443
+     sudo nginx -t && sudo systemctl reload nginx
+  5) In backend/ (venv active), bind locally so only nginx hits the API:
+     python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 \
+       --proxy-headers --forwarded-allow-ips='*' --reload
+  6) curl -k https://127.0.0.1/api/health
+     (-k is required for self-signed.) Or open https://YOUR_LAN_IP/ in a browser.
+
+502 Bad Gateway from nginx means uvicorn is not running or not on 8000.
+
+The dedicated "forsight" Linux user below is optional — for your own machine,
+set User=yourlogin in the systemd unit instead, or skip systemd and use the
+terminals above for testing.
+
 Assumptions:
   - Repo deployed at /opt/forsight (adjust paths in unit + nginx if different).
   - Kali or another system with the same pentest tools ForSight expects (nmap, nuclei, etc.).
