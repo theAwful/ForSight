@@ -149,7 +149,7 @@ export const api = {
         body: JSON.stringify({ scan_name: scanName }),
       }),
     createScanViaWeb: (projectId, body) =>
-      request(`/projects/${projectId}/nessus/create-web`, {
+      request(`/projects/${projectId}/nessus/create-scan-web`, {
         method: 'POST',
         body: JSON.stringify(body),
       }),
