@@ -1,0 +1,190 @@
+/* ForSight Design Tokens
+   Drop this into frontend/src/styles/globals.css
+   Import in main.jsx/tsx: import './styles/globals.css'
+   The existing index.css should keep its @tailwind directives.
+*/
+
+/* ─── Dark mode (default) ─────────────────────────────────────── */
+:root,
+[data-theme="dark"],
+.dark {
+  --color-bg-primary:    #0d1117;
+  --color-bg-surface:    #161b22;
+  --color-bg-elevated:   #21262d;
+  --color-bg-terminal:   #0a0e14;
+  --color-border:        #30363d;
+  --color-border-strong: #58a6ff;
+  --color-text-primary:  #e6edf3;
+  --color-text-secondary:#8b949e;
+  --color-text-disabled: #484f58;
+  --color-accent:        #2f81f7;
+  --color-accent-hover:  #388bfd;
+  --color-success:       #3fb950;
+  --color-warning:       #d29922;
+  --color-danger:        #f85149;
+  --color-critical:      #ff7b72;
+  --color-high:          #f85149;
+  --color-medium:        #d29922;
+  --color-low:           #2f81f7;
+  --color-info:          #8b949e;
+  --color-sidebar-bg:    #010409;
+  --color-sidebar-text:  #cdd9e5;
+  --color-sidebar-muted: #768390;
+  --color-sidebar-active:#2f81f7;
+
+  /* Legacy variables — keep for backward compat while migrating components */
+  --bg:           var(--color-bg-primary);
+  --surface:      var(--color-bg-surface);
+  --border:       var(--color-border);
+  --text:         var(--color-text-primary);
+  --text-muted:   var(--color-text-secondary);
+  --accent:       var(--color-accent);
+  --accent-text:  #ffffff;
+  --sidebar-bg:   var(--color-sidebar-bg);
+  --sidebar-text: var(--color-sidebar-text);
+  --sidebar-text-muted: var(--color-sidebar-muted);
+  --sidebar-active: var(--color-sidebar-active);
+  --radius:       6px;
+  --font-mono:    'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+}
+
+/* ─── Light mode ──────────────────────────────────────────────── */
+[data-theme="light"],
+.light {
+  --color-bg-primary:    #f6f8fa;
+  --color-bg-surface:    #ffffff;
+  --color-bg-elevated:   #f6f8fa;
+  --color-bg-terminal:   #24292f;
+  --color-border:        #d0d7de;
+  --color-border-strong: #0969da;
+  --color-text-primary:  #1f2328;
+  --color-text-secondary:#57606a;
+  --color-text-disabled: #8c959f;
+  --color-accent:        #0969da;
+  --color-accent-hover:  #0550ae;
+  --color-success:       #1a7f37;
+  --color-warning:       #9a6700;
+  --color-danger:        #cf222e;
+  --color-critical:      #a40e26;
+  --color-high:          #cf222e;
+  --color-medium:        #9a6700;
+  --color-low:           #0969da;
+  --color-info:          #57606a;
+  --color-sidebar-bg:    #161b22;
+  --color-sidebar-text:  #cdd9e5;
+  --color-sidebar-muted: #768390;
+  --color-sidebar-active:#2f81f7;
+
+  --bg:           var(--color-bg-primary);
+  --surface:      var(--color-bg-surface);
+  --border:       var(--color-border);
+  --text:         var(--color-text-primary);
+  --text-muted:   var(--color-text-secondary);
+  --accent:       var(--color-accent);
+  --accent-text:  #ffffff;
+  --sidebar-bg:   var(--color-sidebar-bg);
+  --sidebar-text: var(--color-sidebar-text);
+  --sidebar-text-muted: var(--color-sidebar-muted);
+  --sidebar-active: var(--color-sidebar-active);
+  --radius:       6px;
+  --font-mono:    'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+}
+
+/* ─── Spacing tokens ──────────────────────────────────────────── */
+:root {
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+
+  --radius-sm:   3px;
+  --radius-md:   6px;
+  --radius-lg:   10px;
+  --radius-full: 9999px;
+
+  --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* ─── Base reset ──────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Severity badge ──────────────────────────────────────────── */
+.severity-critical { background:#3d1a1c; color:var(--color-critical); border:1px solid #6e2226; }
+.severity-high     { background:#2d1a1c; color:var(--color-high);     border:1px solid #5a1a1c; }
+.severity-medium   { background:#2d2010; color:var(--color-warning);  border:1px solid #5a3e10; }
+.severity-low      { background:#0d1f38; color:var(--color-low);      border:1px solid #1a3a6e; }
+.severity-info     { background:var(--color-bg-elevated); color:var(--color-text-secondary); border:1px solid var(--color-border); }
+.severity-none     { background:transparent; color:var(--color-text-disabled); border:none; }
+
+/* ─── Status pulse animation ──────────────────────────────────── */
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--color-bg-elevated) 25%, var(--color-bg-surface) 50%, var(--color-bg-elevated) 75%);
+  background-size: 400px 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* ─── Toast slide-in ─────────────────────────────────────────── */
+@keyframes toast-in {
+  from { transform: translateX(110%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes toast-out {
+  from { transform: translateX(0);    opacity: 1; }
+  to   { transform: translateX(110%); opacity: 0; }
+}
+
+/* ─── Utility classes ─────────────────────────────────────────── */
+.font-mono { font-family: var(--font-mono); }
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Scrollbar styling for dark mode */
+:root {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-disabled); }
