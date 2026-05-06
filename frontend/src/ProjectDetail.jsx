@@ -110,9 +110,12 @@ export default function ProjectDetail() {
 
   useEffect(() => {
     load()
-    const interval = setInterval(load, 3000)
+    // Pause polling while any text field is being edited to prevent
+    // the interval overwriting textarea content mid-keystroke
+    if (editingTargets || pasting || uploading) return
+    const interval = setInterval(load, 5000)
     return () => clearInterval(interval)
-  }, [load])
+  }, [load, editingTargets, pasting, uploading])
 
   // ── ROE handlers ──────────────────────────────────────────────
   const onRoeUpload = async (e) => {
