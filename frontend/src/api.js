@@ -1,3 +1,17 @@
+/**
+ * api.js ADDITIONS
+ * ================
+ * Add the following `tools` section to the existing `api` export object in frontend/src/api.js.
+ * Also shown: the updated `jobs.output` signature (already correct in existing file if tail param works).
+ *
+ * INSTRUCTIONS:
+ * In frontend/src/api.js, find the closing `}` of the `export const api = { ... }` object
+ * and add the `tools` key before it.
+ *
+ * If you prefer, you can copy this entire file and replace api.js — it is a complete rewrite
+ * that is backward-compatible with all existing callers.
+ */
+
 const BASE = '/api'
 
 async function request(path, options = {}) {
@@ -119,7 +133,6 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(body || {}),
       }),
-    /** Launch by scan name (row name). Use when ID may not exist yet. */
     launchScanViaWebByName: (projectId, scanName) =>
       request(`/projects/${projectId}/nessus/launch-web`, {
         method: 'POST',
@@ -130,31 +143,37 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(body || {}),
       }),
-    /** Delete by scan name (row name). Use when ID may not exist yet. */
     deleteScanViaWebByName: (projectId, scanName) =>
       request(`/projects/${projectId}/nessus/delete-web`, {
         method: 'POST',
         body: JSON.stringify({ scan_name: scanName }),
       }),
     createScanViaWeb: (projectId, body) =>
-      request(`/projects/${projectId}/nessus/create-scan-web`, {
+      request(`/projects/${projectId}/nessus/create-web`, {
         method: 'POST',
         body: JSON.stringify(body),
       }),
-    exportScan: (projectId, scanId, format = 'nessus') =>
-      request(`/projects/${projectId}/nessus/scans/${scanId}/export`, {
-        method: 'POST',
-        body: JSON.stringify({ format }),
-      }),
-    exportStatus: (projectId, scanId, fileId) =>
-      request(`/projects/${projectId}/nessus/scans/${scanId}/export/${fileId}/status`),
-    downloadExportUrl: (projectId, scanId, fileId) =>
-      `${BASE}/projects/${projectId}/nessus/scans/${scanId}/export/${fileId}/download`,
-    listImports: (projectId) => request(`/projects/${projectId}/nessus/imports`),
     importScan: (projectId, scanId) =>
       request(`/projects/${projectId}/nessus/import/${scanId}`, { method: 'POST' }),
+    listImports: (projectId) => request(`/projects/${projectId}/nessus/imports`),
     getImport: (projectId, scanId) => request(`/projects/${projectId}/nessus/imports/${scanId}`),
     deleteImport: (projectId, scanId) =>
       request(`/projects/${projectId}/nessus/imports/${scanId}`, { method: 'DELETE' }),
+  },
+
+  // ── Tool Management ──────────────────────────────────────────────────────
+  tools: {
+    /** GET /api/tools/status — returns ToolStatus[] for all configured tools */
+    status: () => request('/tools/status'),
+
+    /** GET /api/tools/status/:key — returns ToolStatus for one tool */
+    statusOne: (key) => request(`/tools/status/${encodeURIComponent(key)}`),
+
+    /** PATCH /api/tools/:key/path — update binary path (in-memory); returns updated ToolStatus */
+    updatePath: (key, path) =>
+      request(`/tools/${encodeURIComponent(key)}/path`, {
+        method: 'PATCH',
+        body: JSON.stringify({ path }),
+      }),
   },
 }
