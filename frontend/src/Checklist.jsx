@@ -118,21 +118,31 @@ export default function Checklist({ projectId, checklist, onRun, onStatusChange,
         <ul style={styles.preGateList}>
           {PRE_ENGAGEMENT_CHECKS.map(({ id, title, hint }) => {
             const item = prePhase?.items?.find((i) => i.id === id)
-            if (!item) return null
-            const checked = item.status === 'completed'
+            const checked = item?.status === 'completed'
+            const isUpdating = updating === id
             return (
               <li key={id} style={styles.preGateItem}>
-                <label style={styles.preCheckLabel}>
+                <label style={{ ...styles.preCheckLabel, cursor: checked ? 'default' : 'pointer' }}>
                   <input
                     type="checkbox"
                     className="checklist-pre-checkbox"
                     checked={checked}
-                    disabled={updating === item.id}
-                    onChange={(e) => togglePreGate(item.id, e.target.checked)}
+                    disabled={checked || isUpdating || !item}
+                    onChange={() => {
+                      if (!checked && item) setStatus(item.id, 'completed')
+                    }}
                   />
                   <span style={styles.preCheckBody}>
-                    <span style={styles.preCheckTitle}>{title}</span>
+                    <span style={{
+                      ...styles.preCheckTitle,
+                      color: checked ? 'var(--primary)' : 'var(--text)',
+                    }}>
+                      {checked ? '✓ ' : ''}{title}
+                    </span>
                     <span style={styles.preCheckHint}>{hint}</span>
+                    {!item && (
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>(Loading…)</span>
+                    )}
                   </span>
                 </label>
               </li>
