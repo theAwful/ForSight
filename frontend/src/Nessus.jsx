@@ -1,1118 +1,962 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { api } from './api'
 
-const SEVERITY_ORDER = { critical: 4, high: 3, medium: 2, low: 1, none: 0, info: 0 }
-const SEVERITY_COLOR = { critical: '#8b0000', high: '#c00', medium: '#e09000', low: '#366', none: '#666', info: '#4a6fa5' }
+// ── Severity helpers ──────────────────────────────────────────────────────────
 
-function severityRank(s) {
-  if (s == null) return 0
-  const v = String(s).toLowerCase()
-  return SEVERITY_ORDER[v] ?? (parseInt(v, 10) >= 4 ? 4 : parseInt(v, 10) >= 3 ? 3 : parseInt(v, 10) >= 2 ? 2 : 1)
+const SEV_LABELS  = ['Info', 'Low', 'Medium', 'High', 'Critical']
+const SEV_COLORS  = {
+  4: { bg: 'rgba(220,38,38,0.12)',  text: '#f87171', border: 'rgba(220,38,38,0.3)'  }, // Critical
+  3: { bg: 'rgba(234,88,12,0.12)',  text: '#fb923c', border: 'rgba(234,88,12,0.3)'  }, // High
+  2: { bg: 'rgba(217,119,6,0.12)',  text: '#fbbf24', border: 'rgba(217,119,6,0.3)'  }, // Medium
+  1: { bg: 'rgba(37,99,235,0.10)',  text: '#60a5fa', border: 'rgba(37,99,235,0.25)' }, // Low
+  0: { bg: 'rgba(100,116,139,0.1)', text: '#94a3b8', border: 'rgba(100,116,139,0.2)'}, // Info
 }
 
-function severityLabel(s) {
-  if (s == null) return 'Info'
-  const n = parseInt(s, 10)
-  if (!Number.isNaN(n)) {
-    const labels = ['None', 'Low', 'Medium', 'High', 'Critical']
-    return labels[Math.min(Math.max(n, 0), 4)] || String(s)
-  }
-  const v = String(s).toLowerCase()
-  return v.charAt(0).toUpperCase() + v.slice(1)
+function sevLabel(s) {
+  const n = Number(s)
+  return SEV_LABELS[n] ?? String(s ?? 'Info')
 }
 
-function severityColor(s) {
-  const v = String(s).toLowerCase()
-  if (SEVERITY_COLOR[v]) return SEVERITY_COLOR[v]
-  const n = parseInt(s, 10)
-  if (!Number.isNaN(n)) {
-    const colors = ['#666', '#366', '#e09000', '#c00', '#8b0000']
-    return colors[Math.min(Math.max(n, 0), 4)] || SEVERITY_COLOR.none
-  }
-  return SEVERITY_COLOR.none
-}
-
-function formatLastRun(value) {
-  if (value == null || value === '' || value === 0) return 'Never'
-  const n = Number(value)
-  if (Number.isNaN(n) || n <= 0) return 'Never'
-  const ms = n > 1e12 ? n : n * 1000
-  const date = new Date(ms)
-  if (Number.isNaN(date.getTime())) return '—'
-  return date.toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' })
-}
-
-function formatStatus(status) {
-  if (status == null || status === '') return 'N/A'
-  const s = String(status).toLowerCase()
-  const map = { paused: 'Paused', running: 'Running', completed: 'Completed', canceled: 'Canceled', empty: 'Empty', cancelled: 'Canceled' }
-  return map[s] || (s.charAt(0).toUpperCase() + s.slice(1))
-}
-
-function statusBadgeStyle(status) {
-  const s = String(status || '').toLowerCase()
-  const colors = {
-    paused: { background: 'var(--warn, #e09000)', color: '#fff', padding: '0.2rem 0.45rem', borderRadius: 4, fontSize: '0.8rem' },
-    running: { background: 'var(--primary)', color: 'var(--primary-text, #fff)', padding: '0.2rem 0.45rem', borderRadius: 4, fontSize: '0.8rem' },
-    completed: { background: 'var(--accent)', color: '#fff', padding: '0.2rem 0.45rem', borderRadius: 4, fontSize: '0.8rem' },
-    canceled: { background: 'var(--text-muted)', color: '#fff', padding: '0.2rem 0.45rem', borderRadius: 4, fontSize: '0.8rem' },
-    cancelled: { background: 'var(--text-muted)', color: '#fff', padding: '0.2rem 0.45rem', borderRadius: 4, fontSize: '0.8rem' },
-    empty: { background: 'var(--border)', color: 'var(--text-muted)', padding: '0.2rem 0.45rem', borderRadius: 4, fontSize: '0.8rem' },
-  }
-  return colors[s] || { padding: '0.2rem 0.45rem', borderRadius: 4, fontSize: '0.8rem', background: 'var(--border)', color: 'var(--text)' }
-}
-
-export default function Nessus({ projectId, onRefresh }) {
-  const [configured, setConfigured] = useState(false)
-  const [scans, setScans] = useState([])
-  const [imports, setImports] = useState([])
-  const [importDetail, setImportDetail] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [importing, setImporting] = useState(null)
-  const [launching, setLaunching] = useState(null)
-  const [deleting, setDeleting] = useState(null)
-  const [view, setView] = useState('imported')
-  const [selectedImportId, setSelectedImportId] = useState(null)
-  const [detailType, setDetailType] = useState(null)
-  const [detailVuln, setDetailVuln] = useState(null)
-  const [detailHost, setDetailHost] = useState(null)
-  const [vulnSearch, setVulnSearch] = useState('')
-  const [scanSubView, setScanSubView] = useState('vulns')
-  const [templates, setTemplates] = useState([])
-  const [createName, setCreateName] = useState('')
-  const [createTemplateUuid, setCreateTemplateUuid] = useState('')
-  const [createExtraTargets, setCreateExtraTargets] = useState('')
-  const [creating, setCreating] = useState(false)
-  const [creatingViaWeb, setCreatingViaWeb] = useState(false)
-  const [createError, setCreateError] = useState(null)
-  const [showCreate, setShowCreate] = useState(false)
-  const [webLaunchInfo, setWebLaunchInfo] = useState(null)
-
-  useEffect(() => {
-    if (!projectId) return
-    setError(null)
-    api.nessus
-      .configured()
-      .then((r) => setConfigured(r?.configured === true))
-      .catch(() => setConfigured(false))
-  }, [projectId])
-
-  useEffect(() => {
-    if (!configured) return
-    api.nessus
-      .webLaunchAvailable()
-      .then(setWebLaunchInfo)
-      .catch(() => setWebLaunchInfo(null))
-  }, [configured])
-
-  useEffect(() => {
-    if (!projectId || !configured) {
-      setScans([])
-      setLoading(false)
-      return
-    }
-    setLoading(true)
-    setError(null)
-    Promise.all([
-      api.nessus.listScans(projectId).then((data) => {
-        const list = data?.scans ?? []
-        return Array.isArray(list) ? list : []
-      }),
-      api.nessus.listImports(projectId).then((data) => {
-        const list = data?.scans ?? []
-        return Array.isArray(list) ? list : []
-      }),
-    ])
-      .then(([scanList, importList]) => {
-        setScans(scanList)
-        setImports(importList)
-      })
-      .catch((err) => {
-        setScans([])
-        setImports([])
-        setError(err?.body?.detail ?? err?.message ?? 'Failed to load')
-      })
-      .finally(() => setLoading(false))
-  }, [projectId, configured])
-
-  useEffect(() => {
-    if (!projectId || !configured) return
-    api.nessus
-      .templates(projectId)
-      .then((data) => {
-        const list = data?.items ?? data?.templates ?? data ?? []
-        setTemplates(Array.isArray(list) ? list : [])
-      })
-      .catch(() => setTemplates([]))
-  }, [projectId, configured])
-
-  const loadImports = () => {
-    return api.nessus.listImports(projectId).then((data) => {
-      const list = data?.scans ?? []
-      setImports(Array.isArray(list) ? list : [])
-    })
-  }
-
-  const loadScans = (fresh = false) => {
-    return api.nessus.listScans(projectId, fresh).then((data) => {
-      const list = data?.scans ?? []
-      setScans(Array.isArray(list) ? list : [])
-    })
-  }
-
-  const doImport = async (scanId) => {
-    setImporting(scanId)
-    setError(null)
-    try {
-      await api.nessus.importScan(projectId, scanId)
-      await loadImports()
-      onRefresh?.()
-    } catch (err) {
-      setError(err?.body?.detail ?? err?.message ?? 'Import failed')
-    } finally {
-      setImporting(null)
-    }
-  }
-
-  const launchScan = async (scanId, useProjectTargets = true) => {
-    setLaunching(scanId)
-    setError(null)
-    try {
-      await api.nessus.launchScan(projectId, scanId, { use_project_targets: useProjectTargets })
-      onRefresh?.()
-      await loadScans()
-    } catch (err) {
-      setError(err?.body?.detail ?? err?.message ?? 'Launch failed')
-    } finally {
-      setLaunching(null)
-    }
-  }
-
-  // Find the row by scan name in Nessus and click the launch button to the right of that name (we don't use scan/button id).
-  const launchScanViaWeb = async (scanId, scanName) => {
-    const rowKey = scanId ?? scanName
-    const displayName = (scanName ?? (scanId != null ? `Scan ${scanId}` : '')).trim()
-    if (!displayName) {
-      setError('Scan name is required to launch via web')
-      return
-    }
-    setLaunching(rowKey)
-    setError(null)
-    try {
-      await api.nessus.launchScanViaWebByName(projectId, displayName)
-      onRefresh?.()
-      await loadScans(true)
-    } catch (err) {
-      setError(err?.body?.detail ?? err?.message ?? 'Web launch failed')
-    } finally {
-      setLaunching(null)
-    }
-  }
-
-  const deleteScanViaWeb = async (scanId, scanName) => {
-    const displayName = (scanName ?? (scanId != null ? `Scan ${scanId}` : '')).trim()
-    if (!window.confirm(`Delete scan "${displayName || scanId}" from Nessus? This cannot be undone.`)) return
-    const rowKey = scanId ?? scanName
-    setDeleting(rowKey)
-    setError(null)
-    try {
-      await api.nessus.deleteScanViaWebByName(projectId, displayName || String(scanId))
-      onRefresh?.()
-      await loadScans(true)
-    } catch (err) {
-      setError(err?.body?.detail ?? err?.message ?? 'Delete failed')
-    } finally {
-      setDeleting(null)
-    }
-  }
-
-  useEffect(() => {
-    if (!projectId || selectedImportId == null) {
-      setImportDetail(null)
-      return
-    }
-    setDetailType(null)
-    setDetailVuln(null)
-    setDetailHost(null)
-    api.nessus
-      .getImport(projectId, selectedImportId)
-      .then(setImportDetail)
-      .catch(() => setImportDetail(null))
-  }, [projectId, selectedImportId])
-
-  const createScan = async () => {
-    const name = (createName || '').trim()
-    if (!name) {
-      setCreateError('Enter a scan name')
-      return
-    }
-    if (!createTemplateUuid) {
-      setCreateError('Select a template')
-      return
-    }
-    setCreating(true)
-    setCreateError(null)
-    try {
-      await api.nessus.createScan(projectId, {
-        name,
-        template_uuid: createTemplateUuid,
-        use_project_targets: true,
-        text_targets: createExtraTargets.trim() || undefined,
-      })
-      setCreateName('')
-      setCreateTemplateUuid('')
-      setCreateExtraTargets('')
-      await loadScans()
-      onRefresh?.()
-    } catch (err) {
-      setCreateError(err?.body?.detail ?? err?.message ?? 'Create failed')
-    } finally {
-      setCreating(false)
-    }
-  }
-
-  const createScanViaWeb = async () => {
-    const name = (createName || '').trim()
-    if (!name) {
-      setCreateError('Enter a scan name')
-      return
-    }
-    const selectedTemplate = createTemplateUuid
-      ? templates.find(
-          (t) =>
-            (t.uuid || (t.type === 'policy' && t.id != null ? `policy:${t.id}` : '') || t.id) === createTemplateUuid
-        )
-      : null
-    const templateKey = selectedTemplate?.name || selectedTemplate?.title || 'advanced'
-    setCreatingViaWeb(true)
-    setCreateError(null)
-    try {
-      await api.nessus.createScanViaWeb(projectId, {
-        name,
-        template_key: templateKey,
-        use_project_targets: true,
-        text_targets: createExtraTargets.trim() || undefined,
-      })
-      setCreateName('')
-      setCreateTemplateUuid('')
-      setCreateExtraTargets('')
-      await loadScans(true)
-      onRefresh?.()
-    } catch (err) {
-      setCreateError(err?.body?.detail ?? err?.message ?? 'Create via web failed')
-    } finally {
-      setCreatingViaWeb(false)
-    }
-  }
-
-  const deleteImport = async (scanId) => {
-    try {
-      await api.nessus.deleteImport(projectId, scanId)
-      if (selectedImportId === scanId) {
-        setSelectedImportId(null)
-        setImportDetail(null)
-      }
-      await loadImports()
-      onRefresh?.()
-    } catch (err) {
-      setError(err?.body?.detail ?? err?.message ?? 'Delete failed')
-    }
-  }
-
-  const hosts = importDetail?.hosts ?? []
-  const vulnsFlat = []
-  const vulnKeyToInstances = {}
-  hosts.forEach((h) => {
-    (h.vulns || []).forEach((v) => {
-      const key = `${v.plugin_id}-${v.port || 0}-${v.protocol || ''}`
-      vulnsFlat.push({ ...v, _host: h })
-      if (!vulnKeyToInstances[key]) vulnKeyToInstances[key] = []
-      vulnKeyToInstances[key].push({ ...v, host: h })
-    })
-  })
-  const vulnsByPlugin = {}
-  vulnsFlat.forEach((v) => {
-    const id = v.plugin_id || 'unknown'
-    if (!vulnsByPlugin[id]) vulnsByPlugin[id] = { vuln: v, count: 0, hosts: new Set() }
-    vulnsByPlugin[id].count += 1
-    vulnsByPlugin[id].hosts.add(v._host?.host_ip || v._host?.name || '')
-  })
-  const vulnList = Object.entries(vulnsByPlugin)
-    .map(([id, o]) => ({ plugin_id: id, ...o.vuln, affected_count: o.count, affected_hosts: [...o.hosts] }))
-    .sort((a, b) => severityRank(b.severity) - severityRank(a.severity))
-
-  const vulnSearchLower = (vulnSearch || '').trim().toLowerCase()
-  const filteredVulnList = vulnSearchLower
-    ? vulnList.filter(
-        (v) =>
-          (v.plugin_name || '').toLowerCase().includes(vulnSearchLower) ||
-          (v.plugin_id || '').toString().includes(vulnSearchLower)
-      )
-    : vulnList
-
-  const severityCounts = { Critical: 0, High: 0, Medium: 0, Low: 0, Info: 0 }
-  vulnList.forEach((v) => {
-    const label = severityLabel(v.severity)
-    if (severityCounts[label] !== undefined) severityCounts[label] += 1
-    else severityCounts.Info += 1
-  })
-
-  if (!configured) {
-    return (
-      <div style={styles.card}>
-        <h2 style={styles.title}>Nessus</h2>
-        <p style={styles.muted}>
-          Configure the backend (e.g. <code>backend/.env</code>). For Nessus Pro you can use either: (1) API keys —
-          <code>FORSIGHT_TENABLE_ACCESS_KEY</code> and <code>FORSIGHT_TENABLE_SECRET_KEY</code> from Nessus → My Account → API Keys;
-          or (2) session login — <code>FORSIGHT_TENABLE_USERNAME</code> and <code>FORSIGHT_TENABLE_PASSWORD</code> (enables launch scans).
-          Default URL is <code>https://127.0.0.1:8834</code>. Set <code>FORSIGHT_TENABLE_VERIFY_SSL=false</code> for self-signed certs.
-        </p>
-      </div>
-    )
-  }
-
-  if (loading && !imports.length) {
-    return (
-      <div style={styles.card}>
-        <h2 style={styles.title}>Nessus</h2>
-        <p style={styles.muted}>Loading…</p>
-      </div>
-    )
-  }
-
+function SeverityPill({ severity, size = 'sm' }) {
+  const n = Number(severity ?? 0)
+  const cfg = SEV_COLORS[n] || SEV_COLORS[0]
   return (
-    <div style={styles.wrapper}>
-      <div style={styles.header}>
-        <h2 style={styles.title}>Nessus</h2>
-        <div style={styles.headerActions}>
-          <button
-            type="button"
-            className={view === 'imported' ? 'btn-primary' : 'btn-secondary'}
-            onClick={() => setView('imported')}
-            style={styles.tabBtn}
-          >
-            Imported results
-          </button>
-          <button
-            type="button"
-            className={view === 'scans' ? 'btn-primary' : 'btn-secondary'}
-            onClick={() => setView('scans')}
-            style={styles.tabBtn}
-          >
-            Available scans
-          </button>
-          <button type="button" className="btn-secondary" onClick={() => loadImports().then(() => loadScans(true))}>
-            Refresh
-          </button>
-        </div>
+    <span style={{
+      display: 'inline-block',
+      padding: size === 'lg' ? '3px 12px' : '2px 8px',
+      borderRadius: 4,
+      fontSize: size === 'lg' ? '0.8rem' : '0.72rem',
+      fontWeight: 700,
+      letterSpacing: '0.04em',
+      textTransform: 'uppercase',
+      background: cfg.bg,
+      color: cfg.text,
+      border: `1px solid ${cfg.border}`,
+      whiteSpace: 'nowrap',
+    }}>
+      {sevLabel(n)}
+    </span>
+  )
+}
+
+function formatStatus(s) {
+  if (!s) return 'Unknown'
+  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()
+}
+
+function formatLastRun(ts) {
+  if (!ts) return 'Never'
+  try { return new Date(ts * 1000).toLocaleString() } catch { return String(ts) }
+}
+
+function StatusChip({ status }) {
+  const s = (status || '').toLowerCase()
+  const cfg = s === 'completed'  ? { bg: 'rgba(5,150,105,0.12)',  text: '#34d399' }
+            : s === 'running'    ? { bg: 'rgba(79,70,229,0.12)',   text: '#818cf8' }
+            : s === 'paused'     ? { bg: 'rgba(217,119,6,0.12)',   text: '#fbbf24' }
+            : s === 'canceled'   ? { bg: 'rgba(100,116,139,0.1)',  text: '#94a3b8' }
+            :                      { bg: 'rgba(100,116,139,0.1)',  text: '#94a3b8' }
+  return (
+    <span style={{
+      display: 'inline-block',
+      padding: '2px 8px',
+      borderRadius: 4,
+      fontSize: '0.75rem',
+      fontWeight: 600,
+      background: cfg.bg,
+      color: cfg.text,
+    }}>
+      {formatStatus(status)}
+    </span>
+  )
+}
+
+// ── Vuln detail panel ─────────────────────────────────────────────────────────
+
+function VulnDetail({ vuln, onBack, scanName }) {
+  if (!vuln) return null
+  return (
+    <div style={S.detailRoot}>
+      <div style={S.detailNav}>
+        <button type="button" style={S.backBtn} onClick={onBack}>← Back</button>
+        <span style={S.detailBreadcrumb}>{scanName} / Plugin #{vuln.plugin_id}</span>
       </div>
-      {error && <div style={styles.error}>{error}</div>}
 
-      {view === 'imported' && (
-        <div style={styles.importedSection}>
-          {!imports.length ? (
-            <div style={styles.importedList}>
-              <h3 style={styles.subtitle}>Imported scan results</h3>
-              <p style={styles.muted}>No imported results yet. Switch to &quot;Available scans&quot; and use &quot;Import results&quot; on a scan.</p>
-            </div>
-          ) : (
-            <>
-              {selectedImportId == null ? (
-                <div style={styles.importedList}>
-                  <h3 style={styles.subtitle}>Imported scan results</h3>
-                  <p style={styles.muted}>Select a scan to view vulnerabilities and hosts.</p>
-                  <ul style={styles.importList}>
-                    {imports.map((imp) => (
-                      <li
-                        key={imp.scan_id}
-                        style={{
-                          ...styles.importItem,
-                          ...(selectedImportId === imp.scan_id ? styles.importItemActive : {}),
-                        }}
-                        onClick={() => {
-                          setSelectedImportId(imp.scan_id)
-                          setDetailVuln(null)
-                          setDetailHost(null)
-                          setScanSubView('vulns')
-                        }}
-                      >
-                        <div style={styles.importName}>{imp.scan_name || `Scan ${imp.scan_id}`}</div>
-                        <div style={styles.importMeta}>
-                          {imp.hosts_count ?? 0} hosts · {imp.vulns_count ?? 0} findings · {imp.imported_at ? new Date(imp.imported_at).toLocaleString() : ''}
-                        </div>
-                        <button
-                          type="button"
-                          className="btn-secondary"
-                          style={styles.deleteImportBtn}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            if (window.confirm('Remove this imported scan from the project?')) deleteImport(imp.scan_id)
-                          }}
-                        >
-                          Remove
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : !importDetail ? (
-                <div style={styles.importedList}>
-                  <p style={styles.muted}>Loading scan…</p>
-                </div>
-              ) : (detailVuln || detailHost ? (
-                <div style={styles.findingsDetailRoot}>
-                  {detailVuln && (
-                    <>
-                      <div style={styles.findingsDetailHeader}>
-                        <button
-                          type="button"
-                          className="btn-secondary"
-                          style={styles.backBtn}
-                          onClick={() => { setDetailVuln(null); setDetailHost(null) }}
-                        >
-                          ← Back to Vulnerabilities
-                        </button>
-                        <span style={styles.findingsDetailBreadcrumb}>
-                          {importDetail.scan_name || `Scan ${selectedImportId}`} / Plugin #{detailVuln.plugin_id}
-                        </span>
-                      </div>
-                      <div style={styles.findingsDetailLayout}>
-                        <div style={styles.findingsDetailMain}>
-                          <div style={styles.findingsDetailTitleRow}>
-                            <span
-                              style={{
-                                ...styles.severityBadge,
-                                background: severityColor(detailVuln.severity),
-                                color: '#fff',
-                              }}
-                            >
-                              {severityLabel(detailVuln.severity).toUpperCase()}
-                            </span>
-                            <h3 style={styles.findingsDetailTitle}>{detailVuln.plugin_name || `Plugin ${detailVuln.plugin_id}`}</h3>
-                          </div>
-                          {detailVuln.synopsis && (
-                            <p style={styles.findingsSynopsis}>{detailVuln.synopsis}</p>
-                          )}
-                          {detailVuln.description && (
-                            <section style={styles.findingsSection}>
-                              <h4 style={styles.findingsSectionTitle}>Description</h4>
-                              <div style={styles.findingsSectionBody}>
-                                <pre style={styles.pre}>{detailVuln.description}</pre>
-                              </div>
-                            </section>
-                          )}
-                          {detailVuln.solution && (
-                            <section style={styles.findingsSection}>
-                              <h4 style={styles.findingsSectionTitle}>Solution</h4>
-                              <div style={styles.findingsSectionBody}>
-                                <pre style={styles.pre}>{detailVuln.solution}</pre>
-                              </div>
-                            </section>
-                          )}
-                          {detailVuln.plugin_output && (
-                            <section style={styles.findingsSection}>
-                              <h4 style={styles.findingsSectionTitle}>Output</h4>
-                              <div style={styles.findingsSectionBody}>
-                                <pre style={styles.pre}>{detailVuln.plugin_output}</pre>
-                              </div>
-                            </section>
-                          )}
-                          <section style={styles.findingsSection}>
-                            <h4 style={styles.findingsSectionTitle}>Affected hosts ({detailVuln.affected_count ?? 0})</h4>
-                            <div style={styles.findingsSectionBody}>
-                              {(detailVuln.affected_hosts || []).join(', ') || '—'}
-                            </div>
-                          </section>
-                        </div>
-                        <aside style={styles.findingsSidebar}>
-                          <div style={styles.findingsSidebarBlock}>
-                            <h4 style={styles.findingsSidebarTitle}>Plugin details</h4>
-                            <dl style={styles.findingsSidebarDl}>
-                              <dt style={styles.findingsSidebarDt}>Severity</dt>
-                              <dd style={styles.findingsSidebarDd}>{severityLabel(detailVuln.severity)}</dd>
-                              <dt style={styles.findingsSidebarDt}>ID</dt>
-                              <dd style={styles.findingsSidebarDd}>{detailVuln.plugin_id}</dd>
-                              <dt style={styles.findingsSidebarDt}>Port</dt>
-                              <dd style={styles.findingsSidebarDd}>{detailVuln.port || '—'}</dd>
-                              <dt style={styles.findingsSidebarDt}>Protocol</dt>
-                              <dd style={styles.findingsSidebarDd}>{detailVuln.protocol || '—'}</dd>
-                              {detailVuln.risk_factor && (
-                                <>
-                                  <dt style={styles.findingsSidebarDt}>Risk factor</dt>
-                                  <dd style={styles.findingsSidebarDd}>{detailVuln.risk_factor}</dd>
-                                </>
-                              )}
-                            </dl>
-                          </div>
-                        </aside>
-                      </div>
-                    </>
-                  )}
-                  {detailHost && (
-                    <>
-                      <div style={styles.findingsDetailHeader}>
-                        <button
-                          type="button"
-                          className="btn-secondary"
-                          style={styles.backBtn}
-                          onClick={() => { setDetailVuln(null); setDetailHost(null) }}
-                        >
-                          ← Back to Hosts
-                        </button>
-                        <span style={styles.findingsDetailBreadcrumb}>
-                          {importDetail.scan_name || `Scan ${selectedImportId}`} / {detailHost.name || detailHost.host_ip}
-                        </span>
-                      </div>
-                      <div style={styles.findingsDetailLayout}>
-                        <div style={styles.findingsDetailMain}>
-                          <h3 style={styles.findingsDetailTitle}>{detailHost.name || detailHost.host_ip}</h3>
-                          <p style={styles.detailMeta}>IP: {detailHost.host_ip} · {(detailHost.vulns || []).length} findings</p>
-                          {(detailHost.vulns || []).map((v, i) => (
-                            <div key={i} style={styles.hostVulnCard}>
-                              <div style={styles.findingsDetailTitleRow}>
-                                <span
-                                  style={{
-                                    ...styles.severityBadge,
-                                    background: severityColor(v.severity),
-                                    color: '#fff',
-                                  }}
-                                >
-                                  {severityLabel(v.severity).toUpperCase()}
-                                </span>
-                                <h4 style={styles.findingsDetailTitle}>{v.plugin_name || `Plugin ${v.plugin_id}`}</h4>
-                              </div>
-                              {v.synopsis && <p style={styles.findingsSynopsis}>{v.synopsis}</p>}
-                              {v.description && (
-                                <section style={styles.findingsSection}>
-                                  <h4 style={styles.findingsSectionTitle}>Description</h4>
-                                  <div style={styles.findingsSectionBody}>
-                                    <pre style={styles.pre}>{v.description}</pre>
-                                  </div>
-                                </section>
-                              )}
-                              {v.solution && (
-                                <section style={styles.findingsSection}>
-                                  <h4 style={styles.findingsSectionTitle}>Solution</h4>
-                                  <div style={styles.findingsSectionBody}>
-                                    <pre style={styles.pre}>{v.solution}</pre>
-                                  </div>
-                                </section>
-                              )}
-                              {v.plugin_output && (
-                                <section style={styles.findingsSection}>
-                                  <h4 style={styles.findingsSectionTitle}>Output</h4>
-                                  <div style={styles.findingsSectionBody}>
-                                    <pre style={styles.pre}>{v.plugin_output}</pre>
-                                  </div>
-                                </section>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                        <aside style={styles.findingsSidebar}>
-                          <div style={styles.findingsSidebarBlock}>
-                            <h4 style={styles.findingsSidebarTitle}>Host details</h4>
-                            <dl style={styles.findingsSidebarDl}>
-                              <dt style={styles.findingsSidebarDt}>Host / Name</dt>
-                              <dd style={styles.findingsSidebarDd}>{detailHost.name || '—'}</dd>
-                              <dt style={styles.findingsSidebarDt}>IP</dt>
-                              <dd style={styles.findingsSidebarDd}>{detailHost.host_ip || '—'}</dd>
-                              <dt style={styles.findingsSidebarDt}>Findings</dt>
-                              <dd style={styles.findingsSidebarDd}>{(detailHost.vulns || []).length}</dd>
-                            </dl>
-                          </div>
-                          <div style={styles.findingsSidebarBlock}>
-                            <h4 style={styles.findingsSidebarTitle}>Plugins on this host</h4>
-                            <div style={styles.findingsSectionBody}>
-                              {(detailHost.vulns || []).map((v, i) => (
-                                <div key={i} style={styles.hostPluginRow}>
-                                  <span
-                                    style={{
-                                      ...styles.severityBadge,
-                                      background: severityColor(v.severity),
-                                      color: '#fff',
-                                      fontSize: '0.7rem',
-                                      padding: '0.1rem 0.35rem',
-                                    }}
-                                  >
-                                    {severityLabel(v.severity)}
-                                  </span>
-                                  <span style={styles.hostPluginId}>#{v.plugin_id}</span>
-                                  <span style={styles.vulnMeta}>{v.port || '—'}/{v.protocol || '—'}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </aside>
-                      </div>
-                    </>
-                  )}
-                </div>
-              ) : (
-                <div style={styles.findingsRoot}>
-                  <div style={styles.findingsScanHeader}>
-                    <button
-                      type="button"
-                      className="btn-secondary"
-                      style={styles.backBtn}
-                      onClick={() => setSelectedImportId(null)}
-                    >
-                      ← Back to scan list
-                    </button>
-                    <h3 style={styles.findingsScanTitle}>{importDetail.scan_name || `Scan ${selectedImportId}`}</h3>
-                  </div>
-                  <div style={styles.findingsTabs}>
-                    <button
-                      type="button"
-                      style={{
-                        ...styles.findingsTab,
-                        ...(scanSubView === 'vulns' ? styles.findingsTabActive : {}),
-                      }}
-                      onClick={() => setScanSubView('vulns')}
-                    >
-                      Vulnerabilities {vulnList.length}
-                    </button>
-                    <button
-                      type="button"
-                      style={{
-                        ...styles.findingsTab,
-                        ...(scanSubView === 'hosts' ? styles.findingsTabActive : {}),
-                      }}
-                      onClick={() => setScanSubView('hosts')}
-                    >
-                      Hosts {hosts.length}
-                    </button>
-                  </div>
+      <div style={S.detailLayout}>
+        {/* Main content */}
+        <div style={S.detailMain}>
+          <div style={S.detailTitleRow}>
+            <SeverityPill severity={vuln.severity} size="lg" />
+            <h2 style={S.detailTitle}>{vuln.plugin_name || `Plugin ${vuln.plugin_id}`}</h2>
+          </div>
 
-                  {scanSubView === 'vulns' && (
-                    <div style={styles.findingsContent}>
-                      <div style={styles.findingsToolbar}>
-                        <input
-                          type="text"
-                          placeholder="Search vulnerabilities…"
-                          value={vulnSearch}
-                          onChange={(e) => setVulnSearch(e.target.value)}
-                          style={styles.findingsSearch}
-                        />
-                        <span style={styles.findingsCount}>{filteredVulnList.length} vulnerabilities</span>
-                      </div>
-                      <div style={styles.findingsVulnLayout}>
-                        <div style={styles.findingsTableWrap}>
-                          <table className="findings-table" style={styles.findingsTable}>
-                            <thead>
-                              <tr>
-                                <th style={styles.findingsTh}>Sev</th>
-                                <th style={styles.findingsTh}>Name</th>
-                                <th style={styles.findingsTh}>Count</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {filteredVulnList.length === 0 ? (
-                                <tr>
-                                  <td colSpan={3} style={styles.findingsTd}>
-                                    {vulnList.length === 0 ? 'No vulnerabilities in this scan.' : 'No matches for search.'}
-                                  </td>
-                                </tr>
-                              ) : (
-                                filteredVulnList.map((v) => (
-                                  <tr
-                                    key={`${v.plugin_id}-${v.port}-${v.protocol}`}
-                                    style={styles.findingsTr}
-                                    onClick={() => {
-                                      setDetailVuln(v)
-                                      setDetailHost(null)
-                                    }}
-                                  >
-                                    <td style={styles.findingsTd}>
-                                      <span
-                                        style={{
-                                          ...styles.severityBadge,
-                                          background: severityColor(v.severity),
-                                          color: '#fff',
-                                        }}
-                                      >
-                                        {severityLabel(v.severity).toUpperCase()}
-                                      </span>
-                                    </td>
-                                    <td style={styles.findingsTdName}>{v.plugin_name || v.plugin_id}</td>
-                                    <td style={styles.findingsTd}>{v.affected_count}</td>
-                                  </tr>
-                                ))
-                              )}
-                            </tbody>
-                          </table>
-                        </div>
-                        <div style={styles.findingsSummary}>
-                          <h4 style={styles.findingsSummaryTitle}>By severity</h4>
-                          <div style={styles.findingsSummaryList}>
-                            {['Critical', 'High', 'Medium', 'Low', 'Info'].map((label) => (
-                              <div key={label} style={styles.findingsSummaryRow}>
-                                <span style={{ ...styles.severityDot, background: severityColor(label.toLowerCase()) }} />
-                                <span>{label}</span>
-                                <span style={styles.findingsSummaryCount}>{severityCounts[label] ?? 0}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+          {vuln.synopsis && <p style={S.synopsis}>{vuln.synopsis}</p>}
 
-                  {scanSubView === 'hosts' && (
-                    <div style={styles.findingsContent}>
-                      <div style={styles.findingsTableWrap}>
-                        <table className="findings-table" style={styles.findingsTable}>
-                          <thead>
-                            <tr>
-                              <th style={styles.findingsTh}>Host</th>
-                              <th style={styles.findingsTh}>Findings</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {hosts.length === 0 ? (
-                              <tr>
-                                <td colSpan={2} style={styles.findingsTd}>No hosts.</td>
-                              </tr>
-                            ) : (
-                              hosts.map((h) => (
-                                <tr
-                                  key={h.host_ip || h.name}
-                                  style={styles.findingsTr}
-                                  onClick={() => {
-                                    setDetailHost(h)
-                                    setDetailVuln(null)
-                                  }}
-                                >
-                                  <td style={styles.findingsTdName}>{h.name || h.host_ip}</td>
-                                  <td style={styles.findingsTd}>{(h.vulns || []).length}</td>
-                                </tr>
-                              ))
-                            )}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </>
+          {vuln.description && (
+            <Section title="Description">
+              <pre style={S.preBlock}>{vuln.description}</pre>
+            </Section>
+          )}
+
+          {vuln.solution && (
+            <Section title="Solution">
+              <pre style={S.preBlock}>{vuln.solution}</pre>
+            </Section>
+          )}
+
+          {vuln.plugin_output && (
+            <Section title="Plugin Output">
+              <pre style={S.termBlock}>{vuln.plugin_output}</pre>
+            </Section>
+          )}
+
+          {(vuln.affected_hosts?.length > 0 || vuln.affected_count > 0) && (
+            <Section title={`Affected Hosts (${vuln.affected_count ?? vuln.affected_hosts?.length ?? 0})`}>
+              <div style={S.chipGroup}>
+                {(vuln.affected_hosts || []).map((h, i) => (
+                  <span key={i} style={S.hostChip}>{h}</span>
+                ))}
+              </div>
+            </Section>
           )}
         </div>
-      )}
 
-      {view === 'scans' && (
-        <div style={styles.scansSection}>
-          <h3 style={styles.subtitle}>Scans from Nessus</h3>
-          <p style={styles.muted}>Import results from a scan to view vulnerabilities and hosts in ForSight. Use &quot;Import results&quot; to pull findings into this project.</p>
-          {!scans.length ? (
-            <p style={styles.muted}>No scans found. Create one below or in Nessus; they will appear here after refresh.</p>
-          ) : (
-            <div style={styles.tableWrap}>
-              <table style={styles.table}>
+        {/* Sidebar */}
+        <aside style={S.detailSidebar}>
+          <div style={S.sidebarCard}>
+            <h4 style={S.sidebarTitle}>Plugin Details</h4>
+            <dl style={S.dl}>
+              <dt style={S.dt}>Severity</dt>
+              <dd style={S.dd}><SeverityPill severity={vuln.severity} /></dd>
+              <dt style={S.dt}>Plugin ID</dt>
+              <dd style={S.dd}><code style={S.mono}>{vuln.plugin_id}</code></dd>
+              {vuln.port && <><dt style={S.dt}>Port</dt><dd style={S.dd}>{vuln.port}/{vuln.protocol || 'tcp'}</dd></>}
+              {vuln.risk_factor && <><dt style={S.dt}>Risk Factor</dt><dd style={S.dd}>{vuln.risk_factor}</dd></>}
+              {vuln.cvss_score && <><dt style={S.dt}>CVSS</dt><dd style={S.dd}>{vuln.cvss_score}</dd></>}
+              {vuln.cve && <><dt style={S.dt}>CVE</dt><dd style={S.dd}><code style={S.mono}>{vuln.cve}</code></dd></>}
+            </dl>
+          </div>
+        </aside>
+      </div>
+    </div>
+  )
+}
+
+function Section({ title, children }) {
+  return (
+    <section style={S.section}>
+      <h3 style={S.sectionTitle}>{title}</h3>
+      {children}
+    </section>
+  )
+}
+
+// ── Imported scan findings view ───────────────────────────────────────────────
+
+function ImportFindings({ projectId, importMeta, onBack }) {
+  const [detail, setDetail]       = useState(null)
+  const [loading, setLoading]     = useState(true)
+  const [error, setError]         = useState(null)
+  const [subView, setSubView]     = useState('vulns') // 'vulns' | 'hosts'
+  const [search, setSearch]       = useState('')
+  const [selectedVuln, setSelectedVuln] = useState(null)
+
+  useEffect(() => {
+    setLoading(true)
+    api.nessus.getImport(projectId, importMeta.scan_id)
+      .then(setDetail)
+      .catch((e) => setError(e?.body?.detail || e?.message || 'Failed to load'))
+      .finally(() => setLoading(false))
+  }, [projectId, importMeta.scan_id])
+
+  if (loading) return <div style={S.muted}>Loading scan details…</div>
+  if (error)   return <div style={S.errorBox}>{error}</div>
+  if (!detail) return null
+
+  if (selectedVuln) {
+    return (
+      <VulnDetail
+        vuln={selectedVuln}
+        scanName={detail.scan_name || `Scan ${importMeta.scan_id}`}
+        onBack={() => setSelectedVuln(null)}
+      />
+    )
+  }
+
+  // Build unified vuln list (deduplicated by plugin_id) with host lists
+  const vulnMap = new Map()
+  for (const host of detail.hosts || []) {
+    for (const v of host.vulns || []) {
+      const key = v.plugin_id
+      if (!vulnMap.has(key)) {
+        vulnMap.set(key, { ...v, affected_hosts: [], affected_count: 0 })
+      }
+      const existing = vulnMap.get(key)
+      existing.affected_hosts.push(host.name || host.host_ip)
+      existing.affected_count = existing.affected_hosts.length
+    }
+  }
+  const allVulns = [...vulnMap.values()].sort((a, b) => Number(b.severity) - Number(a.severity))
+
+  const filtered = search.trim()
+    ? allVulns.filter(v => (v.plugin_name || '').toLowerCase().includes(search.toLowerCase()))
+    : allVulns
+
+  const sevCounts = [0, 1, 2, 3, 4].map(n => ({
+    n, label: SEV_LABELS[n], count: allVulns.filter(v => Number(v.severity) === n).length
+  })).reverse().filter(x => x.count > 0)
+
+  const hosts = detail.hosts || []
+
+  return (
+    <div>
+      {/* Back + scan name */}
+      <div style={S.findingsHeader}>
+        <button type="button" style={S.backBtn} onClick={onBack}>← All scans</button>
+        <span style={S.findingsScanName}>{detail.scan_name || `Scan ${importMeta.scan_id}`}</span>
+      </div>
+
+      {/* Sub-tabs */}
+      <div style={S.subTabs}>
+        <button
+          type="button"
+          style={{ ...S.subTab, ...(subView === 'vulns' ? S.subTabActive : {}) }}
+          onClick={() => setSubView('vulns')}
+        >
+          Vulnerabilities {allVulns.length > 0 && <span style={S.tabCount}>{allVulns.length}</span>}
+        </button>
+        <button
+          type="button"
+          style={{ ...S.subTab, ...(subView === 'hosts' ? S.subTabActive : {}) }}
+          onClick={() => setSubView('hosts')}
+        >
+          Hosts {hosts.length > 0 && <span style={S.tabCount}>{hosts.length}</span>}
+        </button>
+      </div>
+
+      {subView === 'vulns' && (
+        <div style={S.findingsBody}>
+          {/* Toolbar */}
+          <div style={S.toolbar}>
+            <input
+              type="search"
+              placeholder="Search vulnerabilities…"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={S.searchInput}
+            />
+            <span style={S.muted}>{filtered.length} vulnerabilities</span>
+          </div>
+
+          <div style={S.findingsTwoPan}>
+            {/* Vuln table */}
+            <div style={S.vulnTableWrap}>
+              <table style={S.table}>
                 <thead>
                   <tr>
-                    <th style={styles.th}>Name</th>
-                    <th style={styles.th}>Status</th>
-                    <th style={styles.th}>Last run</th>
-                    <th style={styles.th}>Actions</th>
+                    <th style={S.th}>Sev</th>
+                    <th style={S.th}>Name</th>
+                    <th style={{ ...S.th, textAlign: 'right' }}>Count</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {scans.map((s, idx) => {
-                    const rowKey = s.id ?? s.name ?? idx
-                    const displayName = s.name ?? `Scan ${s.id}`
-                    return (
-                      <tr key={rowKey}>
-                        <td style={styles.td}>{displayName}</td>
-                        <td style={styles.td}>
-                          <span style={statusBadgeStyle(s.status)} title={s.status || ''}>
-                            {formatStatus(s.status)}
-                          </span>
-                        </td>
-                        <td style={styles.td}>{formatLastRun(s.last_modification_date)}</td>
-                        <td style={styles.td}>
-                          {webLaunchInfo?.available ? (
-                            <button
-                              type="button"
-                              className="btn-primary"
-                              disabled={launching === rowKey}
-                              onClick={() => launchScanViaWeb(s.id, s.name)}
-                              title="Launch via Nessus web UI (by scan name in this row)"
-                              style={styles.actionBtn}
-                            >
-                              {launching === rowKey ? 'Launching…' : 'Launch (via web)'}
-                            </button>
-                          ) : (
-                            <button
-                              type="button"
-                              className="btn-primary"
-                              disabled={launching === rowKey}
-                              onClick={() => launchScan(s.id, true)}
-                              title="Launch via API (if supported)"
-                              style={styles.actionBtn}
-                            >
-                              {launching === rowKey ? 'Launching…' : 'Launch'}
-                            </button>
-                          )}
-                          {webLaunchInfo?.open_url && (
-                            <button
-                              type="button"
-                              className="btn-secondary"
-                              style={styles.actionBtn}
-                              onClick={() => window.open(webLaunchInfo.open_url, '_blank', 'noopener,noreferrer')}
-                            >
-                              Open in Nessus
-                            </button>
-                          )}
-                          <button
-                            type="button"
-                            className="btn-secondary"
-                            disabled={importing === s.id}
-                            onClick={() => doImport(s.id)}
-                            title="Import scan results into this project"
-                            style={styles.actionBtn}
-                          >
-                            {importing === s.id ? 'Importing…' : 'Import results'}
-                          </button>
-                          {webLaunchInfo?.available && (
-                            <button
-                              type="button"
-                              className="btn-secondary"
-                              disabled={deleting === rowKey}
-                              onClick={() => deleteScanViaWeb(s.id, s.name)}
-                              title="Delete scan from Nessus (Trash)"
-                              style={{ ...styles.actionBtn, color: 'var(--danger, #c00)' }}
-                            >
-                              {deleting === rowKey ? 'Deleting…' : 'Trash'}
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    )
-                  })}
+                  {filtered.length === 0 ? (
+                    <tr><td colSpan={3} style={S.td}>No vulnerabilities found.</td></tr>
+                  ) : filtered.map((v, i) => (
+                    <tr
+                      key={v.plugin_id ?? i}
+                      style={S.vulnRow}
+                      onClick={() => setSelectedVuln(v)}
+                    >
+                      <td style={{ ...S.td, width: 90 }}><SeverityPill severity={v.severity} /></td>
+                      <td style={{ ...S.td, ...S.vulnName }}>{v.plugin_name || `Plugin ${v.plugin_id}`}</td>
+                      <td style={{ ...S.td, textAlign: 'right', color: 'var(--text-muted)' }}>{v.affected_count}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
-          )}
 
-          <div style={styles.createSection}>
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => setShowCreate(!showCreate)}
-              style={styles.collapseBtn}
-            >
-              {showCreate ? 'Hide create scan' : 'Create new scan (optional)'}
-            </button>
-            {showCreate && (
-              <div style={styles.createCard}>
-                <div style={styles.createRow}>
-                  <label style={styles.label}>Scan name</label>
-                  <input
-                    type="text"
-                    value={createName}
-                    onChange={(e) => setCreateName(e.target.value)}
-                    placeholder="e.g. ForSight scan"
-                    style={styles.input}
-                  />
-                </div>
-                <div style={styles.createRow}>
-                  <label style={styles.label}>Template</label>
-                  <select value={createTemplateUuid} onChange={(e) => setCreateTemplateUuid(e.target.value)} style={styles.select}>
-                    <option value="">— Select template or policy —</option>
-                    {templates.map((t) => {
-                      const value = t.uuid || (t.type === 'policy' && t.id != null ? `policy:${t.id}` : '') || t.id || ''
-                      const label = t.name || t.title || (t.type === 'policy' ? `Policy ${t.id}` : t.uuid) || `Item ${t.id}`
-                      return (
-                        <option key={value || label} value={value}>
-                          {t.type === 'policy' ? `[Policy] ${label}` : label}
-                        </option>
-                      )
-                    })}
-                  </select>
-                </div>
-                <div style={styles.createRow}>
-                  <label style={styles.label}>Extra targets (optional)</label>
-                  <textarea
-                    value={createExtraTargets}
-                    onChange={(e) => setCreateExtraTargets(e.target.value)}
-                    placeholder="Additional IPs or hostnames"
-                    style={styles.textarea}
-                    rows={2}
-                  />
-                </div>
-                {createError && <div style={styles.error}>{createError}</div>}
-                <div style={styles.createBtnRow}>
-                  <button type="button" className="btn-primary" disabled={creating || creatingViaWeb} onClick={createScan} style={styles.createBtn}>
-                    {creating ? 'Creating…' : 'Create scan (API)'}
-                  </button>
-                  {webLaunchInfo?.available && (
-                    <button type="button" className="btn-primary" disabled={creating || creatingViaWeb} onClick={createScanViaWeb} style={styles.createBtn}>
-                      {creatingViaWeb ? 'Creating…' : 'Create via web'}
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
+            {/* Severity summary */}
+            <div style={S.sevSummary}>
+              <div style={S.sevSummaryTitle}>By severity</div>
+              {sevCounts.map(({ n, label, count }) => {
+                const cfg = SEV_COLORS[n] || SEV_COLORS[0]
+                return (
+                  <div key={n} style={S.sevRow}>
+                    <span style={{ ...S.sevDot, background: cfg.text }} />
+                    <span style={S.sevLabel}>{label}</span>
+                    <span style={S.sevCount}>{count}</span>
+                  </div>
+                )
+              })}
+            </div>
           </div>
+        </div>
+      )}
+
+      {subView === 'hosts' && (
+        <div style={S.findingsBody}>
+          <table style={S.table}>
+            <thead>
+              <tr>
+                <th style={S.th}>Host</th>
+                <th style={{ ...S.th, textAlign: 'right' }}>Findings</th>
+              </tr>
+            </thead>
+            <tbody>
+              {hosts.length === 0 ? (
+                <tr><td colSpan={2} style={S.td}>No hosts.</td></tr>
+              ) : hosts.map((h, i) => (
+                <tr key={h.host_ip || i} style={S.vulnRow} onClick={() => {
+                  // Show all vulns for this host
+                  setSubView('vulns')
+                  setSearch(h.name || h.host_ip || '')
+                }}>
+                  <td style={{ ...S.td, ...S.mono }}>{h.name || h.host_ip}</td>
+                  <td style={{ ...S.td, textAlign: 'right', color: 'var(--text-muted)' }}>
+                    {(h.vulns || []).length}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
   )
 }
 
-const styles = {
-  wrapper: { padding: '0.5rem 0' },
-  card: { padding: '1rem' },
-  header: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem' },
-  headerActions: { display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' },
-  title: { margin: 0, fontSize: '1.25rem' },
-  subtitle: { margin: '0 0 0.5rem 0', fontSize: '1rem' },
-  tabBtn: { marginRight: '0.25rem' },
-  muted: { color: 'var(--text-muted)', margin: 0 },
-  error: { color: 'var(--danger, #c00)', marginBottom: '1rem' },
-  importedSection: { display: 'flex', flexDirection: 'column', gap: '1rem' },
-  importedList: { flex: '0 0 auto' },
-  importList: { listStyle: 'none', padding: 0, margin: 0 },
-  importItem: {
-    padding: '0.75rem',
-    border: '1px solid var(--border)',
-    borderRadius: 'var(--radius)',
-    marginBottom: '0.5rem',
-    cursor: 'pointer',
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    gap: '0.5rem',
-  },
-  importItemActive: { borderColor: 'var(--primary)', background: 'var(--bg-subtle, #f5f5f5)' },
-  importName: { fontWeight: 600 },
-  importMeta: { fontSize: '0.9rem', color: 'var(--text-muted)' },
-  deleteImportBtn: { marginLeft: 'auto' },
-  detailArea: { border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '1rem' },
-  twoCol: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' },
-  panel: { minWidth: 0 },
-  panelTitle: { margin: '0 0 0.5rem 0', fontSize: '0.95rem' },
-  vulnList: { maxHeight: 320, overflowY: 'auto' },
-  vulnRow: {
-    padding: '0.4rem 0.5rem',
-    borderLeft: '3px solid #666',
-    marginBottom: 2,
-    cursor: 'pointer',
-    borderRadius: 2,
-    background: 'var(--bg-subtle, #fafafa)',
-  },
-  vulnName: { display: 'block', fontWeight: 500 },
-  vulnMeta: { fontSize: '0.85rem', color: 'var(--text-muted)' },
-  hostList: { maxHeight: 320, overflowY: 'auto' },
-  hostRow: {
-    padding: '0.4rem 0.5rem',
-    marginBottom: 2,
-    cursor: 'pointer',
-    borderRadius: 2,
-    background: 'var(--bg-subtle, #fafafa)',
-    border: '1px solid transparent',
-  },
-  hostName: { fontWeight: 500 },
-  detailPanel: { marginTop: '1rem', padding: '1rem', border: '1px solid var(--border)', borderRadius: 'var(--radius)', minHeight: 120 },
-  detailContent: {},
-  detailTitle: { margin: '0 0 0.5rem 0' },
-  detailMeta: { fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem' },
-  detailBlock: { marginTop: '0.75rem' },
-  pre: { whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: '0.9rem', margin: '0.25rem 0', padding: '0.5rem', background: 'var(--bg-subtle)', borderRadius: 4, maxHeight: 300, overflow: 'auto' },
-  preSmall: { whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: '0.85rem', margin: '0.25rem 0', padding: '0.25rem', background: 'var(--bg-subtle)', borderRadius: 4 },
-  hostVuln: { marginBottom: '0.75rem' },
-  scansSection: {},
-  tableWrap: { overflowX: 'auto' },
-  table: { width: '100%', borderCollapse: 'collapse' },
-  th: { textAlign: 'left', padding: '0.5rem 0.75rem', borderBottom: '1px solid var(--border)' },
-  td: { padding: '0.5rem 0.75rem', borderBottom: '1px solid var(--border)' },
-  actionBtn: { marginRight: '0.5rem' },
-  createSection: { marginTop: '1.5rem' },
-  collapseBtn: { marginBottom: '0.5rem' },
-  createCard: { marginBottom: '1rem', padding: '1rem', border: '1px solid var(--border)', borderRadius: 'var(--radius)' },
-  createRow: { marginBottom: '0.75rem' },
-  label: { display: 'block', marginBottom: '0.25rem', fontSize: '0.9rem' },
-  input: { width: '100%', maxWidth: 400, padding: '0.4rem 0.5rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)' },
-  select: { width: '100%', maxWidth: 400, padding: '0.4rem 0.5rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)' },
-  textarea: { width: '100%', maxWidth: 400, padding: '0.4rem 0.5rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)', resize: 'vertical' },
-  createBtn: { marginTop: '0.5rem', marginRight: '0.5rem' },
-  createBtnRow: { display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' },
-  backBtn: { marginBottom: '0.5rem' },
-  findingsRoot: { border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' },
-  findingsScanHeader: { padding: '0.75rem 1rem', borderBottom: '1px solid var(--border)', background: 'var(--bg-subtle, #f8f8f8)' },
-  findingsScanTitle: { margin: '0.25rem 0 0 0', fontSize: '1.1rem' },
-  findingsTabs: { display: 'flex', gap: 0, borderBottom: '1px solid var(--border)', background: 'var(--bg-subtle, #f8f8f8)' },
-  findingsTab: {
-    padding: '0.5rem 1rem',
-    border: 'none',
-    background: 'none',
-    cursor: 'pointer',
-    fontSize: '0.9rem',
-    color: 'var(--text-muted)',
-    borderBottom: '2px solid transparent',
-  },
-  findingsTabActive: { color: 'var(--text)', fontWeight: 600, borderBottomColor: 'var(--primary)' },
-  findingsContent: { padding: '1rem' },
-  findingsToolbar: { display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' },
-  findingsSearch: {
-    flex: '1',
-    maxWidth: 320,
-    padding: '0.5rem 0.75rem',
-    borderRadius: 'var(--radius)',
-    border: '1px solid var(--border)',
-    fontSize: '0.9rem',
-  },
-  findingsCount: { fontSize: '0.9rem', color: 'var(--text-muted)' },
-  findingsVulnLayout: { display: 'grid', gridTemplateColumns: '1fr 220px', gap: '1.5rem', alignItems: 'start' },
-  findingsTableWrap: { overflowX: 'auto', minWidth: 0 },
-  findingsTable: { width: '100%', borderCollapse: 'collapse' },
-  findingsTh: {
-    textAlign: 'left',
-    padding: '0.5rem 0.75rem',
-    borderBottom: '1px solid var(--border)',
-    fontSize: '0.85rem',
-    fontWeight: 600,
-    color: 'var(--text-muted)',
-  },
-  findingsTd: { padding: '0.75rem 0.85rem', borderBottom: '1px solid var(--border)', fontSize: '0.9rem', verticalAlign: 'middle' },
-  findingsTdName: { padding: '0.75rem 0.85rem', borderBottom: '1px solid var(--border)', fontSize: '0.9rem', maxWidth: 420, verticalAlign: 'middle' },
-  findingsTr: { cursor: 'pointer', transition: 'background 0.15s' },
-  findingsTrHover: {},
-  severityBadge: {
-    display: 'inline-block',
-    padding: '0.2rem 0.5rem',
-    borderRadius: 4,
-    fontSize: '0.75rem',
-    fontWeight: 600,
-  },
-  findingsSummary: { padding: '1rem', border: '1px solid var(--border)', borderRadius: 'var(--radius)', maxWidth: 240 },
-  findingsSummaryTitle: { margin: '0 0 0.5rem 0', fontSize: '0.9rem' },
-  findingsSummaryList: { display: 'flex', flexDirection: 'column', gap: '0.35rem' },
-  findingsSummaryRow: { display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem' },
-  severityDot: { width: 8, height: 8, borderRadius: '50%', flexShrink: 0 },
-  findingsSummaryCount: { marginLeft: 'auto', fontWeight: 600 },
-  findingsDetailRoot: { border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' },
-  findingsDetailHeader: { padding: '0.75rem 1rem', borderBottom: '1px solid var(--border)', background: 'var(--bg-subtle, #f8f8f8)' },
-  findingsDetailBreadcrumb: { fontSize: '0.85rem', color: 'var(--text-muted)', marginLeft: '0.5rem' },
-  findingsDetailLayout: { display: 'grid', gridTemplateColumns: '1fr 280px', gap: '1.5rem', padding: '1rem', minHeight: 0 },
-  findingsDetailMain: { minWidth: 0 },
-  findingsDetailTitleRow: { display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '0.5rem' },
-  findingsDetailTitle: { margin: 0, fontSize: '1rem', fontWeight: 600, flex: 1 },
-  findingsSynopsis: { margin: '0 0 1rem 0', fontSize: '0.9rem', color: 'var(--text-muted)' },
-  findingsSection: { marginTop: '1.25rem' },
-  findingsSectionTitle: { margin: '0 0 0.35rem 0', fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' },
-  findingsSectionBody: { fontSize: '0.9rem' },
-  findingsSidebar: { borderLeft: '1px solid var(--border)', paddingLeft: '1rem' },
-  findingsSidebarBlock: {},
-  findingsSidebarTitle: { margin: '0 0 0.5rem 0', fontSize: '0.9rem', fontWeight: 600 },
-  findingsSidebarDl: { margin: 0, fontSize: '0.85rem' },
-  findingsSidebarDt: { marginTop: '0.5rem', color: 'var(--text-muted)' },
-  findingsSidebarDd: { margin: '0.25rem 0 0 0' },
-  hostVulnCard: { marginBottom: '1.5rem', padding: '1rem', border: '1px solid var(--border)', borderRadius: 'var(--radius)', background: 'var(--surface, #fff)' },
-  hostVulnName: { fontWeight: 600, marginRight: '0.5rem' },
-  hostVulnSynopsis: { margin: '0.25rem 0', fontSize: '0.9rem', color: 'var(--text-muted)' },
-  hostPluginRow: { display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.4rem', fontSize: '0.85rem' },
-  hostPluginId: { fontFamily: 'var(--font-mono)', marginRight: '0.25rem' },
+// ── Imported scan list ────────────────────────────────────────────────────────
+
+function ImportedResults({ projectId, imports, onDelete, onRefresh }) {
+  const [selected, setSelected] = useState(null)
+
+  if (selected) {
+    return (
+      <ImportFindings
+        projectId={projectId}
+        importMeta={selected}
+        onBack={() => setSelected(null)}
+      />
+    )
+  }
+
+  if (!imports.length) {
+    return (
+      <div style={S.emptyBox}>
+        <p style={S.emptyTitle}>No imported results yet</p>
+        <p style={S.muted}>Switch to <strong>Available scans</strong> and click <strong>Import results</strong> after a scan completes.</p>
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      <table style={S.table}>
+        <thead>
+          <tr>
+            <th style={S.th}>Scan name</th>
+            <th style={S.th}>Hosts</th>
+            <th style={S.th}>Findings</th>
+            <th style={S.th}>Imported</th>
+            <th style={S.th}></th>
+          </tr>
+        </thead>
+        <tbody>
+          {imports.map((imp) => (
+            <tr
+              key={imp.scan_id}
+              style={S.vulnRow}
+              onClick={() => setSelected(imp)}
+            >
+              <td style={{ ...S.td, fontWeight: 500 }}>{imp.scan_name || `Scan ${imp.scan_id}`}</td>
+              <td style={S.td}>{imp.hosts_count ?? 0}</td>
+              <td style={S.td}>{imp.vulns_count ?? 0}</td>
+              <td style={{ ...S.td, color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                {imp.imported_at ? new Date(imp.imported_at).toLocaleString() : '—'}
+              </td>
+              <td style={S.td} onClick={e => e.stopPropagation()}>
+                <button
+                  type="button"
+                  style={S.dangerBtn}
+                  onClick={() => {
+                    if (window.confirm('Remove this imported scan?')) onDelete(imp.scan_id)
+                  }}
+                >
+                  Remove
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+// ── Available scans (scan management) ────────────────────────────────────────
+
+function AvailableScans({ projectId, scans, webLaunchInfo, launching, importing, deleting, templates,
+  onLaunch, onImport, onDelete, showCreate, setShowCreate,
+  createName, setCreateName, createTemplateUuid, setCreateTemplateUuid,
+  createExtraTargets, setCreateExtraTargets, creating, creatingViaWeb,
+  createError, onCreateAPI, onCreateWeb
+}) {
+  return (
+    <div>
+      {/* Scan table */}
+      {scans.length === 0 ? (
+        <div style={S.emptyBox}>
+          <p style={S.muted}>No scans found. Create one below or directly in Nessus, then refresh.</p>
+        </div>
+      ) : (
+        <div style={S.tableWrap}>
+          <table style={S.table}>
+            <thead>
+              <tr>
+                <th style={S.th}>Name</th>
+                <th style={S.th}>Status</th>
+                <th style={S.th}>Last run</th>
+                <th style={{ ...S.th, textAlign: 'right' }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {scans.map((s, idx) => {
+                const key = s.id ?? s.name ?? idx
+                const name = s.name ?? `Scan ${s.id}`
+                const isLaunching = launching === key
+                const isImporting = importing === s.id
+                const isDeleting  = deleting  === key
+                return (
+                  <tr key={key} style={S.scanRow}>
+                    <td style={{ ...S.td, fontWeight: 500 }}>{name}</td>
+                    <td style={S.td}><StatusChip status={s.status} /></td>
+                    <td style={{ ...S.td, color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                      {formatLastRun(s.last_modification_date)}
+                    </td>
+                    <td style={{ ...S.td, textAlign: 'right' }}>
+                      <div style={S.actionGroup}>
+                        {/* Launch */}
+                        {webLaunchInfo?.available ? (
+                          <button
+                            type="button"
+                            style={{ ...S.actionBtn, ...S.primaryBtn }}
+                            disabled={isLaunching}
+                            onClick={() => onLaunch(s.id, name)}
+                          >
+                            {isLaunching ? 'Launching…' : 'Launch'}
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            style={{ ...S.actionBtn, ...S.primaryBtn }}
+                            disabled={isLaunching || !s.id}
+                            title={!webLaunchInfo?.available ? 'Configure Tenable credentials for web launch' : ''}
+                            onClick={() => onLaunch(s.id, name)}
+                          >
+                            {isLaunching ? 'Launching…' : 'Launch'}
+                          </button>
+                        )}
+
+                        {/* Open in Nessus */}
+                        {webLaunchInfo?.open_url && (
+                          <button
+                            type="button"
+                            style={S.actionBtn}
+                            onClick={() => window.open(webLaunchInfo.open_url, '_blank', 'noopener,noreferrer')}
+                          >
+                            Open in Nessus ↗
+                          </button>
+                        )}
+
+                        {/* Import */}
+                        <button
+                          type="button"
+                          style={S.actionBtn}
+                          disabled={isImporting || !s.id}
+                          onClick={() => onImport(s.id)}
+                        >
+                          {isImporting ? 'Importing…' : 'Import results'}
+                        </button>
+
+                        {/* Trash */}
+                        {webLaunchInfo?.available && (
+                          <button
+                            type="button"
+                            style={{ ...S.actionBtn, ...S.dangerOutlineBtn }}
+                            disabled={isDeleting}
+                            onClick={() => onDelete(s.id, name)}
+                          >
+                            {isDeleting ? 'Deleting…' : 'Trash'}
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Create scan section */}
+      <div style={S.createSection}>
+        <button
+          type="button"
+          style={S.toggleCreateBtn}
+          onClick={() => setShowCreate(v => !v)}
+        >
+          {showCreate ? 'Hide create scan' : '+ Create new scan'}
+        </button>
+
+        {showCreate && (
+          <div style={S.createForm}>
+            {createError && <div style={S.errorBox}>{createError}</div>}
+
+            <div style={S.formRow}>
+              <label style={S.label}>Scan name</label>
+              <input
+                type="text"
+                value={createName}
+                onChange={e => setCreateName(e.target.value)}
+                placeholder="e.g. ForSight scan"
+                style={S.input}
+              />
+            </div>
+
+            <div style={S.formRow}>
+              <label style={S.label}>Template</label>
+              <select
+                value={createTemplateUuid}
+                onChange={e => setCreateTemplateUuid(e.target.value)}
+                style={S.input}
+              >
+                <option value="">— Select template or policy —</option>
+                {templates.map(t => (
+                  <option key={t.uuid || t.id} value={t.uuid || `policy:${t.id}`}>
+                    {t.title || t.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div style={S.formRow}>
+              <label style={S.label}>Extra targets (optional)</label>
+              <textarea
+                value={createExtraTargets}
+                onChange={e => setCreateExtraTargets(e.target.value)}
+                placeholder="Additional IPs or hostnames"
+                style={{ ...S.input, minHeight: 72, resize: 'vertical' }}
+              />
+            </div>
+
+            <div style={S.formActions}>
+              <button
+                type="button"
+                style={{ ...S.actionBtn, ...S.primaryBtn }}
+                disabled={creating || !createName.trim() || !createTemplateUuid}
+                onClick={onCreateAPI}
+              >
+                {creating ? 'Creating…' : 'Create scan (API)'}
+              </button>
+              {webLaunchInfo?.available && (
+                <button
+                  type="button"
+                  style={S.actionBtn}
+                  disabled={creatingViaWeb || !createName.trim()}
+                  onClick={onCreateWeb}
+                >
+                  {creatingViaWeb ? 'Creating…' : 'Create via web'}
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ── Main Nessus component ─────────────────────────────────────────────────────
+
+export default function Nessus({ projectId, onRefresh }) {
+  const [configured,    setConfigured]    = useState(false)
+  const [webLaunchInfo, setWebLaunchInfo] = useState(null)
+  const [scans,         setScans]         = useState([])
+  const [imports,       setImports]       = useState([])
+  const [loading,       setLoading]       = useState(true)
+  const [error,         setError]         = useState(null)
+  const [view,          setView]          = useState('imported') // 'imported' | 'scans'
+  const [launching,     setLaunching]     = useState(null)
+  const [importing,     setImporting]     = useState(null)
+  const [deleting,      setDeleting]      = useState(null)
+  const [templates,     setTemplates]     = useState([])
+  const [showCreate,    setShowCreate]    = useState(false)
+  const [createName,    setCreateName]    = useState('')
+  const [createTemplateUuid, setCreateTemplateUuid] = useState('')
+  const [createExtraTargets, setCreateExtraTargets] = useState('')
+  const [creating,      setCreating]      = useState(false)
+  const [creatingViaWeb,setCreatingViaWeb]= useState(false)
+  const [createError,   setCreateError]   = useState(null)
+  const [statusMsg,     setStatusMsg]     = useState(null) // { type, text }
+
+  const flash = (type, text) => {
+    setStatusMsg({ type, text })
+    setTimeout(() => setStatusMsg(null), 6000)
+  }
+
+  const loadImports = useCallback(() => {
+    if (!projectId || !configured) return Promise.resolve()
+    return api.nessus.listImports(projectId)
+      .then(d => setImports(Array.isArray(d?.scans) ? d.scans : []))
+      .catch(() => {})
+  }, [projectId, configured])
+
+  const loadScans = useCallback((bust = false) => {
+    if (!projectId || !configured) return Promise.resolve()
+    return api.nessus.listScans(projectId, bust)
+      .then(d => setScans(Array.isArray(d?.scans) ? d.scans : []))
+      .catch(() => {})
+  }, [projectId, configured])
+
+  // Initial data load
+  useEffect(() => {
+    if (!projectId) return
+    api.nessus.configured()
+      .then(r => setConfigured(r?.configured === true))
+      .catch(() => setConfigured(false))
+  }, [projectId])
+
+  useEffect(() => {
+    if (!configured) { setLoading(false); return }
+    api.nessus.webLaunchAvailable().then(setWebLaunchInfo).catch(() => {})
+    setLoading(true)
+    Promise.all([
+      api.nessus.listScans(projectId).then(d => Array.isArray(d?.scans) ? d.scans : []),
+      api.nessus.listImports(projectId).then(d => Array.isArray(d?.scans) ? d.scans : []),
+      api.nessus.templates(projectId).then(d => Array.isArray(d?.templates) ? d.templates : []).catch(() => []),
+    ])
+      .then(([s, i, t]) => { setScans(s); setImports(i); setTemplates(t) })
+      .catch(e => setError(e?.body?.detail || e?.message || 'Failed to load Nessus data'))
+      .finally(() => setLoading(false))
+  }, [configured, projectId])
+
+  const handleRefresh = () => {
+    loadImports()
+    loadScans(true)
+  }
+
+  const handleLaunch = async (scanId, scanName) => {
+    const key = scanId ?? scanName
+    setLaunching(key)
+    try {
+      if (webLaunchInfo?.available) {
+        await api.nessus.launchScanViaWebByName(projectId, scanName)
+        flash('success', `Launch triggered for "${scanName}".`)
+      } else {
+        await api.nessus.launchScan(projectId, scanId, { use_project_targets: true })
+        flash('success', `Scan launched.`)
+      }
+      await loadScans(true)
+    } catch (e) {
+      flash('error', e?.body?.detail || e?.message || 'Launch failed.')
+    } finally {
+      setLaunching(null)
+    }
+  }
+
+  const handleImport = async (scanId) => {
+    setImporting(scanId)
+    try {
+      await api.nessus.importScan(projectId, scanId)
+      flash('success', 'Import complete. Results merged into Hosts.')
+      await loadImports()
+    } catch (e) {
+      flash('error', e?.body?.detail || e?.message || 'Import failed.')
+    } finally {
+      setImporting(null)
+    }
+  }
+
+  const handleDelete = async (scanId, scanName) => {
+    if (!window.confirm(`Delete scan "${scanName}" from Nessus?`)) return
+    const key = scanId ?? scanName
+    setDeleting(key)
+    try {
+      await api.nessus.deleteScanViaWebByName(projectId, scanName)
+      flash('success', `Scan "${scanName}" deleted.`)
+      await loadScans(true)
+    } catch (e) {
+      flash('error', e?.body?.detail || e?.message || 'Delete failed.')
+    } finally {
+      setDeleting(null)
+    }
+  }
+
+  const handleDeleteImport = async (scanId) => {
+    try {
+      await api.nessus.deleteImport(projectId, scanId)
+      await loadImports()
+    } catch (e) {
+      flash('error', e?.body?.detail || e?.message || 'Remove failed.')
+    }
+  }
+
+  const handleCreateAPI = async () => {
+    if (!createName.trim() || !createTemplateUuid) return
+    setCreating(true); setCreateError(null)
+    try {
+      await api.nessus.createScan(projectId, {
+        name: createName.trim(),
+        template_uuid: createTemplateUuid,
+        use_project_targets: true,
+        text_targets: createExtraTargets || undefined,
+      })
+      flash('success', `Scan "${createName}" created.`)
+      setCreateName(''); setCreateTemplateUuid(''); setCreateExtraTargets(''); setShowCreate(false)
+      await loadScans(true)
+    } catch (e) {
+      setCreateError(e?.body?.detail || e?.message || 'Create failed.')
+    } finally {
+      setCreating(false)
+    }
+  }
+
+  const handleCreateWeb = async () => {
+    if (!createName.trim()) return
+    setCreatingViaWeb(true); setCreateError(null)
+    try {
+      await api.nessus.createScanViaWeb(projectId, {
+        scan_name: createName.trim(),
+        targets_text: createExtraTargets || '',
+        template_key: 'advanced',
+      })
+      flash('success', `Scan "${createName}" created via web.`)
+      setCreateName(''); setCreateExtraTargets(''); setShowCreate(false)
+      await loadScans(true)
+    } catch (e) {
+      setCreateError(e?.body?.detail || e?.message || 'Create via web failed.')
+    } finally {
+      setCreatingViaWeb(false)
+    }
+  }
+
+  // ── Not configured ─────────────────────────────────────────────────────────
+  if (!configured && !loading) {
+    return (
+      <div style={S.notConfigured}>
+        <h2 style={S.notConfiguredTitle}>Nessus not configured</h2>
+        <p style={S.muted}>
+          Set Tenable credentials in <code style={S.inlineCode}>backend/.env</code>:
+        </p>
+        <ul style={S.configList}>
+          {[
+            ['FORSIGHT_TENABLE_BASE_URL', 'Nessus URL (default https://127.0.0.1:8834)'],
+            ['FORSIGHT_TENABLE_ACCESS_KEY', 'API access key'],
+            ['FORSIGHT_TENABLE_SECRET_KEY', 'API secret key'],
+            ['FORSIGHT_TENABLE_USERNAME',   'Username (for Selenium launch/create/delete)'],
+            ['FORSIGHT_TENABLE_PASSWORD',   'Password (for Selenium)'],
+          ].map(([k, v]) => (
+            <li key={k} style={S.configItem}>
+              <code style={S.inlineCode}>{k}</code>
+              <span style={S.muted}> — {v}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+
+  if (loading && !imports.length) {
+    return <div style={S.muted}>Loading Nessus data…</div>
+  }
+
+  // ── Main layout ─────────────────────────────────────────────────────────────
+  return (
+    <div>
+      {/* Header bar */}
+      <div style={S.header}>
+        <h2 style={S.pageTitle}>Nessus</h2>
+        <div style={S.headerActions}>
+          <button
+            type="button"
+            style={{ ...S.tabPill, ...(view === 'imported' ? S.tabPillActive : {}) }}
+            onClick={() => setView('imported')}
+          >
+            Imported results
+          </button>
+          <button
+            type="button"
+            style={{ ...S.tabPill, ...(view === 'scans' ? S.tabPillActive : {}) }}
+            onClick={() => setView('scans')}
+          >
+            Available scans
+          </button>
+          <button type="button" style={S.refreshBtn} onClick={handleRefresh}>
+            ↻ Refresh
+          </button>
+        </div>
+      </div>
+
+      {/* Status flash message */}
+      {statusMsg && (
+        <div style={{
+          ...S.flashMsg,
+          borderLeftColor: statusMsg.type === 'success' ? 'var(--primary)' : 'var(--danger)',
+          color: statusMsg.type === 'success' ? 'var(--primary)' : 'var(--danger)',
+        }}>
+          {statusMsg.text}
+        </div>
+      )}
+
+      {error && <div style={S.errorBox}>{error}</div>}
+
+      {/* Content */}
+      <div style={S.content}>
+        {view === 'imported' && (
+          <ImportedResults
+            projectId={projectId}
+            imports={imports}
+            onDelete={handleDeleteImport}
+            onRefresh={handleRefresh}
+          />
+        )}
+
+        {view === 'scans' && (
+          <AvailableScans
+            projectId={projectId}
+            scans={scans}
+            webLaunchInfo={webLaunchInfo}
+            launching={launching}
+            importing={importing}
+            deleting={deleting}
+            templates={templates}
+            onLaunch={handleLaunch}
+            onImport={handleImport}
+            onDelete={handleDelete}
+            showCreate={showCreate}
+            setShowCreate={setShowCreate}
+            createName={createName}
+            setCreateName={setCreateName}
+            createTemplateUuid={createTemplateUuid}
+            setCreateTemplateUuid={setCreateTemplateUuid}
+            createExtraTargets={createExtraTargets}
+            setCreateExtraTargets={setCreateExtraTargets}
+            creating={creating}
+            creatingViaWeb={creatingViaWeb}
+            createError={createError}
+            onCreateAPI={handleCreateAPI}
+            onCreateWeb={handleCreateWeb}
+          />
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ── Styles ────────────────────────────────────────────────────────────────────
+
+const S = {
+  // Layout
+  header: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 16 },
+  pageTitle: { margin: 0, fontSize: '1.25rem', fontWeight: 700 },
+  headerActions: { display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
+  content: {},
+
+  // Tab pills
+  tabPill: { padding: '5px 14px', borderRadius: 20, border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-muted)', fontSize: '0.85rem', cursor: 'pointer', fontWeight: 500 },
+  tabPillActive: { background: 'var(--accent)', color: 'var(--accent-text)', borderColor: 'var(--accent)' },
+  refreshBtn: { padding: '5px 12px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-muted)', fontSize: '0.82rem', borderRadius: 6, cursor: 'pointer' },
+
+  // Flash
+  flashMsg: { padding: '10px 14px', borderLeft: '3px solid', borderRadius: '0 6px 6px 0', background: 'var(--surface)', marginBottom: 12, fontSize: '0.875rem', fontWeight: 500 },
+  errorBox: { padding: '10px 14px', background: 'rgba(220,38,38,0.08)', border: '1px solid rgba(220,38,38,0.25)', borderRadius: 6, color: 'var(--danger)', fontSize: '0.875rem', marginBottom: 12 },
+
+  // Table
+  tableWrap: { overflowX: 'auto', borderRadius: 8, border: '1px solid var(--border)' },
+  table: { width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' },
+  th: { padding: '10px 14px', textAlign: 'left', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', background: 'var(--surface-muted)', borderBottom: '1px solid var(--border)' },
+  td: { padding: '11px 14px', borderBottom: '1px solid var(--border)', verticalAlign: 'middle', color: 'var(--text)' },
+  vulnRow: { cursor: 'pointer', transition: 'background 0.1s' },
+  scanRow: {},
+  vulnName: { maxWidth: 460, overflow: 'hidden', textOverflow: 'ellipsis' },
+
+  // Action buttons
+  actionGroup: { display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'flex-end', flexWrap: 'wrap' },
+  actionBtn: { padding: '4px 12px', borderRadius: 5, border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)', fontSize: '0.8rem', cursor: 'pointer', fontWeight: 500, whiteSpace: 'nowrap' },
+  primaryBtn: { background: 'var(--primary)', color: 'var(--primary-text)', border: 'none' },
+  dangerBtn: { padding: '3px 10px', border: '1px solid rgba(220,38,38,0.4)', background: 'transparent', color: 'var(--danger)', borderRadius: 5, fontSize: '0.78rem', cursor: 'pointer' },
+  dangerOutlineBtn: { borderColor: 'rgba(220,38,38,0.4)', color: 'var(--danger)', background: 'transparent' },
+
+  // Findings two-pane
+  findingsHeader: { display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 },
+  findingsScanName: { fontWeight: 600, fontSize: '1rem' },
+  findingsBody: { marginTop: 16 },
+  findingsTwoPan: { display: 'grid', gridTemplateColumns: '1fr 200px', gap: 20, alignItems: 'start' },
+  vulnTableWrap: { overflowX: 'auto', border: '1px solid var(--border)', borderRadius: 8 },
+  toolbar: { display: 'flex', alignItems: 'center', gap: 14, marginBottom: 12 },
+  searchInput: { flex: 1, maxWidth: 320, padding: '7px 11px', border: '1px solid var(--border)', borderRadius: 6, background: 'var(--surface-muted)', color: 'var(--text)', fontSize: '0.875rem' },
+
+  // Severity summary
+  sevSummary: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, padding: 14 },
+  sevSummaryTitle: { fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: 10 },
+  sevRow: { display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 },
+  sevDot: { width: 8, height: 8, borderRadius: '50%', flexShrink: 0 },
+  sevLabel: { flex: 1, fontSize: '0.85rem', color: 'var(--text)' },
+  sevCount: { fontSize: '0.85rem', fontWeight: 600, color: 'var(--text)' },
+
+  // Sub-tabs
+  subTabs: { display: 'flex', gap: 0, borderBottom: '2px solid var(--border)', marginBottom: 0 },
+  subTab: { padding: '8px 18px', background: 'none', border: 'none', borderBottom: '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 500, marginBottom: -2 },
+  subTabActive: { color: 'var(--accent)', borderBottomColor: 'var(--accent)', fontWeight: 600 },
+  tabCount: { marginLeft: 6, background: 'var(--border)', color: 'var(--text-muted)', borderRadius: 10, padding: '1px 7px', fontSize: '0.75rem', fontWeight: 600 },
+
+  // Vuln detail
+  detailRoot: { paddingBottom: 32 },
+  detailNav: { display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 },
+  detailBreadcrumb: { color: 'var(--text-muted)', fontSize: '0.85rem' },
+  detailLayout: { display: 'grid', gridTemplateColumns: '1fr 240px', gap: 24, alignItems: 'start' },
+  detailMain: {},
+  detailTitleRow: { display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12, flexWrap: 'wrap' },
+  detailTitle: { margin: 0, fontSize: '1.2rem', fontWeight: 700, flex: 1 },
+  synopsis: { color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.55, marginBottom: 20 },
+  section: { marginBottom: 20 },
+  sectionTitle: { margin: '0 0 8px', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)' },
+  preBlock: { margin: 0, padding: '12px 14px', background: 'var(--surface-muted)', border: '1px solid var(--border)', borderRadius: 6, fontSize: '0.82rem', lineHeight: 1.6, whiteSpace: 'pre-wrap', wordBreak: 'break-word', color: 'var(--text)', fontFamily: 'var(--font-mono)' },
+  termBlock: { margin: 0, padding: '12px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 6, fontSize: '0.78rem', lineHeight: 1.7, whiteSpace: 'pre-wrap', wordBreak: 'break-word', color: 'var(--text)', fontFamily: 'var(--font-mono)', maxHeight: 400, overflowY: 'auto' },
+  chipGroup: { display: 'flex', flexWrap: 'wrap', gap: 6 },
+  hostChip: { padding: '3px 10px', background: 'var(--surface-muted)', border: '1px solid var(--border)', borderRadius: 4, fontSize: '0.8rem', fontFamily: 'var(--font-mono)', color: 'var(--text)' },
+
+  // Detail sidebar
+  detailSidebar: {},
+  sidebarCard: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, padding: 14 },
+  sidebarTitle: { margin: '0 0 12px', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)' },
+  dl: { margin: 0 },
+  dt: { fontSize: '0.72rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginTop: 10 },
+  dd: { margin: '3px 0 0', fontSize: '0.85rem', color: 'var(--text)' },
+  mono: { fontFamily: 'var(--font-mono)', fontSize: '0.82rem' },
+
+  // Back button
+  backBtn: { padding: '5px 12px', border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)', borderRadius: 5, fontSize: '0.82rem', cursor: 'pointer' },
+
+  // Create form
+  createSection: { marginTop: 20, paddingTop: 16, borderTop: '1px solid var(--border)' },
+  toggleCreateBtn: { padding: '6px 14px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text)', borderRadius: 6, fontSize: '0.85rem', cursor: 'pointer' },
+  createForm: { marginTop: 14, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, padding: 16 },
+  formRow: { marginBottom: 14 },
+  label: { display: 'block', fontWeight: 600, fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: 5 },
+  input: { width: '100%', padding: '8px 11px', border: '1px solid var(--border)', borderRadius: 6, background: 'var(--bg)', color: 'var(--text)', fontSize: '0.9rem', fontFamily: 'inherit' },
+  formActions: { display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 4 },
+
+  // Empty / not-configured
+  emptyBox: { padding: '32px 16px', textAlign: 'center' },
+  emptyTitle: { fontWeight: 600, fontSize: '1rem', margin: '0 0 8px' },
+  muted: { color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.5, margin: 0 },
+  notConfigured: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, padding: 24 },
+  notConfiguredTitle: { margin: '0 0 10px', fontSize: '1.1rem', fontWeight: 700 },
+  configList: { paddingLeft: 20, lineHeight: 2, fontSize: '0.875rem' },
+  configItem: {},
+  inlineCode: { fontFamily: 'var(--font-mono)', fontSize: '0.82em', background: 'var(--surface-muted)', padding: '1px 5px', borderRadius: 3 },
 }

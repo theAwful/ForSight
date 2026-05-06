@@ -149,7 +149,9 @@ export default function Checklist({ projectId, checklist, onRun, onStatusChange,
         const items = Array.isArray(phase?.items) ? phase.items : []
         const runnerCount = items.filter((i) => i?.runner_key).length
         const anyInProgress = items.some((i) => i?.status === 'in_progress')
-        const phaseRunning = anyInProgress || runningPhase === phaseKey
+        // phaseRunning is only true when WE just kicked off this phase via the button,
+        // not whenever the DB says something is in_progress (which can be stale)
+        const phaseRunning = runningPhase === phaseKey
         const isCollapsed = collapsed.has(phaseKey)
         const requiresNmap = PHASES_REQUIRING_NMAP.has(phaseKey)
         const nmapBlocked = requiresNmap && !nmapDone
@@ -182,10 +184,8 @@ export default function Checklist({ projectId, checklist, onRun, onStatusChange,
                     className={`checklist-progress-track${phaseRunning ? ' checklist-progress-track-active' : ''}`}
                     title={`${done}/${total} tasks`}
                   >
-                    {!phaseRunning && <div style={{ ...styles.progressFill, width: `${progressPct}%` }} />}
-                    {phaseRunning && (
-                      <div style={{ ...styles.progressFill, width: `${progressPct}%`, opacity: 0.35 }} />
-                    )}
+                    {/* Static fill bar always shows completion percentage */}
+                    <div style={{ ...styles.progressFill, width: `${progressPct}%`, opacity: phaseRunning ? 0.35 : 1 }} />
                   </div>
                   <span style={styles.progressLabel}>{done}/{total}</span>
                 </div>
@@ -231,8 +231,12 @@ export default function Checklist({ projectId, checklist, onRun, onStatusChange,
                 )}
                 <ul style={styles.list}>
                   {items.map((item) => {
-                    const itemRunning =
-                      item.status === 'in_progress' || (item.runner_key && running === item.runner_key)
+                    // itemRunning: true only when THIS runner key is actively being launched
+                    // by the run() call right now. NOT based on DB status alone — that can
+                    // be stale and would cause the bar to spin forever after a job ends.
+                    const activelyRunning = item.runner_key && running === item.runner_key
+                    const itemRunning = activelyRunning || item.status === 'in_progress'
+
                     return (
                       <li key={item.id} style={styles.item}>
                         <div style={styles.itemTop}>
@@ -283,7 +287,17 @@ export default function Checklist({ projectId, checklist, onRun, onStatusChange,
                             </button>
                           )}
                         </div>
-                        {itemRunning && <div className="checklist-item-running-bar" aria-hidden />}
+
+                        {/* Progress bar: only animate when this runner is actively being launched.
+                            When item is just 'in_progress' from DB (could be stale), show the bar
+                            but paused — the checklist-progress-paused class stops the sweep. */}
+                        {itemRunning && (
+                          <div
+                            className={`checklist-item-running-bar${activelyRunning ? '' : ' checklist-progress-paused'}`}
+                            aria-hidden
+                          />
+                        )}
+
                         <div style={styles.actions}>
                           {['not_started', 'in_progress', 'completed', 'skipped'].map((s) => (
                             <button
@@ -303,7 +317,7 @@ export default function Checklist({ projectId, checklist, onRun, onStatusChange,
                     )
                   })}
                 </ul>
-                {phase.phase === 'reporting' && (
+                {phaseKey === 'reporting' && (
                   <div style={styles.downloadRow}>
                     <a
                       href={api.projects.downloadOutputsUrl(projectId)}
@@ -326,6 +340,7 @@ export default function Checklist({ projectId, checklist, onRun, onStatusChange,
 
 const styles = {
   wrapper: { display: 'flex', flexDirection: 'column', gap: '1.5rem' },
+  workflowHint: { fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '1rem', lineHeight: 1.5 },
   preGate: {
     padding: '1.1rem 1.25rem',
     borderColor: 'var(--accent)',
@@ -365,7 +380,6 @@ const styles = {
     border: '1px solid var(--border-light)',
   },
   phase: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '1rem', transition: 'box-shadow 0.15s ease, opacity 0.2s ease' },
-  workflowHint: { fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '1rem', lineHeight: 1.5 },
   phaseHeader: {
     display: 'flex',
     alignItems: 'center',

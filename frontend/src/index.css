@@ -146,6 +146,10 @@ textarea {
   font-family: inherit;
   font-size: 0.9375rem;
   border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  padding: 0.5rem 0.75rem;
   transition: border-color var(--transition), box-shadow var(--transition);
 }
 input:focus,
@@ -238,6 +242,10 @@ textarea:focus {
   color: var(--sidebar-text);
   text-decoration: none;
 }
+.layout-sidebar .sidebar-project-link.active {
+  background: var(--sidebar-accent);
+  color: #fff;
+}
 .layout-sidebar .sidebar-project-link.active:hover {
   background: var(--sidebar-accent);
   color: #fff;
@@ -310,7 +318,15 @@ html[data-theme="dark"] .layout-header {
   }
 }
 
-/* Checklist: indeterminate progress while work is running */
+/* ─── Checklist: progress animations ────────────────────────────────────────
+   The sweep animation only plays when the -active modifier is present AND
+   the -paused modifier is absent. This prevents stale DB status values from
+   running the bar forever after a job has already finished.
+   Checklist.jsx applies -active only during an active runPhase() call,
+   and applies -paused when status === 'in_progress' but the runner is NOT
+   actively being launched right now.
+────────────────────────────────────────────────────────────────────────── */
+
 @keyframes checklist-progress-sweep {
   0% {
     transform: translateX(-100%);
@@ -350,6 +366,12 @@ html[data-theme="dark"] .layout-header {
   animation: checklist-progress-sweep 1.15s ease-in-out infinite;
 }
 
+/* Paused: bar visible but sweep stopped — used for stale in_progress state */
+.checklist-progress-track.checklist-progress-paused::after {
+  animation-play-state: paused;
+  opacity: 0;
+}
+
 .checklist-item-running-bar {
   position: relative;
   height: 3px;
@@ -369,6 +391,12 @@ html[data-theme="dark"] .layout-header {
   border-radius: 2px;
   background: linear-gradient(90deg, transparent, var(--warn), transparent);
   animation: checklist-progress-sweep 1s ease-in-out infinite;
+}
+
+/* Paused variant: shown when status is in_progress but not actively launching */
+.checklist-item-running-bar.checklist-progress-paused::after {
+  animation-play-state: paused;
+  opacity: 0;
 }
 
 .checklist-pre-checkbox {
