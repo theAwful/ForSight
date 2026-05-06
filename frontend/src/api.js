@@ -153,6 +153,21 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(body),
       }),
+    /** Pause a running scan by name (via Selenium). */
+    pauseScanViaWebByName: (projectId, scanName) =>
+      request(`/projects/${projectId}/nessus/pause-web`, {
+        method: 'POST',
+        body: JSON.stringify({ scan_name: scanName }),
+      }),
+    /** Stop a running/paused scan by name (via Selenium). */
+    stopScanViaWebByName: (projectId, scanName) =>
+      request(`/projects/${projectId}/nessus/stop-web`, {
+        method: 'POST',
+        body: JSON.stringify({ scan_name: scanName }),
+      }),
+    /** List Nessus scan templates by scraping the New Scan page (via Selenium). */
+    templatesViaWeb: (projectId) =>
+      request(`/projects/${projectId}/nessus/templates-web`),
     importScan: (projectId, scanId) =>
       request(`/projects/${projectId}/nessus/import/${scanId}`, { method: 'POST' }),
     listImports: (projectId) => request(`/projects/${projectId}/nessus/imports`),
