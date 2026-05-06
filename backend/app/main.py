@@ -51,6 +51,7 @@ from app.config import settings
 from app import tenable_client
 from app.tenable_client import TenableAPIError
 from app import nessus_web_launch
+from app.routers.tools import router as tools_router
 
 
 def _sanitize_nessus_web_error(msg: str) -> str:
@@ -171,7 +172,8 @@ executor = ThreadPoolExecutor(max_workers=16)
 class LoginBody(BaseModel):
     username: str = ""
     password: str = ""
-
+    
+app.include_router(tools_router)
 
 @app.post("/api/auth/login")
 async def login(request: Request, body: LoginBody):
