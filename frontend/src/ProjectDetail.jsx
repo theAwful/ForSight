@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { api } from './api'
 import Checklist from './Checklist'
@@ -17,39 +17,73 @@ const PHASE_LABELS = {
   reporting: 'Reporting',
 }
 
+const TAB_LABELS = {
+  checklist: 'Checklist',
+  jobs:      'Jobs',
+  hosts:     'Hosts',
+  nessus:    'Nessus',
+  reporting: 'Reporting',
+}
+
 export default function ProjectDetail() {
   const { projectId } = useParams()
-  const [project, setProject] = useState(null)
-  const [checklist, setChecklist] = useState([])
-  const [jobs, setJobs] = useState([])
-  const [tab, setTab] = useState('checklist')
-  const [roeFile, setRoeFile] = useState(null)
-  const [uploading, setUploading] = useState(false)
-  const [pasteText, setPasteText] = useState('')
-  const [pasting, setPasting] = useState(false)
-  const [loadError, setLoadError] = useState(null)
-  const [nmapDone, setNmapDone] = useState(false)
-  const [deleting, setDeleting] = useState(false)
-  const [targets, setTargets] = useState({ ips: [], domains: [] })
-  const [editingTargets, setEditingTargets] = useState(false)
-  const [editTargetsText, setEditTargetsText] = useState('')
-  const [savingTargets, setSavingTargets] = useState(false)
   const navigate = useNavigate()
 
-  const load = () => {
+  // ── Core data ─────────────────────────────────────────────────
+  const [project, setProject]           = useState(null)
+  const [checklist, setChecklist]       = useState([])
+  const [jobs, setJobs]                 = useState([])
+  const [nmapDone, setNmapDone]         = useState(false)
+  const [targets, setTargets]           = useState({ ips: [], domains: [] })
+  const [loadError, setLoadError]       = useState(null)
+
+  // ── Tab state ─────────────────────────────────────────────────
+  const [tab, setTab] = useState('checklist')
+
+  // Track which tabs have ever been visited so we can keep them
+  // mounted (display:none) instead of unmounting on tab switch.
+  // This prevents re-fetching and losing live job output state.
+  const [jobsEverVisited,   setJobsEverVisited]   = useState(false)
+  const [hostsEverVisited,  setHostsEverVisited]  = useState(false)
+  const [nessusEverVisited, setNessusEverVisited] = useState(false)
+
+  const handleTabChange = useCallback((t) => {
+    setTab(t)
+    if (t === 'jobs')   setJobsEverVisited(true)
+    if (t === 'hosts')  setHostsEverVisited(true)
+    if (t === 'nessus') setNessusEverVisited(true)
+  }, [])
+
+  // ── ROE / targets UI state ────────────────────────────────────
+  const [roeFile, setRoeFile]                 = useState(null)
+  const [uploading, setUploading]             = useState(false)
+  const [pasteText, setPasteText]             = useState('')
+  const [pasting, setPasting]                 = useState(false)
+  const [editingTargets, setEditingTargets]   = useState(false)
+  const [editTargetsText, setEditTargetsText] = useState('')
+  const [savingTargets, setSavingTargets]     = useState(false)
+
+  // ── Delete state ──────────────────────────────────────────────
+  const [deleting, setDeleting]               = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+
+  // ── Data loading ──────────────────────────────────────────────
+  const load = useCallback(() => {
     if (!projectId) return
+
     setLoadError(null)
+
     api.projects
       .get(projectId)
       .then((p) => {
         setProject(p != null && typeof p === 'object' ? p : null)
-        setLoadError(null)
       })
       .catch((err) => {
         setProject(null)
         setLoadError(err?.message || 'Failed to load project')
         if (err?.status === 404) navigate('/', { replace: true })
       })
+
     api.checklist
       .project(projectId)
       .then((data) => setChecklist(Array.isArray(data) ? data : []))
@@ -57,26 +91,30 @@ export default function ProjectDetail() {
         setChecklist([])
         if (err?.status === 404) navigate('/', { replace: true })
       })
+
     api.jobs
       .list(projectId)
       .then((data) => setJobs(Array.isArray(data) ? data : []))
       .catch(() => setJobs([]))
+
     api.projects
       .nmapReady(projectId)
       .then((r) => setNmapDone(r?.nmap_done === true))
       .catch(() => setNmapDone(false))
+
     api.projects
       .targets(projectId)
       .then((t) => setTargets({ ips: t?.ips ?? [], domains: t?.domains ?? [] }))
       .catch(() => setTargets({ ips: [], domains: [] }))
-  }
+  }, [projectId, navigate])
 
   useEffect(() => {
     load()
-    const t = setInterval(load, 3000)
-    return () => clearInterval(t)
-  }, [projectId])
+    const interval = setInterval(load, 3000)
+    return () => clearInterval(interval)
+  }, [load])
 
+  // ── ROE handlers ──────────────────────────────────────────────
   const onRoeUpload = async (e) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -102,14 +140,16 @@ export default function ProjectDetail() {
     }
   }
 
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-
-  const onDeleteProject = () => setShowDeleteConfirm(true)
-
+  // ── Targets handlers ──────────────────────────────────────────
   const startEditTargets = () => {
     const lines = [...(targets.ips || []), ...(targets.domains || [])]
     setEditTargetsText(lines.join('\n'))
     setEditingTargets(true)
+  }
+
+  const cancelEditTargets = () => {
+    setEditingTargets(false)
+    setEditTargetsText('')
   }
 
   const saveTargets = async () => {
@@ -125,10 +165,8 @@ export default function ProjectDetail() {
     }
   }
 
-  const cancelEditTargets = () => {
-    setEditingTargets(false)
-    setEditTargetsText('')
-  }
+  // ── Delete handlers ───────────────────────────────────────────
+  const onDeleteProject = () => setShowDeleteConfirm(true)
 
   const confirmDeleteProject = async () => {
     if (!project?.name) return
@@ -144,10 +182,12 @@ export default function ProjectDetail() {
     }
   }
 
+  // ── Guard renders ─────────────────────────────────────────────
   if (!projectId) {
     return (
       <div style={styles.msg}>
-        Invalid project. <Link to="/" style={styles.link}>Back to engagements</Link>
+        Invalid project.{' '}
+        <Link to="/" style={styles.link}>Back to engagements</Link>
       </div>
     )
   }
@@ -164,8 +204,10 @@ export default function ProjectDetail() {
     return <div style={{ color: 'var(--text-muted)' }}>Loading…</div>
   }
 
+  // ── Main render ───────────────────────────────────────────────
   return (
     <div>
+      {/* Project header */}
       <div style={styles.header}>
         <div>
           <h1 style={styles.title}>{project?.name ?? 'Project'}</h1>
@@ -188,6 +230,7 @@ export default function ProjectDetail() {
         </button>
       </div>
 
+      {/* ROE upload + targets panel */}
       <div className="roe-targets-grid" style={styles.roeTargetsRow}>
         <div style={styles.roeColumn}>
           <div style={styles.roe}>
@@ -210,7 +253,11 @@ export default function ProjectDetail() {
                 style={styles.pasteInput}
                 rows={4}
               />
-              <button onClick={onPasteRoe} disabled={pasting || !pasteText.trim()} style={styles.pasteBtn}>
+              <button
+                onClick={onPasteRoe}
+                disabled={pasting || !pasteText.trim()}
+                style={styles.pasteBtn}
+              >
                 {pasting ? 'Saving…' : 'Save as ROE'}
               </button>
             </div>
@@ -229,10 +276,21 @@ export default function ProjectDetail() {
                 rows={10}
               />
               <div style={styles.targetsEditorActions}>
-                <button type="button" className="btn-secondary" onClick={cancelEditTargets} style={styles.targetsBtn}>
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={cancelEditTargets}
+                  style={styles.targetsBtn}
+                >
                   Cancel
                 </button>
-                <button type="button" className="btn-primary" onClick={saveTargets} disabled={savingTargets} style={styles.targetsBtn}>
+                <button
+                  type="button"
+                  className="btn-primary"
+                  onClick={saveTargets}
+                  disabled={savingTargets}
+                  style={styles.targetsBtn}
+                >
                   {savingTargets ? 'Saving…' : 'Save'}
                 </button>
               </div>
@@ -253,7 +311,12 @@ export default function ProjectDetail() {
                   </ul>
                 )}
               </div>
-              <button type="button" className="btn-secondary" onClick={startEditTargets} style={styles.editTargetsBtn}>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={startEditTargets}
+                style={styles.editTargetsBtn}
+              >
                 Edit targets
               </button>
             </>
@@ -261,60 +324,101 @@ export default function ProjectDetail() {
         </div>
       </div>
 
+      {/* Tab bar + content */}
       <div style={styles.tabContentArea}>
-          <div className="tabs-row" style={styles.tabs}>
-            {['checklist', 'jobs', 'hosts', 'nessus', 'reporting'].map((t) => (
-              <button
-                key={t}
-                type="button"
-                className={`tab-btn ${tab === t ? 'tab-btn-active' : ''}`}
-                onClick={() => setTab(t)}
-                style={{ ...styles.tab, ...(tab === t ? styles.tabActive : {}) }}
-              >
-                {t === 'checklist' ? 'Checklist' : t === 'jobs' ? 'Jobs' : t === 'hosts' ? 'Hosts' : t === 'nessus' ? 'Nessus' : 'Reporting'}
-              </button>
-            ))}
+        <div className="tabs-row" style={styles.tabs}>
+          {Object.keys(TAB_LABELS).map((t) => (
+            <button
+              key={t}
+              type="button"
+              className={`tab-btn ${tab === t ? 'tab-btn-active' : ''}`}
+              onClick={() => handleTabChange(t)}
+              style={{ ...styles.tab, ...(tab === t ? styles.tabActive : {}) }}
+            >
+              {TAB_LABELS[t]}
+            </button>
+          ))}
+        </div>
+
+        {/*
+          Tab content — uses display:none to keep components mounted after
+          first visit. This preserves JobCard polling state, Hosts data,
+          and Nessus scan list without re-fetching on every tab switch.
+
+          Checklist is always rendered (it's the default landing tab).
+          Jobs/Hosts/Nessus are conditionally rendered on first visit,
+          then kept alive with display toggling thereafter.
+          Reporting is lightweight and re-renders fine.
+        */}
+        <div className="tab-content main-content" style={{ minHeight: 200 }}>
+
+          {/* Checklist — always mounted */}
+          <div style={{ display: tab === 'checklist' ? 'block' : 'none' }}>
+            <Checklist
+              projectId={projectId}
+              checklist={checklist}
+              onRun={load}
+              onStatusChange={load}
+              nmapDone={nmapDone}
+            />
           </div>
 
-          <div key={tab} className="tab-content main-content" style={{ minHeight: 200 }}>
-            {tab === 'checklist' && (
-              <Checklist
+          {/* Jobs — mounted on first visit, then kept alive */}
+          {(tab === 'jobs' || jobsEverVisited) && (
+            <div style={{ display: tab === 'jobs' ? 'block' : 'none' }}>
+              <Jobs
                 projectId={projectId}
-                checklist={checklist}
-                onRun={load}
-                onStatusChange={load}
-                nmapDone={nmapDone}
+                jobs={jobs}
+                onRefresh={load}
               />
-            )}
-            {tab === 'jobs' && (
-              <Jobs projectId={projectId} jobs={jobs} onRefresh={load} />
-            )}
-            {tab === 'logs' && (
-              <Logs projectId={projectId} jobs={jobs} onRefresh={load} />
-            )}
-            {tab === 'hosts' && <Hosts projectId={projectId} onRefresh={load} />}
-            {tab === 'nessus' && <Nessus projectId={projectId} onRefresh={load} />}
-            {tab === 'reporting' && (
-              <div className="card" style={styles.reportingCard}>
-                <h2 style={styles.reportingTitle}>Reporting & wrap-up</h2>
-                <p style={styles.reportingLead}>Download all tool outputs (workpapers) as a zip for this project.</p>
-                <a
-                  href={api.projects.downloadOutputsUrl(projectId)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-primary"
-                  style={styles.downloadBtn}
-                >
-                  Download workpapers (zip)
-                </a>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
+
+          {/* Hosts — mounted on first visit, then kept alive */}
+          {(tab === 'hosts' || hostsEverVisited) && (
+            <div style={{ display: tab === 'hosts' ? 'block' : 'none' }}>
+              <Hosts projectId={projectId} onRefresh={load} />
+            </div>
+          )}
+
+          {/* Nessus — mounted on first visit, then kept alive */}
+          {(tab === 'nessus' || nessusEverVisited) && (
+            <div style={{ display: tab === 'nessus' ? 'block' : 'none' }}>
+              <Nessus projectId={projectId} onRefresh={load} />
+            </div>
+          )}
+
+          {/* Reporting — lightweight, conditional render is fine */}
+          {tab === 'reporting' && (
+            <div className="card" style={styles.reportingCard}>
+              <h2 style={styles.reportingTitle}>Reporting & wrap-up</h2>
+              <p style={styles.reportingLead}>
+                Download all tool outputs (workpapers) as a zip for this project.
+              </p>
+              <a
+                href={api.projects.downloadOutputsUrl(projectId)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary"
+                style={styles.downloadBtn}
+              >
+                Download workpapers (zip)
+              </a>
+            </div>
+          )}
+
+        </div>
       </div>
+
+      {/* Delete confirmation modal */}
       <ConfirmModal
         open={showDeleteConfirm}
         title="Delete project?"
-        message={project ? `"${project.name}" will be permanently removed. This cannot be undone.` : ''}
+        message={
+          project
+            ? `"${project.name}" will be permanently removed. This cannot be undone.`
+            : ''
+        }
         confirmLabel="Delete"
         cancelLabel="Cancel"
         danger
@@ -326,10 +430,19 @@ export default function ProjectDetail() {
   )
 }
 
+// ── Styles (unchanged from original) ─────────────────────────────────────────
+
 const styles = {
   msg: { color: 'var(--text-muted)', marginBottom: '1rem' },
   link: { color: 'var(--accent)', marginTop: '0.5rem', display: 'inline-block' },
-  header: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' },
+  header: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: '1rem',
+    marginBottom: '1rem',
+    flexWrap: 'wrap',
+  },
   title: { margin: 0, fontSize: '1.5rem', fontWeight: 600 },
   summary: { color: 'var(--text-muted)', fontSize: '0.9rem', display: 'block', marginTop: '0.25rem' },
   deleteProjectBtn: { color: 'var(--danger)', borderColor: 'var(--danger)' },
@@ -345,13 +458,42 @@ const styles = {
     borderRadius: 'var(--radius)',
     cursor: 'pointer',
   },
-  pasteRow: { marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', maxWidth: '100%' },
-  pasteInput: { padding: '0.5rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)', resize: 'vertical', fontFamily: 'var(--font-mono)', fontSize: '0.9rem' },
-  pasteBtn: { alignSelf: 'flex-start', background: 'var(--accent)', color: 'var(--accent-text)' },
+  pasteRow: {
+    marginTop: '0.75rem',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.5rem',
+    maxWidth: '100%',
+  },
+  pasteInput: {
+    padding: '0.5rem',
+    borderRadius: 'var(--radius)',
+    border: '1px solid var(--border)',
+    background: 'var(--surface)',
+    color: 'var(--text)',
+    resize: 'vertical',
+    fontFamily: 'var(--font-mono)',
+    fontSize: '0.9rem',
+  },
+  pasteBtn: {
+    alignSelf: 'flex-start',
+    background: 'var(--accent)',
+    color: 'var(--accent-text)',
+  },
   tabContentArea: { minWidth: 0 },
   tabs: { display: 'flex', gap: '0.25rem', marginBottom: '1rem' },
-  tab: { background: 'transparent', color: 'var(--text-muted)', padding: '0.5rem 1rem', borderRadius: 'var(--radius)', transition: 'background-color 0.15s ease, color 0.15s ease' },
-  tabActive: { color: 'var(--accent)', background: 'var(--surface)', border: '1px solid var(--border)' },
+  tab: {
+    background: 'transparent',
+    color: 'var(--text-muted)',
+    padding: '0.5rem 1rem',
+    borderRadius: 'var(--radius)',
+    transition: 'background-color 0.15s ease, color 0.15s ease',
+  },
+  tabActive: {
+    color: 'var(--accent)',
+    background: 'var(--surface)',
+    border: '1px solid var(--border)',
+  },
   targetsPanel: {
     background: 'var(--surface)',
     border: '1px solid var(--border)',
@@ -363,13 +505,43 @@ const styles = {
     height: '100%',
   },
   targetsTitle: { margin: '0 0 0.5rem 0', fontSize: '0.9rem', fontWeight: 600 },
-  targetsScroll: { flex: 1, minHeight: 80, overflowY: 'auto', marginBottom: '0.5rem', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '0.5rem', background: 'var(--bg)' },
-  targetsList: { listStyle: 'none', margin: 0, padding: 0, fontFamily: 'var(--font-mono)', fontSize: '0.8rem' },
-  targetsItem: { padding: '0.2rem 0', borderBottom: '1px solid var(--border)', wordBreak: 'break-all' },
+  targetsScroll: {
+    flex: 1,
+    minHeight: 80,
+    overflowY: 'auto',
+    marginBottom: '0.5rem',
+    border: '1px solid var(--border)',
+    borderRadius: 'var(--radius)',
+    padding: '0.5rem',
+    background: 'var(--bg)',
+  },
+  targetsList: {
+    listStyle: 'none',
+    margin: 0,
+    padding: 0,
+    fontFamily: 'var(--font-mono)',
+    fontSize: '0.8rem',
+  },
+  targetsItem: {
+    padding: '0.2rem 0',
+    borderBottom: '1px solid var(--border)',
+    wordBreak: 'break-all',
+  },
   targetsEmpty: { margin: 0, color: 'var(--text-muted)', fontSize: '0.85rem' },
   editTargetsBtn: { width: '100%' },
   targetsEditor: { display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1, minHeight: 0 },
-  targetsTextarea: { padding: '0.5rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', resize: 'vertical', fontFamily: 'var(--font-mono)', fontSize: '0.85rem', minHeight: 140, flex: 1 },
+  targetsTextarea: {
+    padding: '0.5rem',
+    borderRadius: 'var(--radius)',
+    border: '1px solid var(--border)',
+    background: 'var(--bg)',
+    color: 'var(--text)',
+    resize: 'vertical',
+    fontFamily: 'var(--font-mono)',
+    fontSize: '0.85rem',
+    minHeight: 140,
+    flex: 1,
+  },
   targetsEditorActions: { display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' },
   targetsBtn: { padding: '0.35rem 0.75rem' },
   reportingCard: { padding: '1.5rem', maxWidth: 480 },
