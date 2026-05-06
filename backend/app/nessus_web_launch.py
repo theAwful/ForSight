@@ -414,6 +414,230 @@ def launch_scan_via_web(
                 pass
 
 
+def pause_scan_via_web(
+    base_url: str,
+    username: str,
+    password: str,
+    scan_name: str,
+    verify_ssl: bool = False,
+    wait_seconds: int = 15,
+) -> dict:
+    """Pause a running scan via the My Scans pause icon.
+    
+    DOM: <i data-id="N" class="glyphicons pause add-tip" original-title="Pause">
+    """
+    if not _SELENIUM_AVAILABLE:
+        raise NessusWebLaunchError("Selenium is not installed.")
+    if not (scan_name or "").strip():
+        raise NessusWebLaunchError("scan_name is required")
+
+    run_ts = _new_run_ts()
+    base_url = base_url.rstrip("/")
+    driver = None
+    try:
+        driver = _build_driver(verify_ssl)
+        _login_and_go_to_my_scans(driver, base_url, username, password, wait_seconds, run_ts)
+
+        row = _find_scan_row_by_name(driver, scan_name)
+        if not row:
+            _snap(driver, "05_row_not_found", run_ts)
+            raise NessusWebLaunchError(f"Could not find scan row named {scan_name!r}.")
+
+        scan_id_from_row = _get_scan_id_from_row(row)
+        if scan_id_from_row is None:
+            raise NessusWebLaunchError(f"Row for {scan_name!r} has no data-id.")
+
+        scan_id_str = str(scan_id_from_row)
+        # Try multiple selectors — Nessus uses i.glyphicons.pause for the pause icon
+        for sel in (
+            f"i.glyphicons.pause[data-id='{scan_id_str}']",
+            f"i[data-id='{scan_id_str}'][class*='pause']",
+            f"tr[data-id='{scan_id_str}'] i.glyphicons.pause",
+        ):
+            try:
+                icon = driver.find_element(By.CSS_SELECTOR, sel)
+                _log(f"pause icon found via: {sel}")
+                driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", icon)
+                time.sleep(0.3)
+                _snap(driver, "06_before_pause_click", run_ts)
+                try:
+                    icon.click()
+                except Exception:
+                    driver.execute_script("arguments[0].click();", icon)
+                time.sleep(1.5)
+                _snap(driver, "07_after_pause_click", run_ts)
+                return {"ok": True, "message": "Pause triggered via web UI.", "scan_id": scan_id_from_row}
+            except NoSuchElementException:
+                continue
+
+        _snap(driver, "06_pause_icon_not_found", run_ts)
+        raise NessusWebLaunchError(
+            f"Found row for {scan_name!r} but no pause icon (scan may not be running)."
+        )
+    except NessusWebLaunchError:
+        raise
+    except Exception as e:
+        if driver:
+            _snap(driver, "99_unexpected_error", run_ts)
+        raise NessusWebLaunchError(_sanitize_error(str(e))) from e
+    finally:
+        if driver:
+            try:
+                driver.quit()
+            except Exception:
+                pass
+
+
+def stop_scan_via_web(
+    base_url: str,
+    username: str,
+    password: str,
+    scan_name: str,
+    verify_ssl: bool = False,
+    wait_seconds: int = 15,
+) -> dict:
+    """Stop a running or paused scan via the My Scans stop icon.
+
+    DOM: <i data-id="N" class="glyphicons stop add-tip" original-title="Stop">
+    """
+    if not _SELENIUM_AVAILABLE:
+        raise NessusWebLaunchError("Selenium is not installed.")
+    if not (scan_name or "").strip():
+        raise NessusWebLaunchError("scan_name is required")
+
+    run_ts = _new_run_ts()
+    base_url = base_url.rstrip("/")
+    driver = None
+    try:
+        driver = _build_driver(verify_ssl)
+        _login_and_go_to_my_scans(driver, base_url, username, password, wait_seconds, run_ts)
+
+        row = _find_scan_row_by_name(driver, scan_name)
+        if not row:
+            _snap(driver, "05_row_not_found", run_ts)
+            raise NessusWebLaunchError(f"Could not find scan row named {scan_name!r}.")
+
+        scan_id_from_row = _get_scan_id_from_row(row)
+        if scan_id_from_row is None:
+            raise NessusWebLaunchError(f"Row for {scan_name!r} has no data-id.")
+
+        scan_id_str = str(scan_id_from_row)
+        for sel in (
+            f"i.glyphicons.stop[data-id='{scan_id_str}']",
+            f"i[data-id='{scan_id_str}'][class*='stop']",
+            f"tr[data-id='{scan_id_str}'] i.glyphicons.stop",
+        ):
+            try:
+                icon = driver.find_element(By.CSS_SELECTOR, sel)
+                _log(f"stop icon found via: {sel}")
+                driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", icon)
+                time.sleep(0.3)
+                _snap(driver, "06_before_stop_click", run_ts)
+                try:
+                    icon.click()
+                except Exception:
+                    driver.execute_script("arguments[0].click();", icon)
+                # Stop may show a confirmation dialog
+                time.sleep(1.5)
+                # Try to confirm if dialog appears
+                for btn_text in ("Stop", "Confirm", "Yes", "OK"):
+                    btns = driver.find_elements(
+                        By.XPATH,
+                        f"//button[contains(translate(text(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'{btn_text.lower()}')]",
+                    )
+                    for b in btns:
+                        if b.is_displayed() and b.is_enabled():
+                            try:
+                                b.click()
+                                _log(f"clicked stop confirm: {btn_text}")
+                                break
+                            except Exception:
+                                pass
+                time.sleep(1)
+                _snap(driver, "07_after_stop_click", run_ts)
+                return {"ok": True, "message": "Stop triggered via web UI.", "scan_id": scan_id_from_row}
+            except NoSuchElementException:
+                continue
+
+        _snap(driver, "06_stop_icon_not_found", run_ts)
+        raise NessusWebLaunchError(
+            f"Found row for {scan_name!r} but no stop icon (scan may not be running)."
+        )
+    except NessusWebLaunchError:
+        raise
+    except Exception as e:
+        if driver:
+            _snap(driver, "99_unexpected_error", run_ts)
+        raise NessusWebLaunchError(_sanitize_error(str(e))) from e
+    finally:
+        if driver:
+            try:
+                driver.quit()
+            except Exception:
+                pass
+
+
+def list_templates_via_web(
+    base_url: str,
+    username: str,
+    password: str,
+    verify_ssl: bool = False,
+    wait_seconds: int = 15,
+) -> list:
+    """Open New Scan, list available template titles, return list of {title, category}."""
+    if not _SELENIUM_AVAILABLE:
+        raise NessusWebLaunchError("Selenium is not installed.")
+    run_ts = _new_run_ts()
+    base_url = base_url.rstrip("/")
+    driver = None
+    try:
+        driver = _build_driver(verify_ssl)
+        _login_and_go_to_my_scans(driver, base_url, username, password, wait_seconds, run_ts)
+
+        try:
+            new_scan = WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, "#new-scan, a[href='#/scans/reports/new']"))
+            )
+            try:
+                new_scan.click()
+            except Exception:
+                driver.execute_script("arguments[0].click();", new_scan)
+        except TimeoutException:
+            raise NessusWebLaunchError("Could not click New Scan to enumerate templates.")
+
+        try:
+            WebDriverWait(driver, 15).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "a.library-item"))
+            )
+        except TimeoutException:
+            raise NessusWebLaunchError("Template list did not load.")
+
+        templates = []
+        try:
+            categories = driver.find_elements(By.CSS_SELECTOR, "div.category-templates")
+            for cat in categories:
+                category_name = (cat.get_attribute("data-category") or "").strip()
+                links = cat.find_elements(By.CSS_SELECTOR, "a.library-item")
+                for link in links:
+                    try:
+                        title_el = link.find_element(By.CSS_SELECTOR, "h5.title")
+                        title = (title_el.text or "").strip()
+                        if title:
+                            templates.append({"title": title, "category": category_name})
+                    except NoSuchElementException:
+                        continue
+        except Exception:
+            pass
+
+        return templates
+    finally:
+        if driver:
+            try:
+                driver.quit()
+            except Exception:
+                pass
+
+
 def delete_scan_via_web(
     base_url: str,
     username: str,
@@ -535,57 +759,100 @@ def create_scan_via_web(
         time.sleep(2)
         _snap(driver, "11_template_picker", run_ts)
 
-        # Pick template — match by visible text containing template_key
+        # Wait for template picker (a.library-item) to render
+        try:
+            WebDriverWait(driver, 15).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "a.library-item"))
+            )
+        except TimeoutException:
+            _snap(driver, "11_template_picker_timeout", run_ts)
+            raise NessusWebLaunchError(
+                "Template picker did not load. Verify Nessus is reachable and login worked."
+            )
+
+        # Pick template — DOM: <a class="library-item"><h5 class="title">Basic Network Scan</h5></a>
+        # template_key is matched (case-insensitive, substring) against the h5.title text
         tpl_key_lower = (template_key or "advanced").strip().lower()
-        # Common template names: "Advanced Scan", "Basic Network Scan", "Web Application Tests"
         tpl_clicked = False
-        for sel in (
-            f"//div[contains(@class,'template-item')]//*[contains(translate(text(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'{tpl_key_lower}')]",
-            f"//*[contains(@class,'template')]//*[contains(translate(text(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'{tpl_key_lower}')]",
-        ):
-            try:
-                tpls = driver.find_elements(By.XPATH, sel)
-                for t in tpls:
-                    if t.is_displayed():
-                        try:
-                            t.click()
-                            tpl_clicked = True
-                            _log(f"clicked template matching {tpl_key_lower!r}")
+
+        try:
+            template_links = driver.find_elements(By.CSS_SELECTOR, "a.library-item")
+            _log(f"found {len(template_links)} template links")
+            best_match = None
+            best_match_text = ""
+            for link in template_links:
+                try:
+                    title_el = link.find_element(By.CSS_SELECTOR, "h5.title")
+                    title_text = (title_el.text or "").strip().lower()
+                    _log(f"  template option: {title_text!r}")
+                    if not title_text:
+                        continue
+                    if title_text == tpl_key_lower or tpl_key_lower in title_text:
+                        # Prefer exact match, otherwise first substring match
+                        if title_text == tpl_key_lower:
+                            best_match = link
+                            best_match_text = title_text
                             break
-                        except Exception:
-                            try:
-                                driver.execute_script("arguments[0].click();", t)
-                                tpl_clicked = True
-                                break
-                            except Exception:
-                                continue
-                if tpl_clicked:
-                    break
-            except Exception:
-                continue
+                        elif best_match is None:
+                            best_match = link
+                            best_match_text = title_text
+                except NoSuchElementException:
+                    continue
+
+            if best_match is not None:
+                _log(f"clicking template {best_match_text!r}")
+                driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", best_match)
+                time.sleep(0.3)
+                try:
+                    best_match.click()
+                except Exception:
+                    driver.execute_script("arguments[0].click();", best_match)
+                tpl_clicked = True
+        except Exception as e:
+            _log(f"template click error: {e}")
 
         if not tpl_clicked:
             _snap(driver, "11_template_not_found", run_ts)
+            available_titles = []
+            try:
+                for el in driver.find_elements(By.CSS_SELECTOR, "a.library-item h5.title"):
+                    t = (el.text or "").strip()
+                    if t:
+                        available_titles.append(t)
+            except Exception:
+                pass
+            available_str = ", ".join(available_titles[:10]) if available_titles else "(none visible)"
             raise NessusWebLaunchError(
                 f"Could not find scan template matching {template_key!r}. "
-                f"Inspect screenshots in backend/data/selenium_debug/."
+                f"Available templates: {available_str}"
             )
 
-        time.sleep(2)
+        time.sleep(3)
         _snap(driver, "12_template_clicked", run_ts)
 
-        # Wait for scan-editor form
+        # Wait for scan-editor form to load
+        # DOM: <input data-input-id="name" data-name="Name" type="text" class="editor-input required">
         try:
-            name_field = WebDriverWait(driver, 15).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, "input[data-input-id='text_name'], input[data-name='Name']"))
+            name_field = WebDriverWait(driver, 20).until(
+                EC.presence_of_element_located((
+                    By.CSS_SELECTOR,
+                    "input[data-input-id='name'], input[data-name='Name']"
+                ))
             )
             _log("scan editor loaded — name field found")
         except TimeoutException:
             _snap(driver, "13_editor_not_loaded", run_ts)
-            raise NessusWebLaunchError("Scan editor did not load after picking template.")
+            raise NessusWebLaunchError(
+                "Scan editor did not load after picking template. "
+                "Inspect screenshots in backend/data/selenium_debug/."
+            )
 
+        # Use JS to clear and set value — Nessus uses a custom editor that doesn't always
+        # respond to send_keys after .clear()
+        driver.execute_script("arguments[0].focus();", name_field)
         name_field.clear()
         name_field.send_keys(scan_name)
+        _log(f"set scan name: {scan_name!r}")
 
         # Targets textarea — your DOM: <textarea data-input-id="text_targets" data-name="Targets">
         try:
