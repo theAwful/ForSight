@@ -655,9 +655,11 @@ export default function Nessus({ projectId, onRefresh }) {
       if (webLaunchInfo?.available) {
         await api.nessus.launchScanViaWebByName(projectId, scanName)
         flash('success', `Launch triggered for "${scanName}".`)
-      } else {
+      } else if (scanId) {
         await api.nessus.launchScan(projectId, scanId, { use_project_targets: true })
         flash('success', `Scan launched.`)
+      } else {
+        flash('error', 'Web launch not configured. Set FORSIGHT_TENABLE_USERNAME and FORSIGHT_TENABLE_PASSWORD in .env.')
       }
       await loadScans(true)
     } catch (e) {
