@@ -38,6 +38,11 @@ class Settings(BaseSettings):
     nikto_path: str = "nikto"
     gowitness_path: str = "gowitness"
     masscan_path: str = "masscan"
+    snmpwalk_path: str = "snmpwalk"
+    smbclient_path: str = "smbclient"
+    enum4linux_path: str = "enum4linux"
+    ldapsearch_path: str = "ldapsearch"
+    selenium_debug: bool = False
     dirb_path: str = "dirb"
     dirb_wordlist: Optional[Path] = None  # default: data/wordlists/dirb-small.txt
     # Nessus Pro (local) or Tenable.io – Nessus tab works when keys or username/password are set.
