@@ -397,8 +397,8 @@ function ImportedResults({ projectId, imports, onDelete, onRefresh }) {
 
 // ── Available scans (scan management) ────────────────────────────────────────
 
-function AvailableScans({ projectId, scans, webLaunchInfo, launching, importing, deleting, templates,
-  onLaunch, onImport, onDelete, showCreate, setShowCreate,
+function AvailableScans({ projectId, scans, webLaunchInfo, launching, pausing, stopping, importing, deleting, templates,
+  onLaunch, onPause, onStop, onImport, onDelete, showCreate, setShowCreate,
   createName, setCreateName, createTemplateUuid, setCreateTemplateUuid,
   createExtraTargets, setCreateExtraTargets, creating, creatingViaWeb,
   createError, onCreateAPI, onCreateWeb
@@ -426,8 +426,15 @@ function AvailableScans({ projectId, scans, webLaunchInfo, launching, importing,
                 const key = s.id ?? s.name ?? idx
                 const name = s.name ?? `Scan ${s.id}`
                 const isLaunching = launching === key
+                const isPausing   = pausing   === name
+                const isStopping  = stopping  === name
                 const isImporting = importing === s.id
                 const isDeleting  = deleting  === key
+                const status = (s.status || '').toLowerCase()
+                const isRunning = status === 'running'
+                const isPaused  = status === 'paused'
+                const canPause  = isRunning && webLaunchInfo?.available
+                const canStop   = (isRunning || isPaused) && webLaunchInfo?.available
                 return (
                   <tr key={key} style={S.scanRow}>
                     <td style={{ ...S.td, fontWeight: 500 }}>{name}</td>
@@ -437,25 +444,52 @@ function AvailableScans({ projectId, scans, webLaunchInfo, launching, importing,
                     </td>
                     <td style={{ ...S.td, textAlign: 'right' }}>
                       <div style={S.actionGroup}>
-                        {/* Launch */}
-                        {webLaunchInfo?.available ? (
+                        {/* Launch — hidden when scan is currently running or paused */}
+                        {!isRunning && !isPaused && (
+                          <button
+                            type="button"
+                            style={{ ...S.actionBtn, ...S.primaryBtn }}
+                            disabled={isLaunching || (!webLaunchInfo?.available && !s.id)}
+                            title={!webLaunchInfo?.available ? 'Configure Tenable credentials for web launch' : ''}
+                            onClick={() => onLaunch(s.id, name)}
+                          >
+                            {isLaunching ? 'Launching…' : 'Launch'}
+                          </button>
+                        )}
+
+                        {/* Pause — only when running */}
+                        {canPause && (
+                          <button
+                            type="button"
+                            style={S.actionBtn}
+                            disabled={isPausing}
+                            onClick={() => onPause(name)}
+                          >
+                            {isPausing ? 'Pausing…' : 'Pause'}
+                          </button>
+                        )}
+
+                        {/* Resume — only when paused (resume = relaunch) */}
+                        {isPaused && webLaunchInfo?.available && (
                           <button
                             type="button"
                             style={{ ...S.actionBtn, ...S.primaryBtn }}
                             disabled={isLaunching}
                             onClick={() => onLaunch(s.id, name)}
                           >
-                            {isLaunching ? 'Launching…' : 'Launch'}
+                            {isLaunching ? 'Resuming…' : 'Resume'}
                           </button>
-                        ) : (
+                        )}
+
+                        {/* Stop — when running or paused */}
+                        {canStop && (
                           <button
                             type="button"
-                            style={{ ...S.actionBtn, ...S.primaryBtn }}
-                            disabled={isLaunching || !s.id}
-                            title={!webLaunchInfo?.available ? 'Configure Tenable credentials for web launch' : ''}
-                            onClick={() => onLaunch(s.id, name)}
+                            style={{ ...S.actionBtn, ...S.dangerOutlineBtn }}
+                            disabled={isStopping}
+                            onClick={() => onStop(name)}
                           >
-                            {isLaunching ? 'Launching…' : 'Launch'}
+                            {isStopping ? 'Stopping…' : 'Stop'}
                           </button>
                         )}
 
@@ -533,12 +567,18 @@ function AvailableScans({ projectId, scans, webLaunchInfo, launching, importing,
                 onChange={e => setCreateTemplateUuid(e.target.value)}
                 style={S.input}
               >
-                <option value="">— Select template or policy —</option>
-                {templates.map(t => (
-                  <option key={t.uuid || t.id} value={t.uuid || `policy:${t.id}`}>
-                    {t.title || t.name}
-                  </option>
-                ))}
+                <option value="">— Select template —</option>
+                {templates.map((t, i) => {
+                  // templates-web returns {title, category}; templates (API) returns {uuid, title|name}
+                  const value = t.uuid || t.title || t.name || `tpl-${i}`
+                  const label = t.title || t.name || value
+                  const cat   = t.category ? ` (${t.category})` : ''
+                  return (
+                    <option key={value + i} value={value}>
+                      {label}{cat}
+                    </option>
+                  )
+                })}
               </select>
             </div>
 
@@ -590,6 +630,8 @@ export default function Nessus({ projectId, onRefresh }) {
   const [error,         setError]         = useState(null)
   const [view,          setView]          = useState('imported') // 'imported' | 'scans'
   const [launching,     setLaunching]     = useState(null)
+  const [pausing,       setPausing]       = useState(null)
+  const [stopping,      setStopping]      = useState(null)
   const [importing,     setImporting]     = useState(null)
   const [deleting,      setDeleting]      = useState(null)
   const [templates,     setTemplates]     = useState([])
@@ -636,7 +678,13 @@ export default function Nessus({ projectId, onRefresh }) {
     Promise.all([
       api.nessus.listScans(projectId).then(d => Array.isArray(d?.scans) ? d.scans : []),
       api.nessus.listImports(projectId).then(d => Array.isArray(d?.scans) ? d.scans : []),
-      api.nessus.templates(projectId).then(d => Array.isArray(d?.templates) ? d.templates : []).catch(() => []),
+      // Use templates-web (Selenium scrape) when web launch is configured — names match Nessus exactly.
+      // Fallback to API templates list otherwise.
+      api.nessus.templatesViaWeb(projectId)
+        .then(d => Array.isArray(d?.templates) ? d.templates : [])
+        .catch(() => api.nessus.templates(projectId)
+          .then(d => Array.isArray(d?.templates) ? d.templates : [])
+          .catch(() => [])),
     ])
       .then(([s, i, t]) => { setScans(s); setImports(i); setTemplates(t) })
       .catch(e => setError(e?.body?.detail || e?.message || 'Failed to load Nessus data'))
@@ -666,6 +714,33 @@ export default function Nessus({ projectId, onRefresh }) {
       flash('error', e?.body?.detail || e?.message || 'Launch failed.')
     } finally {
       setLaunching(null)
+    }
+  }
+
+  const handlePause = async (scanName) => {
+    setPausing(scanName)
+    try {
+      await api.nessus.pauseScanViaWebByName(projectId, scanName)
+      flash('success', `Paused "${scanName}".`)
+      await loadScans(true)
+    } catch (e) {
+      flash('error', e?.body?.detail || e?.message || 'Pause failed.')
+    } finally {
+      setPausing(null)
+    }
+  }
+
+  const handleStop = async (scanName) => {
+    if (!window.confirm(`Stop scan "${scanName}"? In-progress results will be saved.`)) return
+    setStopping(scanName)
+    try {
+      await api.nessus.stopScanViaWebByName(projectId, scanName)
+      flash('success', `Stopped "${scanName}".`)
+      await loadScans(true)
+    } catch (e) {
+      flash('error', e?.body?.detail || e?.message || 'Stop failed.')
+    } finally {
+      setStopping(null)
     }
   }
 
@@ -730,10 +805,12 @@ export default function Nessus({ projectId, onRefresh }) {
     if (!createName.trim()) return
     setCreatingViaWeb(true); setCreateError(null)
     try {
+      // Use selected template title as the template_key (matched by substring on Nessus side)
       await api.nessus.createScanViaWeb(projectId, {
-        scan_name: createName.trim(),
-        targets_text: createExtraTargets || '',
-        template_key: 'advanced',
+        name: createName.trim(),
+        template_key: createTemplateUuid || 'advanced',
+        use_project_targets: true,
+        text_targets: createExtraTargets || undefined,
       })
       flash('success', `Scan "${createName}" created via web.`)
       setCreateName(''); setCreateExtraTargets(''); setShowCreate(false)
@@ -832,10 +909,14 @@ export default function Nessus({ projectId, onRefresh }) {
             scans={scans}
             webLaunchInfo={webLaunchInfo}
             launching={launching}
+            pausing={pausing}
+            stopping={stopping}
             importing={importing}
             deleting={deleting}
             templates={templates}
             onLaunch={handleLaunch}
+            onPause={handlePause}
+            onStop={handleStop}
             onImport={handleImport}
             onDelete={handleDelete}
             showCreate={showCreate}
