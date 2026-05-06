@@ -1122,11 +1122,11 @@ def nessus_delete_scan_via_web_by_name(
     except nessus_web_launch.NessusWebLaunchError as e:
         raise HTTPException(502, _sanitize_nessus_web_error(str(e)))
 
-PAUSE_STOP_ROUTES = '''
+
+PAUSE_STOP_ROUTES = ''
 class NessusPauseWebBody(BaseModel):
     scan_name: str  # required: find row by name, click pause icon
- 
- 
+    
 @app.post("/api/projects/{project_id}/nessus/pause-web")
 def nessus_pause_scan_via_web(
     project_id: int,
