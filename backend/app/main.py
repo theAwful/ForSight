@@ -1122,6 +1122,95 @@ def nessus_delete_scan_via_web_by_name(
     except nessus_web_launch.NessusWebLaunchError as e:
         raise HTTPException(502, _sanitize_nessus_web_error(str(e)))
 
+PAUSE_STOP_ROUTES = '''
+class NessusPauseWebBody(BaseModel):
+    scan_name: str  # required: find row by name, click pause icon
+ 
+ 
+@app.post("/api/projects/{project_id}/nessus/pause-web")
+def nessus_pause_scan_via_web(
+    project_id: int,
+    body: NessusPauseWebBody,
+    db: Session = Depends(get_db),
+):
+    """Pause a running Nessus scan via the web UI by scan name."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    if not settings.tenable_username or not settings.tenable_password:
+        raise HTTPException(400, "Web pause requires FORSIGHT_TENABLE_USERNAME and FORSIGHT_TENABLE_PASSWORD")
+    if not nessus_web_launch.is_available():
+        raise HTTPException(503, "Selenium is not installed.")
+    name = (body.scan_name or "").strip()
+    if not name:
+        raise HTTPException(400, "scan_name is required")
+    try:
+        result = nessus_web_launch.pause_scan_via_web(
+            base_url=settings.tenable_base_url or "https://127.0.0.1:8834",
+            username=settings.tenable_username,
+            password=settings.tenable_password,
+            scan_name=name,
+            verify_ssl=settings.tenable_verify_ssl,
+        )
+        return result
+    except nessus_web_launch.NessusWebLaunchError as e:
+        raise HTTPException(502, _sanitize_nessus_web_error(str(e)))
+ 
+ 
+class NessusStopWebBody(BaseModel):
+    scan_name: str
+ 
+ 
+@app.post("/api/projects/{project_id}/nessus/stop-web")
+def nessus_stop_scan_via_web(
+    project_id: int,
+    body: NessusStopWebBody,
+    db: Session = Depends(get_db),
+):
+    """Stop a running or paused Nessus scan via the web UI by scan name."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    if not settings.tenable_username or not settings.tenable_password:
+        raise HTTPException(400, "Web stop requires FORSIGHT_TENABLE_USERNAME and FORSIGHT_TENABLE_PASSWORD")
+    if not nessus_web_launch.is_available():
+        raise HTTPException(503, "Selenium is not installed.")
+    name = (body.scan_name or "").strip()
+    if not name:
+        raise HTTPException(400, "scan_name is required")
+    try:
+        result = nessus_web_launch.stop_scan_via_web(
+            base_url=settings.tenable_base_url or "https://127.0.0.1:8834",
+            username=settings.tenable_username,
+            password=settings.tenable_password,
+            scan_name=name,
+            verify_ssl=settings.tenable_verify_ssl,
+        )
+        return result
+    except nessus_web_launch.NessusWebLaunchError as e:
+        raise HTTPException(502, _sanitize_nessus_web_error(str(e)))
+ 
+ 
+@app.get("/api/projects/{project_id}/nessus/templates-web")
+def nessus_list_templates_via_web(project_id: int, db: Session = Depends(get_db)):
+    """List available Nessus scan templates by scraping the New Scan page via Selenium."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    if not settings.tenable_username or not settings.tenable_password:
+        raise HTTPException(400, "Listing templates via web requires Tenable credentials")
+    if not nessus_web_launch.is_available():
+        raise HTTPException(503, "Selenium is not installed.")
+    try:
+        templates = nessus_web_launch.list_templates_via_web(
+            base_url=settings.tenable_base_url or "https://127.0.0.1:8834",
+            username=settings.tenable_username,
+            password=settings.tenable_password,
+            verify_ssl=settings.tenable_verify_ssl,
+        )
+        return {"templates": templates}
+    except nessus_web_launch.NessusWebLaunchError as e:
+        raise HTTPException(502, _sanitize_nessus_web_error(str(e)))
 
 @app.post("/api/projects/{project_id}/nessus/scans/{scan_id}/delete-web")
 def nessus_delete_scan_via_web(
