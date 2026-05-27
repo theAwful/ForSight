@@ -1,0 +1,1 @@
+pytest tests/test_roe.py tests/test_auth.py tests/test_checklist.py tests/test_nmap_parse.py tests/test_api_auth.py tests/test_api_projects.py tests/test_api_misc.py --cov=app --cov-report=term-missing
