@@ -1,0 +1,248 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Backend: Unit, Integration & Functional tests + Coverage
+  # ─────────────────────────────────────────────────────────────────────────────
+  backend-tests:
+    name: Backend Tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov pytest-asyncio httpx
+
+      # ── Group 1: Unit tests (pure logic, no DB, no HTTP) ─────────────────
+      - name: Run unit tests
+        env:
+          FORSIGHT_SECRET_KEY: "ci-test-secret-key"
+          FORSIGHT_DATA_DIR: /tmp/forsight-test
+        run: |
+          pytest \
+            tests/test_roe.py \
+            tests/test_auth.py \
+            tests/test_checklist.py \
+            tests/test_nmap_parse.py \
+            --cov=app \
+            --cov-report=xml:coverage_unit.xml \
+            -v --tb=short
+
+      # ── Group 2: Integration tests (FastAPI + in-memory DB) ───────────────
+      - name: Run integration tests
+        env:
+          FORSIGHT_SECRET_KEY: "ci-test-secret-key"
+          FORSIGHT_DATA_DIR: /tmp/forsight-test
+        run: |
+          pytest \
+            tests/test_api_auth.py \
+            tests/test_api_projects.py \
+            tests/test_api_misc.py \
+            "tests/test_api_checklist_jobs.py::TestChecklistEndpoints" \
+            "tests/test_api_checklist_jobs.py::TestUpdateChecklistItem" \
+            "tests/test_api_checklist_jobs.py::TestPreEngagementGate::test_run_scan_blocked_before_pre_engagement" \
+            "tests/test_api_checklist_jobs.py::TestPreEngagementGate::test_run_phase_blocked_before_pre_engagement" \
+            "tests/test_api_checklist_jobs.py::TestPreEngagementGate::test_unknown_runner_returns_400" \
+            "tests/test_api_checklist_jobs.py::TestScanJobs::test_list_jobs_empty_initially" \
+            "tests/test_api_checklist_jobs.py::TestScanJobs::test_get_nonexistent_job_404" \
+            "tests/test_api_checklist_jobs.py::TestScanJobs::test_delete_nonexistent_job_404" \
+            "tests/test_api_checklist_jobs.py::TestHealthEndpoint" \
+            "tests/test_api_checklist_jobs.py::TestRunPhase" \
+            --cov=app \
+            --cov-append \
+            --cov-report=xml:coverage_integration.xml \
+            -v --tb=short
+
+      # ── Merge coverage + enforce threshold ────────────────────────────────
+      - name: Merge & report coverage
+        env:
+          FORSIGHT_SECRET_KEY: "ci-test-secret-key"
+          FORSIGHT_DATA_DIR: /tmp/forsight-test
+        run: |
+          pytest \
+            tests/test_roe.py \
+            tests/test_auth.py \
+            tests/test_checklist.py \
+            tests/test_nmap_parse.py \
+            tests/test_api_auth.py \
+            tests/test_api_projects.py \
+            tests/test_api_misc.py \
+            "tests/test_api_checklist_jobs.py::TestChecklistEndpoints" \
+            "tests/test_api_checklist_jobs.py::TestUpdateChecklistItem" \
+            "tests/test_api_checklist_jobs.py::TestPreEngagementGate::test_run_scan_blocked_before_pre_engagement" \
+            "tests/test_api_checklist_jobs.py::TestPreEngagementGate::test_run_phase_blocked_before_pre_engagement" \
+            "tests/test_api_checklist_jobs.py::TestPreEngagementGate::test_unknown_runner_returns_400" \
+            "tests/test_api_checklist_jobs.py::TestScanJobs::test_list_jobs_empty_initially" \
+            "tests/test_api_checklist_jobs.py::TestScanJobs::test_get_nonexistent_job_404" \
+            "tests/test_api_checklist_jobs.py::TestScanJobs::test_delete_nonexistent_job_404" \
+            "tests/test_api_checklist_jobs.py::TestHealthEndpoint" \
+            "tests/test_api_checklist_jobs.py::TestRunPhase" \
+            --cov=app \
+            --cov-report=term-missing \
+            --cov-report=xml:coverage.xml \
+            --cov-report=html:htmlcov \
+            --cov-fail-under=30 \
+            -q --tb=no
+
+      - name: Upload coverage (XML)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-xml-py${{ matrix.python-version }}
+          path: backend/coverage.xml
+
+      - name: Upload coverage (HTML)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-html-py${{ matrix.python-version }}
+          path: backend/htmlcov/
+
+      - name: Comment coverage on PR
+        if: github.event_name == 'pull_request' && matrix.python-version == '3.11'
+        uses: orgoro/coverage@v3.1
+        with:
+          coverageFile: backend/coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          thresholdAll: 0.30
+          thresholdNew: 0.60
+          thresholdModified: 0.40
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Frontend: Lint + type check + unit tests
+  # ─────────────────────────────────────────────────────────────────────────────
+  frontend-tests:
+    name: Frontend Tests (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: ["18", "20"]
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint --if-present
+
+      - name: Type check
+        run: npm run typecheck --if-present
+
+      - name: Run frontend unit tests
+        run: npm run test --if-present -- --coverage --reporter=verbose
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Docker smoke test (build + health check)
+  # ─────────────────────────────────────────────────────────────────────────────
+  docker-smoke:
+    name: Docker Smoke Test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build images
+        run: docker compose build --no-cache
+        env:
+          FORSIGHT_SECRET_KEY: ci-smoke-secret
+
+      - name: Start services
+        run: docker compose up -d
+        env:
+          FORSIGHT_SECRET_KEY: ci-smoke-secret
+
+      - name: Wait for backend health
+        run: |
+          for i in $(seq 1 30); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/api/health 2>/dev/null || echo "000")
+            [ "$STATUS" = "200" ] && echo "Healthy after ${i}s" && exit 0
+            echo "Attempt $i: $STATUS — waiting..."
+            sleep 2
+          done
+          echo "Backend did not become healthy"; docker compose logs backend; exit 1
+
+      - name: API smoke tests
+        run: |
+          curl -s -X POST http://localhost:8000/api/auth/login \
+            -H "Content-Type: application/json" \
+            -d '{"username":"forsight","password":"forsight"}' \
+            -c /tmp/cookies.txt | python3 -c "import sys,json; d=json.load(sys.stdin); assert d.get('username')=='forsight'"
+
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST http://localhost:8000/api/projects \
+            -H "Content-Type: application/json" \
+            -d '{"name":"CI Smoke"}' -b /tmp/cookies.txt)
+          [ "$STATUS" = "200" ] || (echo "Create project failed: $STATUS" && exit 1)
+
+          echo "All smoke tests passed"
+
+      - name: Show logs on failure
+        if: failure()
+        run: docker compose logs
+
+      - name: Stop services
+        if: always()
+        run: docker compose down -v
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Required gate
+  # ─────────────────────────────────────────────────────────────────────────────
+  ci-status:
+    name: CI Status Gate
+    runs-on: ubuntu-latest
+    needs: [backend-tests, frontend-tests]
+    if: always()
+    steps:
+      - name: Check required jobs passed
+        run: |
+          if [[ "${{ needs.backend-tests.result }}" != "success" ]]; then
+            echo "Backend tests failed"; exit 1
+          fi
+          echo "All required CI checks passed"
