@@ -31,6 +31,9 @@ except ImportError:
 
 logger = logging.getLogger("forsight.selenium")
 
+_tpl_cache: dict = {"data": [], "ts": 0.0}
+_TPL_TTL = 600  # 10 minutes
+
 # ── Debug helpers ─────────────────────────────────────────────────────────────
 
 def _debug_enabled() -> bool:
@@ -584,7 +587,13 @@ def list_templates_via_web(
     verify_ssl: bool = False,
     wait_seconds: int = 15,
 ) -> list:
-    """Open New Scan, list available template titles, return list of {title, category}."""
+    """Open New Scan, list available template titles, return list of {title, category}.
+    Results are cached for _TPL_TTL seconds to avoid spinning up Selenium on every call.
+    """
+    now = time.time()
+    if _tpl_cache["data"] and (now - _tpl_cache["ts"]) < _TPL_TTL:
+        return _tpl_cache["data"]
+
     if not _SELENIUM_AVAILABLE:
         raise NessusWebLaunchError("Selenium is not installed.")
     run_ts = _new_run_ts()
@@ -629,6 +638,8 @@ def list_templates_via_web(
         except Exception:
             pass
 
+        _tpl_cache["data"] = templates
+        _tpl_cache["ts"] = time.time()
         return templates
     finally:
         if driver:
