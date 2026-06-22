@@ -398,8 +398,7 @@ function ImportedResults({ projectId, imports, onDelete, onRefresh }) {
 // ── Available scans (scan management) ────────────────────────────────────────
 
 function AvailableScans({ projectId, scans, webLaunchInfo, launching, pausing, stopping, importing, deleting, templates,
-  onLaunch, onPause, onStop, onImport, onDelete, showCreate, setShowCreate,
-  createName, setCreateName, createTemplateUuid, setCreateTemplateUuid,
+  onLaunch, onPause, onStop, onImport, onDelete, showCreate, setShowCreate, handleShowCreateToggle, createName, setCreateName, createTemplateUuid, setCreateTemplateUuid,
   createExtraTargets, setCreateExtraTargets, creating, creatingViaWeb,
   createError, onCreateAPI, onCreateWeb
 }) {
@@ -540,7 +539,7 @@ function AvailableScans({ projectId, scans, webLaunchInfo, launching, pausing, s
         <button
           type="button"
           style={S.toggleCreateBtn}
-          onClick={() => setShowCreate(v => !v)}
+          onClick={() => handleShowCreateToggle()}
         >
           {showCreate ? 'Hide create scan' : '+ Create new scan'}
         </button>
@@ -680,11 +679,7 @@ export default function Nessus({ projectId, onRefresh }) {
       api.nessus.listImports(projectId).then(d => Array.isArray(d?.scans) ? d.scans : []),
       // Use templates-web (Selenium scrape) when web launch is configured — names match Nessus exactly.
       // Fallback to API templates list otherwise.
-      api.nessus.templatesViaWeb(projectId)
-        .then(d => Array.isArray(d?.templates) ? d.templates : [])
-        .catch(() => api.nessus.templates(projectId)
-          .then(d => Array.isArray(d?.templates) ? d.templates : [])
-          .catch(() => [])),
+      Promise.resolve([]),
     ])
       .then(([s, i, t]) => { setScans(s); setImports(i); setTemplates(t) })
       .catch(e => setError(e?.body?.detail || e?.message || 'Failed to load Nessus data'))
@@ -695,6 +690,19 @@ export default function Nessus({ projectId, onRefresh }) {
     loadImports()
     loadScans(true)
   }
+
+  const handleShowCreateToggle = async () => {
+  const opening = !showCreate
+  setShowCreate(v => !v)
+  if (opening && templates.length === 0) {
+    try {
+      const t = await api.nessus.templatesViaWeb(projectId)
+      setTemplates(Array.isArray(t?.templates) ? t.templates : [])
+    } catch {
+      // silently fail — user can still type a template name manually
+    }
+  }
+
 
   const handleLaunch = async (scanId, scanName) => {
     const key = scanId ?? scanName
@@ -921,6 +929,7 @@ export default function Nessus({ projectId, onRefresh }) {
             onDelete={handleDelete}
             showCreate={showCreate}
             setShowCreate={setShowCreate}
+            handleShowCreateToggle={handleShowCreateToggle}
             createName={createName}
             setCreateName={setCreateName}
             createTemplateUuid={createTemplateUuid}
