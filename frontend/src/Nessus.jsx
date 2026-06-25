@@ -704,10 +704,10 @@ function ImportedResults({ projectId, imports, onDelete }) {
 // ── AvailableScans ────────────────────────────────────────────────────────────
 
 function AvailableScans({
-  projectId, scans, webLaunchInfo, launching, pausing, stopping, importing, deleting, templates,
+  projectId, scans, webLaunchInfo, launching, pausing, stopping, importing, deleting,
   onLaunch, onPause, onStop, onImport, onDelete,
   showCreate, handleShowCreateToggle,
-  createName, setCreateName, createTemplateUuid, setCreateTemplateUuid,
+  createName, setCreateName,
   createExtraTargets, setCreateExtraTargets,
   creating, creatingViaWeb, createError, onCreateAPI, onCreateWeb,
 }) {
@@ -814,17 +814,6 @@ function AvailableScans({
                 placeholder="e.g. ForSight scan" style={S.input} />
             </div>
             <div style={S.formRow}>
-              <label style={S.label}>Template</label>
-              <select value={createTemplateUuid} onChange={e => setCreateTemplateUuid(e.target.value)} style={S.input}>
-                <option value="">— Select template —</option>
-                {templates.map((t, i) => {
-                  const val = t.uuid || t.title || t.name || `tpl-${i}`
-                  const lbl = t.title || t.name || val
-                  return <option key={val + i} value={val}>{lbl}{t.category ? ` (${t.category})` : ''}</option>
-                })}
-              </select>
-            </div>
-            <div style={S.formRow}>
               <label style={S.label}>Extra targets <span style={S.muted}>(optional)</span></label>
               <textarea value={createExtraTargets} onChange={e => setCreateExtraTargets(e.target.value)}
                 placeholder="Additional IPs or hostnames"
@@ -832,9 +821,9 @@ function AvailableScans({
             </div>
             <div style={S.formActions}>
               <button type="button" style={{ ...S.actionBtn, ...S.primaryBtn }}
-                disabled={creating || !createName.trim() || !createTemplateUuid}
+                disabled={creating || !createName.trim()}
                 onClick={onCreateAPI}>
-                {creating ? 'Creating…' : 'Create (API)'}
+                {creating ? 'Creating…' : 'Create scan'}
               </button>
               {webLaunchInfo?.available && (
                 <button type="button" style={S.actionBtn}
@@ -866,12 +855,9 @@ export default function Nessus({ projectId }) {
   const [stopping,        setStopping]        = useState(null)
   const [importing,       setImporting]       = useState(null)
   const [deleting,        setDeleting]        = useState(null)
-  const [templates,       setTemplates]       = useState([])
   const [showCreate,      setShowCreate]      = useState(false)
   const [createName,      setCreateName]      = useState('')
-  const [createTemplateUuid, setCreateTemplateUuid] = useState('')
   const [createExtraTargets, setCreateExtraTargets] = useState('')
-  const [creating,        setCreating]        = useState(false)
   const [creatingViaWeb,  setCreatingViaWeb]  = useState(false)
   const [createError,     setCreateError]     = useState(null)
   const [statusMsg,       setStatusMsg]       = useState(null)
@@ -918,15 +904,8 @@ export default function Nessus({ projectId }) {
 
   const handleRefresh = () => { loadImports(); loadScans(true) }
 
-  const handleShowCreateToggle = async () => {
-    const opening = !showCreate
+  const handleShowCreateToggle = () => {
     setShowCreate(v => !v)
-    if (opening && templates.length === 0) {
-      try {
-        const t = await api.nessus.templatesViaWeb(projectId)
-        setTemplates(Array.isArray(t?.templates) ? t.templates : [])
-      } catch { /* silent */ }
-    }
   }
 
   const handleLaunch = async (scanId, scanName) => {
@@ -1004,13 +983,13 @@ export default function Nessus({ projectId }) {
     }
   }
 
-  const handleCreateAPI = async () => {
+  const handleCreateWeb = async () => {
     if (!createName.trim()) return
-    setCreating(true); setCreateError(null)
+    setCreatingViaWeb(true); setCreateError(null)
     try {
-      await api.nessus.createScan(projectId, {
+      await api.nessus.createScanViaWeb(projectId, {
         name: createName.trim(),
-        template_uuid: '731a8e52-3ea6-a291-ec0a-d2ff0619c19f',
+        template_key: 'basic',
         use_project_targets: true,
         text_targets: createExtraTargets || undefined,
       })
@@ -1019,24 +998,6 @@ export default function Nessus({ projectId }) {
       await loadScans(true)
     } catch (e) {
       setCreateError(e?.body?.detail || e?.message || 'Create failed.')
-    } finally {
-    setCreating(false)
-    }
-  }
-
-  const handleCreateWeb = async () => {
-    if (!createName.trim()) return
-    setCreatingViaWeb(true); setCreateError(null)
-    try {
-      await api.nessus.createScanViaWeb(projectId, {
-        name: createName.trim(), template_key: createTemplateUuid || 'advanced',
-        use_project_targets: true, text_targets: createExtraTargets || undefined,
-      })
-      flash('success', `Scan "${createName}" created via web.`)
-      setCreateName(''); setCreateExtraTargets(''); setShowCreate(false)
-      await loadScans(true)
-    } catch (e) {
-      setCreateError(e?.body?.detail || e?.message || 'Create via web failed.')
     } finally { setCreatingViaWeb(false) }
   }
 
