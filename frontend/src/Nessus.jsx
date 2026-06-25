@@ -1005,19 +1005,23 @@ export default function Nessus({ projectId }) {
   }
 
   const handleCreateAPI = async () => {
-    if (!createName.trim() || !createTemplateUuid) return
+    if (!createName.trim()) return
     setCreating(true); setCreateError(null)
     try {
       await api.nessus.createScan(projectId, {
-        name: createName.trim(), template_uuid: createTemplateUuid,
-        use_project_targets: true, text_targets: createExtraTargets || undefined,
+        name: createName.trim(),
+        template_uuid: '731a8e52-3ea6-a291-ec0a-d2ff0619c19f',
+        use_project_targets: true,
+        text_targets: createExtraTargets || undefined,
       })
       flash('success', `Scan "${createName}" created.`)
-      setCreateName(''); setCreateTemplateUuid(''); setCreateExtraTargets(''); setShowCreate(false)
+      setCreateName(''); setCreateExtraTargets(''); setShowCreate(false)
       await loadScans(true)
     } catch (e) {
       setCreateError(e?.body?.detail || e?.message || 'Create failed.')
-    } finally { setCreating(false) }
+    } finally {
+    setCreating(false)
+    }
   }
 
   const handleCreateWeb = async () => {
