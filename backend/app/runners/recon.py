@@ -5,7 +5,7 @@ from typing import List, Optional
 
 from app.config import settings
 from app.runners.base import run_tool, run_tool_stream
-
+from .dehashed import run_recon_dehashed
 
 async def _write_header(stream_path: Optional[Path], tool_name: str) -> None:
     if stream_path:
@@ -159,9 +159,12 @@ async def run_recon_leaked(
     job_id: Optional[int] = None,
     **kwargs,
 ) -> tuple[int, str, str, Optional[Path]]:
-    output_path = results_dir / "recon_leaked.txt"
-    text = "# Leaked creds (Dehashed, H8mail, TCM) – run manually per ROE.\n" + f"# Domains: {domains}\n"
-    if stream_path:
-        stream_path.write_text(text)
-    output_path.write_text(text)
-    return 0, text, "", stream_path or output_path
+    return await run_recon_dehashed(
+        project_id=project_id,
+        ips=ips,
+        domains=domains,
+        results_dir=results_dir,
+        stream_path=stream_path,
+        job_id=job_id,
+        **kwargs,
+    )
