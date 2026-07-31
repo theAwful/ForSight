@@ -1,0 +1,71 @@
+{
+  "$schema": "ForSight tool bundle — keep in sync with backend/Dockerfile and app/config.py",
+  "version": 1,
+  "apt": {
+    "description": "Debian/Ubuntu/Kali packages (apt-get install)",
+    "packages": [
+      "ca-certificates",
+      "curl",
+      "python3",
+      "python3-pip",
+      "python3-venv",
+      "nmap",
+      "nikto",
+      "dirb",
+      "whois",
+      "sslscan",
+      "masscan",
+      "dnsrecon",
+      "amass",
+      "theharvester",
+      "subfinder",
+      "nuclei",
+      "gowitness",
+      "wpscan",
+      "snmp",
+      "samba-common-bin",
+      "ldap-utils",
+      "enum4linux-ng",
+      "testssl.sh"
+    ]
+  },
+  "pip_user": {
+    "description": "pip install --user (Python tools not in apt)",
+    "packages": ["droopescan"]
+  },
+  "git_tools": [
+    {
+      "id": "cloud_enum",
+      "description": "Multi-cloud OSINT (initstring/cloud_enum). ForSight expects command name cloud_enum on PATH.",
+      "repo": "https://github.com/initstring/cloud_enum.git",
+      "branch": "master",
+      "entry_script": "cloud_enum.py",
+      "requirements_file": "requirements.txt",
+      "wrapper_name": "cloud_enum"
+    }
+  ],
+  "path_checks": {
+    "description": "Binary name used for `which` / version smoke checks (keys match env FORSIGHT_*_PATH defaults)",
+    "nmap": "nmap",
+    "subfinder": "subfinder",
+    "testssl.sh": "testssl.sh",
+    "sslscan": "sslscan",
+    "dnsrecon": "dnsrecon",
+    "amass": "amass",
+    "theHarvester": "theHarvester",
+    "whois": "whois",
+    "cloud_enum": "cloud_enum",
+    "wpscan": "wpscan",
+    "droopescan": "droopescan",
+    "nuclei": "nuclei",
+    "nikto": "nikto",
+    "gowitness": "gowitness",
+    "masscan": "masscan",
+    "dirb": "dirb",
+    "snmpwalk": "snmpwalk",
+    "curl": "curl",
+    "smbclient": "smbclient",
+    "enum4linux": "enum4linux-ng",
+    "ldapsearch": "ldapsearch"
+  }
+}

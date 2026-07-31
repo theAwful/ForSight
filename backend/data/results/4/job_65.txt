@@ -1,0 +1,3 @@
+=== recon_shodan ===
+Targets: 0 IPs, 1 domains
+# No IPs in ROE for Shodan.

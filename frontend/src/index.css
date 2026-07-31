@@ -42,11 +42,11 @@
   --danger:          #dc2626;
   --danger-soft:     rgba(220, 38, 38, 0.08);
 
-  /* Shape */
-  --radius:          8px;
-  --radius-sm:       5px;
-  --radius-lg:       12px;
-  --radius-xl:       16px;
+  /* Shape — sharp instrument-panel edges (match sidebar) */
+  --radius:          0;
+  --radius-sm:       0;
+  --radius-lg:       0;
+  --radius-xl:       0;
 
   /* Type */
   --font-sans:       'Inter', system-ui, -apple-system, sans-serif;
@@ -261,12 +261,11 @@ input:focus, select:focus, textarea:focus {
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-xs);
-  transition: box-shadow var(--transition), border-color var(--transition);
+  border-radius: 0;
+  box-shadow: none;
+  transition: border-color var(--transition), background-color var(--transition);
 }
 .card:hover {
-  box-shadow: var(--shadow-sm);
   border-color: var(--border-strong);
 }
 
@@ -716,21 +715,54 @@ html[data-theme="dark"] .layout-header {
   }
 }
 
-/* ── ROE / targets grid ──────────────────────────────────────────────────────*/
-.roe-targets-grid {
+/* ── Project detail: main + sticky targets rail ──────────────────────────────*/
+.project-detail-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(200px, 300px);
+  grid-template-columns: minmax(0, 1fr) minmax(200px, 260px);
   gap: 20px;
-  align-items: stretch;
+  align-items: start;
+}
+
+.project-detail-main {
+  min-width: 0;
+}
+
+.project-targets-rail {
+  position: sticky;
+  top: 72px;
+  max-height: calc(100vh - 96px);
+  overflow: hidden;
+  align-self: start;
 }
 
 @media (max-width: 900px) {
-  .roe-targets-grid {
+  .project-detail-layout {
     grid-template-columns: 1fr;
+  }
+  .project-targets-rail {
+    position: relative;
+    top: auto;
+    max-height: 280px;
+    order: -1;
   }
 }
 
-/* ── Input variants ──────────────────────────────────────────────────────────*/
+/* ── Hosts sidebar list — no focus ring on click ─────────────────────────────*/
+.hosts-sidebar-list button:focus,
+.hosts-sidebar-list button:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+/* ── Engagement list rows ────────────────────────────────────────────────────*/
+.engagement-row-link:hover {
+  background: var(--surface-muted);
+  border-color: var(--border-strong);
+}
+.engagement-delete-btn:hover:not(:disabled) {
+  background: var(--danger-soft);
+  border-color: var(--danger);
+}
 .input-search {
   background: var(--surface-muted) !important;
   border-color: var(--border) !important;

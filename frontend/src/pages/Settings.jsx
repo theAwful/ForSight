@@ -1,49 +1,7 @@
-import { useState, useEffect, useCallback } from 'react'
 import { useTheme } from '../theme'
-import { api } from '../api'
-import ToolStatusTable from '../components/settings/ToolStatusTable'
-import { useToast } from '../components/ui/Toast'
 
 export default function Settings() {
   const { theme, setTheme } = useTheme()
-  const { toast } = useToast()
-
-  const [tools, setTools] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [isRefreshing, setIsRefreshing] = useState(false)
-  const [toolError, setToolError] = useState(null)
-
-  const fetchTools = useCallback(async (isRefresh = false) => {
-    if (isRefresh) setIsRefreshing(true)
-    else setIsLoading(true)
-    setToolError(null)
-    try {
-      const data = await api.tools.status()
-      setTools(data)
-    } catch (err) {
-      setToolError(err?.message || 'Failed to load tool status')
-    } finally {
-      setIsLoading(false)
-      setIsRefreshing(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    fetchTools()
-  }, [fetchTools])
-
-  const handleUpdatePath = useCallback(async (key, path) => {
-    try {
-      const updated = await api.tools.updatePath(key, path)
-      // Merge updated tool back into the list
-      setTools((prev) => prev.map((t) => (t.key === updated.key ? updated : t)))
-      toast.success(`Updated path for ${updated.display_name}. Status: ${updated.status}.`)
-    } catch (err) {
-      const msg = err?.body?.detail || err?.message || 'Failed to update path'
-      toast.error(msg)
-      throw new Error(msg)
-    }
-  }, [toast])
 
   return (
     <div style={styles.wrapper}>
@@ -79,43 +37,6 @@ export default function Settings() {
         </div>
       </section>
 
-      {/* ── Tool Management ────────────────────────────────── */}
-      <section style={styles.card}>
-        <div style={styles.sectionHeader}>
-          <div>
-            <h2 style={styles.sectionTitle}>Tool Management</h2>
-            <p style={styles.sectionDesc}>
-              Current status of all configured pentesting tools on this host.
-              Click <strong>Edit path</strong> to update a binary location without restarting the backend.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => fetchTools(true)}
-            disabled={isRefreshing}
-            style={styles.refreshBtn}
-            aria-label="Refresh tool status"
-          >
-            {isRefreshing ? '↻ Refreshing…' : '↻ Refresh'}
-          </button>
-        </div>
-
-        <ToolStatusTable
-          tools={tools}
-          onRefresh={() => fetchTools(true)}
-          onUpdatePath={handleUpdatePath}
-          isLoading={isLoading}
-          isRefreshing={isRefreshing}
-          error={toolError}
-        />
-
-        <p style={styles.footerNote}>
-          To persist path changes across backend restarts, set{' '}
-          <code style={styles.code}>FORSIGHT_&lt;TOOL_KEY&gt;_PATH</code> in your{' '}
-          <code style={styles.code}>.env</code> file.
-        </p>
-      </section>
-
       {/* ── Nessus / Tenable Config ────────────────────────── */}
       <section style={styles.card}>
         <h2 style={styles.sectionTitle}>Nessus / Tenable Configuration</h2>
@@ -132,6 +53,26 @@ export default function Settings() {
             ['FORSIGHT_TENABLE_PASSWORD', 'Password (for Selenium)'],
             ['FORSIGHT_TENABLE_VERIFY_SSL', 'Set true to verify TLS (default: false)'],
             ['FORSIGHT_SELENIUM_DEBUG', 'Set 1 to save Selenium failure screenshots to /tmp/'],
+          ].map(([key, desc]) => (
+            <div key={key} style={styles.envRow}>
+              <code style={{ ...styles.code, flexShrink: 0 }}>{key}</code>
+              <span style={styles.envDesc}>{desc}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── API keys ───────────────────────────────────────── */}
+      <section style={styles.card}>
+        <h2 style={styles.sectionTitle}>API Keys</h2>
+        <p style={styles.sectionDesc}>
+          Optional third-party API keys for recon tools. Add these to your{' '}
+          <code style={styles.code}>.env</code> and restart the backend.
+        </p>
+        <div style={styles.envList}>
+          {[
+            ['FORSIGHT_SHODAN_API_KEY', 'Shodan API key — queries each ROE IP; writes shodan/<ip>.txt'],
+            ['FORSIGHT_DEHASHED_KEY', 'DeHashed API key — leaked credential lookups'],
           ].map(([key, desc]) => (
             <div key={key} style={styles.envRow}>
               <code style={{ ...styles.code, flexShrink: 0 }}>{key}</code>
@@ -170,17 +111,9 @@ const styles = {
   card: {
     background: 'var(--color-bg-surface)',
     border: '1px solid var(--color-border)',
-    borderRadius: 'var(--radius-lg)',
+    borderRadius: 0,
     padding: '20px 24px',
     marginBottom: '16px',
-  },
-  sectionHeader: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    gap: '16px',
-    marginBottom: '14px',
-    flexWrap: 'wrap',
   },
   sectionTitle: {
     margin: '0 0 4px 0',
@@ -201,7 +134,7 @@ const styles = {
   },
   themeBtn: {
     padding: '7px 18px',
-    borderRadius: 'var(--radius-md)',
+    borderRadius: 0,
     fontSize: '0.875rem',
     cursor: 'pointer',
     fontWeight: 500,
@@ -217,22 +150,6 @@ const styles = {
     background: 'transparent',
     color: 'var(--color-text-secondary)',
     borderColor: 'var(--color-border)',
-  },
-  refreshBtn: {
-    padding: '6px 14px',
-    background: 'transparent',
-    border: '1px solid var(--color-border)',
-    borderRadius: 'var(--radius-md)',
-    color: 'var(--color-text-secondary)',
-    fontSize: '0.82rem',
-    cursor: 'pointer',
-    flexShrink: 0,
-    whiteSpace: 'nowrap',
-  },
-  footerNote: {
-    marginTop: '12px',
-    fontSize: '0.78rem',
-    color: 'var(--color-text-disabled)',
   },
   envList: {
     display: 'flex',
@@ -263,7 +180,7 @@ const styles = {
     fontSize: '0.82em',
     background: 'var(--color-bg-elevated)',
     padding: '1px 5px',
-    borderRadius: '3px',
+    borderRadius: 0,
     color: 'var(--color-text-primary)',
   },
 }

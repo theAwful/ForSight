@@ -26,7 +26,7 @@ async def run_recon_dehashed(
         output_path.write_text(msg)
         return 0, "", "", stream_path or output_path
 
-    api_key = getattr(settings, "FORSIGHT_DEHASHED_KEY", "")
+    api_key = (settings.dehashed_key or "").strip()
     if not api_key:
         msg = "# DeHashed skipped — FORSIGHT_DEHASHED_KEY not set in config.\n"
         if stream_path:

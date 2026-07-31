@@ -1,0 +1,12 @@
+# Nmap 7.98 scan initiated Fri Jul 31 01:57:07 2026 as: /usr/lib/nmap/nmap --privileged -sS --top-ports 5000 -T4 -oN data/results/4/nmap_ports.txt --open awfulsecurity.org
+Nmap scan report for awfulsecurity.org (185.199.111.153)
+Host is up (0.0027s latency).
+Other addresses for awfulsecurity.org (not scanned): 185.199.110.153 185.199.108.153 185.199.109.153
+rDNS record for 185.199.111.153: cdn-185-199-111-153.github.com
+Not shown: 4998 filtered tcp ports (no-response)
+Some closed ports may be reported as filtered due to --defeat-rst-ratelimit
+PORT    STATE SERVICE
+80/tcp  open  http
+443/tcp open  https
+
+# Nmap done at Fri Jul 31 02:00:13 2026 -- 1 IP address (1 host up) scanned in 186.74 seconds

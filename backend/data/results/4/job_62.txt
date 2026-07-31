@@ -1,0 +1,16 @@
+=== recon_amass ===
+Targets: 0 IPs, 1 domains
+=== amass ===
+awfulsecurity.org (FQDN) --> mx_record --> alt2.aspmx.l.google.com (FQDN)
+awfulsecurity.org (FQDN) --> mx_record --> alt1.aspmx.l.google.com (FQDN)
+awfulsecurity.org (FQDN) --> mx_record --> alt4.aspmx.l.google.com (FQDN)
+awfulsecurity.org (FQDN) --> mx_record --> alt3.aspmx.l.google.com (FQDN)
+awfulsecurity.org (FQDN) --> mx_record --> mxb.mailgun.org (FQDN)
+awfulsecurity.org (FQDN) --> mx_record --> mxa.mailgun.org (FQDN)
+awfulsecurity.org (FQDN) --> mx_record --> aspmx.l.google.com (FQDN)
+awfulsecurity.org (FQDN) --> ns_record --> ns-cloud-a4.googledomains.com (FQDN)
+awfulsecurity.org (FQDN) --> ns_record --> ns-cloud-a3.googledomains.com (FQDN)
+awfulsecurity.org (FQDN) --> ns_record --> ns-cloud-a2.googledomains.com (FQDN)
+awfulsecurity.org (FQDN) --> ns_record --> ns-cloud-a1.googledomains.com (FQDN)
+
+The enumeration has finished

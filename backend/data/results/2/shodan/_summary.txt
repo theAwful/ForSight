@@ -1,0 +1,6 @@
+Shodan run for project 2
+IPs queried: 2
+With data: 1
+Not found: 1
+Errors: 0
+Finished: 2026-07-31 01:54:07

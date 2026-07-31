@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { api } from './api'
 import ConfirmModal from './ConfirmModal'
@@ -7,6 +7,7 @@ export default function ProjectList() {
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
   const [name, setName] = useState('')
+  const [search, setSearch] = useState('')
   const [creating, setCreating] = useState(false)
   const [deleting, setDeleting] = useState(null)
   const [deleteConfirm, setDeleteConfirm] = useState(null)
@@ -15,6 +16,12 @@ export default function ProjectList() {
   useEffect(() => {
     api.projects.list().then(setProjects).finally(() => setLoading(false))
   }, [])
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    if (!q) return projects
+    return projects.filter((p) => (p.name || '').toLowerCase().includes(q))
+  }, [projects, search])
 
   const openDeleteConfirm = (e, p) => {
     e.preventDefault()
@@ -62,7 +69,7 @@ export default function ProjectList() {
         <p style={styles.subtitle}>Create and manage external pentest engagements. Upload an ROE (IPs & domains), then run the checklist.</p>
       </header>
 
-      <section style={styles.createCard} className="card">
+      <section style={styles.createCard}>
         <h2 style={styles.sectionTitle}>New engagement</h2>
         <form onSubmit={create} style={styles.form}>
           <input
@@ -80,29 +87,48 @@ export default function ProjectList() {
       </section>
 
       <section style={styles.listSection}>
-        <h2 style={styles.sectionTitle}>
-          Your engagements
-          {projects.length > 0 && <span style={styles.count}>{projects.length}</span>}
-        </h2>
+        <div style={styles.listHeader}>
+          <h2 style={styles.sectionTitle}>
+            Your engagements
+            {projects.length > 0 && <span style={styles.count}>{projects.length}</span>}
+          </h2>
+          {projects.length > 0 && (
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search engagements…"
+              className="input-search"
+              style={styles.searchInput}
+              aria-label="Search engagements"
+            />
+          )}
+        </div>
         {projects.length === 0 ? (
-          <div style={styles.emptyCard} className="card">
+          <div style={styles.emptyCard}>
             <p style={styles.emptyText}>No engagements yet.</p>
             <p style={styles.emptyHint}>Create one above, then open it to upload an ROE and run the checklist.</p>
           </div>
+        ) : filtered.length === 0 ? (
+          <div style={styles.emptyCard}>
+            <p style={styles.emptyText}>No matches for “{search.trim()}”.</p>
+            <p style={styles.emptyHint}>Try a different name, or clear the search.</p>
+          </div>
         ) : (
           <ul style={styles.list}>
-            {projects.map((p) => (
+            {filtered.map((p) => (
               <li key={p.id} style={styles.listItem}>
-                <Link to={`/projects/${p.id}`} style={styles.cardLink} className="card">
+                <Link to={`/projects/${p.id}`} style={styles.cardLink} className="engagement-row-link">
                   <span style={styles.cardAccent} aria-hidden />
                   <div style={styles.cardBody}>
                     <span style={styles.cardName}>{p.name}</span>
                     <div style={styles.cardMeta}>
-                      {p.roe_filename && <span style={styles.metaItem}>ROE: {p.roe_filename}</span>}
-                      {p.targets_summary && (
+                      {p.targets_summary ? (
                         <span style={styles.metaItem}>
                           {p.targets_summary.ips} IPs, {p.targets_summary.domains} domains
                         </span>
+                      ) : (
+                        <span style={styles.metaItem}>No targets yet</span>
                       )}
                     </div>
                   </div>
@@ -110,13 +136,13 @@ export default function ProjectList() {
                 </Link>
                 <button
                   type="button"
-                  className="btn-secondary"
+                  className="engagement-delete-btn"
                   style={styles.deleteBtn}
                   onClick={(e) => openDeleteConfirm(e, p)}
                   disabled={deleting === p.id}
                   title="Delete engagement"
                 >
-                  {deleting === p.id ? 'Deleting…' : 'Delete'}
+                  {deleting === p.id ? '…' : 'Delete'}
                 </button>
               </li>
             ))}
@@ -149,49 +175,107 @@ const styles = {
     marginBottom: '1.5rem',
     background: 'var(--surface)',
     border: '1px solid var(--border)',
-    borderRadius: 'var(--radius)',
-    boxShadow: 'var(--shadow-sm)',
+    borderRadius: 0,
   },
-  sectionTitle: { margin: 0, fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.04em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' },
-  count: { background: 'var(--border)', color: 'var(--text-muted)', fontSize: '0.75rem', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-sm)' },
-  form: { display: 'flex', gap: '0.5rem', flexWrap: 'wrap' },
+  sectionTitle: {
+    margin: 0,
+    fontSize: '0.8125rem',
+    fontWeight: 600,
+    color: 'var(--text-muted)',
+    letterSpacing: '0.04em',
+    textTransform: 'uppercase',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+  },
+  count: {
+    background: 'var(--surface-muted)',
+    color: 'var(--text-muted)',
+    fontSize: '0.75rem',
+    fontFamily: 'var(--font-mono)',
+    padding: '0.15rem 0.45rem',
+    border: '1px solid var(--border)',
+    borderRadius: 0,
+  },
+  form: { display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.75rem' },
   input: {
     flex: 1,
     minWidth: 200,
     padding: '0.6rem 0.75rem',
-    borderRadius: 'var(--radius)',
+    borderRadius: 0,
     border: '1px solid var(--border)',
     background: 'var(--bg)',
     color: 'var(--text)',
     fontSize: '1rem',
     fontFamily: 'var(--font-sans)',
   },
-  createBtn: { padding: '0.6rem 1.25rem', background: 'var(--accent)', color: 'var(--accent-text)', fontWeight: 500 },
+  createBtn: { padding: '0.6rem 1.25rem', background: 'var(--accent)', color: 'var(--accent-text)', fontWeight: 500, borderRadius: 0 },
   listSection: { marginTop: '0.5rem' },
-  list: { listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' },
-  listItem: { display: 'flex', alignItems: 'stretch', gap: '0.5rem' },
+  listHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '1rem',
+    flexWrap: 'wrap',
+    marginBottom: '0.75rem',
+  },
+  searchInput: {
+    flex: '1 1 200px',
+    maxWidth: 280,
+    padding: '0.45rem 0.75rem',
+    borderRadius: 0,
+    border: '1px solid var(--border)',
+    background: 'var(--bg)',
+    color: 'var(--text)',
+    fontSize: '0.875rem',
+    fontFamily: 'var(--font-sans)',
+  },
+  list: { listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '0.35rem' },
+  listItem: { display: 'flex', alignItems: 'stretch', gap: 0 },
   cardLink: {
     flex: 1,
     display: 'flex',
     alignItems: 'center',
     padding: 0,
     background: 'var(--surface)',
-    borderRadius: 'var(--radius)',
+    borderRadius: 0,
     border: '1px solid var(--border)',
+    borderRight: 'none',
     color: 'var(--text)',
     textDecoration: 'none',
     overflow: 'hidden',
-    transition: 'box-shadow 0.15s ease, border-color 0.15s ease',
+    transition: 'border-color 0.15s ease, background-color 0.15s ease',
     minWidth: 0,
   },
-  cardAccent: { width: 4, flexShrink: 0, background: 'var(--accent)', alignSelf: 'stretch' },
-  cardBody: { flex: 1, minWidth: 0, padding: '1rem 1rem 1rem 1.25rem' },
-  cardName: { display: 'block', fontWeight: 600, fontSize: '1rem', color: 'var(--text)' },
-  cardMeta: { display: 'flex', flexWrap: 'wrap', gap: '0.5rem 1rem', marginTop: '0.35rem', fontSize: '0.85rem', color: 'var(--text-muted)' },
+  cardAccent: { width: 3, flexShrink: 0, background: 'var(--accent)', alignSelf: 'stretch' },
+  cardBody: { flex: 1, minWidth: 0, padding: '0.85rem 1rem 0.85rem 1.1rem' },
+  cardName: { display: 'block', fontWeight: 600, fontSize: '0.95rem', color: 'var(--text)' },
+  cardMeta: { display: 'flex', flexWrap: 'wrap', gap: '0.5rem 1rem', marginTop: '0.25rem', fontSize: '0.8rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' },
   metaItem: {},
-  cardArrow: { padding: '1rem 1rem 1rem 0', color: 'var(--text-muted)', fontSize: '1.25rem', flexShrink: 0 },
-  deleteBtn: { flexShrink: 0, color: 'var(--danger)', borderColor: 'var(--danger)', alignSelf: 'center' },
-  emptyCard: { padding: '2rem 1.5rem', textAlign: 'center', background: 'var(--surface)', border: '1px dashed var(--border)', borderRadius: 'var(--radius)' },
+  cardArrow: { padding: '0.85rem 0.85rem 0.85rem 0', color: 'var(--text-muted)', fontSize: '1.1rem', flexShrink: 0 },
+  deleteBtn: {
+    flexShrink: 0,
+    alignSelf: 'stretch',
+    minWidth: 72,
+    padding: '0 1rem',
+    margin: 0,
+    borderRadius: 0,
+    border: '1px solid var(--border)',
+    borderLeft: '1px solid var(--border)',
+    background: 'var(--surface)',
+    color: 'var(--danger)',
+    fontSize: '0.8rem',
+    fontWeight: 500,
+    cursor: 'pointer',
+    transition: 'background-color 0.15s ease, border-color 0.15s ease',
+  },
+  emptyCard: {
+    padding: '2rem 1.5rem',
+    textAlign: 'center',
+    background: 'var(--surface)',
+    border: '1px dashed var(--border)',
+    borderRadius: 0,
+  },
   emptyText: { margin: 0, fontWeight: 600, color: 'var(--text)' },
   emptyHint: { margin: '0.5rem 0 0', fontSize: '0.9rem', color: 'var(--text-muted)' },
 }

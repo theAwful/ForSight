@@ -207,35 +207,37 @@ export default function ProjectDetail() {
     return <div style={{ color: 'var(--text-muted)' }}>Loading…</div>
   }
 
+  const targetCount = (targets.ips || []).length + (targets.domains || []).length
+
   // ── Main render ───────────────────────────────────────────────
   return (
-    <div>
-      {/* Project header */}
-      <div style={styles.header}>
-        <div>
-          <h1 style={styles.title}>{project?.name ?? 'Project'}</h1>
-          {project?.targets_summary && (
-            <span style={styles.summary}>
-              {project.targets_summary.ips} IPs, {project.targets_summary.domains} domains
-              {project.roe_filename && ` · ${project.roe_filename}`}
-            </span>
-          )}
+    <>
+    <div className="project-detail-layout">
+      <div className="project-detail-main">
+        {/* Project header */}
+        <div style={styles.header}>
+          <div>
+            <h1 style={styles.title}>{project?.name ?? 'Project'}</h1>
+            {project?.targets_summary && (
+              <span style={styles.summary}>
+                {project.targets_summary.ips} IPs, {project.targets_summary.domains} domains
+              </span>
+            )}
+          </div>
+          <button
+            type="button"
+            className="btn-secondary"
+            style={styles.deleteProjectBtn}
+            onClick={onDeleteProject}
+            disabled={deleting}
+            title="Delete this project"
+          >
+            {deleting ? 'Deleting…' : 'Delete project'}
+          </button>
         </div>
-        <button
-          type="button"
-          className="btn-secondary"
-          style={styles.deleteProjectBtn}
-          onClick={onDeleteProject}
-          disabled={deleting}
-          title="Delete this project"
-        >
-          {deleting ? 'Deleting…' : 'Delete project'}
-        </button>
-      </div>
 
-      {/* ROE upload + targets panel */}
-      <div className="roe-targets-grid" style={styles.roeTargetsRow}>
-        <div style={styles.roeColumn}>
+        {/* ROE upload */}
+        <div style={styles.roeTargetsRow}>
           <div style={styles.roe}>
             <label style={styles.roeLabel}>
               <span>Upload ROE (IPs / domains):</span>
@@ -267,151 +269,158 @@ export default function ProjectDetail() {
           </div>
         </div>
 
-        <div className="card" style={styles.targetsPanel}>
-          <h3 style={styles.targetsTitle}>Current targets</h3>
-          {editingTargets ? (
-            <div style={styles.targetsEditor}>
-              <textarea
-                value={editTargetsText}
-                onChange={(e) => setEditTargetsText(e.target.value)}
-                placeholder="One IP or domain per line"
-                style={styles.targetsTextarea}
-                rows={10}
+        {/* Tab bar + content */}
+        <div style={styles.tabContentArea}>
+          <div className="tabs-row" style={styles.tabs}>
+            {Object.keys(TAB_LABELS).map((t) => (
+              <button
+                key={t}
+                type="button"
+                className={`tab-btn ${tab === t ? 'tab-btn-active' : ''}`}
+                onClick={() => handleTabChange(t)}
+                style={{ ...styles.tab, ...(tab === t ? styles.tabActive : {}) }}
+              >
+                {TAB_LABELS[t]}
+              </button>
+            ))}
+          </div>
+
+          {/*
+            Tab content — uses display:none to keep components mounted after
+            first visit. This preserves JobCard polling state, Hosts data,
+            and Nessus scan list without re-fetching on every tab switch.
+
+            Checklist is always rendered (it's the default landing tab).
+            Jobs/Hosts/Nessus are conditionally rendered on first visit,
+            then kept alive with display toggling thereafter.
+            Reporting is lightweight and re-renders fine.
+          */}
+          <div className="tab-content main-content" style={{ minHeight: 200 }}>
+
+            {/* Checklist — always mounted */}
+            <div style={{ display: tab === 'checklist' ? 'block' : 'none' }}>
+              <Checklist
+                projectId={projectId}
+                checklist={checklist}
+                onRun={load}
+                onStatusChange={load}
+                nmapDone={nmapDone}
               />
-              <div style={styles.targetsEditorActions}>
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  onClick={cancelEditTargets}
-                  style={styles.targetsBtn}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="btn-primary"
-                  onClick={saveTargets}
-                  disabled={savingTargets}
-                  style={styles.targetsBtn}
-                >
-                  {savingTargets ? 'Saving…' : 'Save'}
-                </button>
-              </div>
             </div>
-          ) : (
-            <>
-              <div style={styles.targetsScroll}>
-                {((targets.ips || []).length + (targets.domains || []).length) === 0 ? (
-                  <p style={styles.targetsEmpty}>No targets. Upload ROE or paste on the left.</p>
-                ) : (
-                  <ul style={styles.targetsList}>
-                    {(targets.ips || []).map((ip, i) => (
-                      <li key={`ip-${i}`} style={styles.targetsItem}>{ip}</li>
-                    ))}
-                    {(targets.domains || []).map((d, i) => (
-                      <li key={`dom-${i}`} style={styles.targetsItem}>{d}</li>
-                    ))}
-                  </ul>
-                )}
+
+            {/* Jobs — mounted on first visit, then kept alive */}
+            {(tab === 'jobs' || jobsEverVisited) && (
+              <div style={{ display: tab === 'jobs' ? 'block' : 'none' }}>
+                <Jobs
+                  projectId={projectId}
+                  jobs={jobs}
+                  onRefresh={load}
+                />
               </div>
+            )}
+
+            {/* Hosts — mounted on first visit, then kept alive */}
+            {(tab === 'hosts' || hostsEverVisited) && (
+              <div style={{ display: tab === 'hosts' ? 'block' : 'none' }}>
+                <Hosts projectId={projectId} onRefresh={load} />
+              </div>
+            )}
+
+            {/* Nessus — mounted on first visit, then kept alive */}
+            {(tab === 'nessus' || nessusEverVisited) && (
+              <div style={{ display: tab === 'nessus' ? 'block' : 'none' }}>
+                <Nessus projectId={projectId} onRefresh={load} />
+              </div>
+            )}
+
+            {/* Reporting — lightweight, conditional render is fine */}
+            {tab === 'reporting' && (
+              <div className="card" style={styles.reportingCard}>
+                <h2 style={styles.reportingTitle}>Reporting & wrap-up</h2>
+                <p style={styles.reportingLead}>
+                  Download all tool outputs (workpapers) as a zip for this project.
+                </p>
+                <a
+                  href={api.projects.downloadOutputsUrl(projectId)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary"
+                  style={styles.downloadBtn}
+                >
+                  Download workpapers (zip)
+                </a>
+              </div>
+            )}
+
+          </div>
+        </div>
+      </div>
+
+      {/* Targets rail — sticky side panel, scrolls independently */}
+      <aside className="project-targets-rail" style={styles.targetsPanel}>
+        <div style={styles.targetsRailHeader}>
+          <h3 style={styles.targetsTitle}>Current targets</h3>
+          {targetCount > 0 && (
+            <span style={styles.targetsCount}>{targetCount}</span>
+          )}
+        </div>
+        {editingTargets ? (
+          <div style={styles.targetsEditor}>
+            <textarea
+              value={editTargetsText}
+              onChange={(e) => setEditTargetsText(e.target.value)}
+              placeholder="One IP or domain per line"
+              style={styles.targetsTextarea}
+              rows={10}
+            />
+            <div style={styles.targetsEditorActions}>
               <button
                 type="button"
                 className="btn-secondary"
-                onClick={startEditTargets}
-                style={styles.editTargetsBtn}
+                onClick={cancelEditTargets}
+                style={styles.targetsBtn}
               >
-                Edit targets
+                Cancel
               </button>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Tab bar + content */}
-      <div style={styles.tabContentArea}>
-        <div className="tabs-row" style={styles.tabs}>
-          {Object.keys(TAB_LABELS).map((t) => (
-            <button
-              key={t}
-              type="button"
-              className={`tab-btn ${tab === t ? 'tab-btn-active' : ''}`}
-              onClick={() => handleTabChange(t)}
-              style={{ ...styles.tab, ...(tab === t ? styles.tabActive : {}) }}
-            >
-              {TAB_LABELS[t]}
-            </button>
-          ))}
-        </div>
-
-        {/*
-          Tab content — uses display:none to keep components mounted after
-          first visit. This preserves JobCard polling state, Hosts data,
-          and Nessus scan list without re-fetching on every tab switch.
-
-          Checklist is always rendered (it's the default landing tab).
-          Jobs/Hosts/Nessus are conditionally rendered on first visit,
-          then kept alive with display toggling thereafter.
-          Reporting is lightweight and re-renders fine.
-        */}
-        <div className="tab-content main-content" style={{ minHeight: 200 }}>
-
-          {/* Checklist — always mounted */}
-          <div style={{ display: tab === 'checklist' ? 'block' : 'none' }}>
-            <Checklist
-              projectId={projectId}
-              checklist={checklist}
-              onRun={load}
-              onStatusChange={load}
-              nmapDone={nmapDone}
-            />
-          </div>
-
-          {/* Jobs — mounted on first visit, then kept alive */}
-          {(tab === 'jobs' || jobsEverVisited) && (
-            <div style={{ display: tab === 'jobs' ? 'block' : 'none' }}>
-              <Jobs
-                projectId={projectId}
-                jobs={jobs}
-                onRefresh={load}
-              />
-            </div>
-          )}
-
-          {/* Hosts — mounted on first visit, then kept alive */}
-          {(tab === 'hosts' || hostsEverVisited) && (
-            <div style={{ display: tab === 'hosts' ? 'block' : 'none' }}>
-              <Hosts projectId={projectId} onRefresh={load} />
-            </div>
-          )}
-
-          {/* Nessus — mounted on first visit, then kept alive */}
-          {(tab === 'nessus' || nessusEverVisited) && (
-            <div style={{ display: tab === 'nessus' ? 'block' : 'none' }}>
-              <Nessus projectId={projectId} onRefresh={load} />
-            </div>
-          )}
-
-          {/* Reporting — lightweight, conditional render is fine */}
-          {tab === 'reporting' && (
-            <div className="card" style={styles.reportingCard}>
-              <h2 style={styles.reportingTitle}>Reporting & wrap-up</h2>
-              <p style={styles.reportingLead}>
-                Download all tool outputs (workpapers) as a zip for this project.
-              </p>
-              <a
-                href={api.projects.downloadOutputsUrl(projectId)}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
                 className="btn-primary"
-                style={styles.downloadBtn}
+                onClick={saveTargets}
+                disabled={savingTargets}
+                style={styles.targetsBtn}
               >
-                Download workpapers (zip)
-              </a>
+                {savingTargets ? 'Saving…' : 'Save'}
+              </button>
             </div>
-          )}
-
-        </div>
-      </div>
+          </div>
+        ) : (
+          <>
+            <div style={styles.targetsScroll}>
+              {targetCount === 0 ? (
+                <p style={styles.targetsEmpty}>No targets. Upload ROE or paste on the left.</p>
+              ) : (
+                <ul style={styles.targetsList}>
+                  {(targets.ips || []).map((ip, i) => (
+                    <li key={`ip-${i}`} style={styles.targetsItem}>{ip}</li>
+                  ))}
+                  {(targets.domains || []).map((d, i) => (
+                    <li key={`dom-${i}`} style={styles.targetsItem}>{d}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={startEditTargets}
+              style={styles.editTargetsBtn}
+            >
+              Edit targets
+            </button>
+          </>
+        )}
+      </aside>
+    </div>
 
       {/* Delete confirmation modal */}
       <ConfirmModal
@@ -429,7 +438,7 @@ export default function ProjectDetail() {
         onConfirm={confirmDeleteProject}
         onCancel={() => setShowDeleteConfirm(false)}
       />
-    </div>
+    </>
   )
 }
 
@@ -448,9 +457,8 @@ const styles = {
   },
   title: { margin: 0, fontSize: '1.5rem', fontWeight: 600 },
   summary: { color: 'var(--text-muted)', fontSize: '0.9rem', display: 'block', marginTop: '0.25rem' },
-  deleteProjectBtn: { color: 'var(--danger)', borderColor: 'var(--danger)' },
+  deleteProjectBtn: { color: 'var(--danger)', borderColor: 'var(--danger)', borderRadius: 0 },
   roeTargetsRow: { marginBottom: '1.5rem' },
-  roeColumn: { minWidth: 0 },
   roe: {},
   roeLabel: { display: 'inline-flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' },
   fileInput: { width: 0, height: 0, opacity: 0, position: 'absolute' },
@@ -458,7 +466,7 @@ const styles = {
     padding: '0.5rem 1rem',
     background: 'var(--surface)',
     border: '1px solid var(--border)',
-    borderRadius: 'var(--radius)',
+    borderRadius: 0,
     cursor: 'pointer',
   },
   pasteRow: {
@@ -470,7 +478,7 @@ const styles = {
   },
   pasteInput: {
     padding: '0.5rem',
-    borderRadius: 'var(--radius)',
+    borderRadius: 0,
     border: '1px solid var(--border)',
     background: 'var(--surface)',
     color: 'var(--text)',
@@ -482,6 +490,7 @@ const styles = {
     alignSelf: 'flex-start',
     background: 'var(--accent)',
     color: 'var(--accent-text)',
+    borderRadius: 0,
   },
   tabContentArea: { minWidth: 0 },
   tabs: { display: 'flex', gap: '0.25rem', marginBottom: '1rem' },
@@ -489,7 +498,7 @@ const styles = {
     background: 'transparent',
     color: 'var(--text-muted)',
     padding: '0.5rem 1rem',
-    borderRadius: 'var(--radius)',
+    borderRadius: 0,
     transition: 'background-color 0.15s ease, color 0.15s ease',
   },
   tabActive: {
@@ -500,21 +509,35 @@ const styles = {
   targetsPanel: {
     background: 'var(--surface)',
     border: '1px solid var(--border)',
-    borderRadius: 'var(--radius)',
+    borderRadius: 0,
     padding: '0.75rem',
     display: 'flex',
     flexDirection: 'column',
     minHeight: 0,
-    height: '100%',
   },
-  targetsTitle: { margin: '0 0 0.5rem 0', fontSize: '0.9rem', fontWeight: 600 },
+  targetsRailHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '0.5rem',
+    marginBottom: '0.5rem',
+  },
+  targetsTitle: { margin: 0, fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--text-muted)' },
+  targetsCount: {
+    fontSize: '0.7rem',
+    fontFamily: 'var(--font-mono)',
+    color: 'var(--text-muted)',
+    background: 'var(--surface-muted)',
+    border: '1px solid var(--border)',
+    padding: '0.1rem 0.4rem',
+  },
   targetsScroll: {
     flex: 1,
-    minHeight: 80,
+    minHeight: 0,
     overflowY: 'auto',
     marginBottom: '0.5rem',
     border: '1px solid var(--border)',
-    borderRadius: 'var(--radius)',
+    borderRadius: 0,
     padding: '0.5rem',
     background: 'var(--bg)',
   },
@@ -531,24 +554,24 @@ const styles = {
     wordBreak: 'break-all',
   },
   targetsEmpty: { margin: 0, color: 'var(--text-muted)', fontSize: '0.85rem' },
-  editTargetsBtn: { width: '100%' },
+  editTargetsBtn: { width: '100%', borderRadius: 0 },
   targetsEditor: { display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1, minHeight: 0 },
   targetsTextarea: {
     padding: '0.5rem',
-    borderRadius: 'var(--radius)',
+    borderRadius: 0,
     border: '1px solid var(--border)',
     background: 'var(--bg)',
     color: 'var(--text)',
-    resize: 'vertical',
+    resize: 'none',
     fontFamily: 'var(--font-mono)',
     fontSize: '0.85rem',
     minHeight: 140,
     flex: 1,
   },
   targetsEditorActions: { display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' },
-  targetsBtn: { padding: '0.35rem 0.75rem' },
-  reportingCard: { padding: '1.5rem', maxWidth: 480 },
+  targetsBtn: { padding: '0.35rem 0.75rem', borderRadius: 0 },
+  reportingCard: { padding: '1.5rem', maxWidth: 480, borderRadius: 0 },
   reportingTitle: { margin: '0 0 0.5rem 0', fontSize: '1.25rem', fontWeight: 600 },
   reportingLead: { margin: '0 0 1rem 0', color: 'var(--text-muted)', lineHeight: 1.5 },
-  downloadBtn: { display: 'inline-block', padding: '0.5rem 1rem', textDecoration: 'none' },
+  downloadBtn: { display: 'inline-block', padding: '0.5rem 1rem', textDecoration: 'none', borderRadius: 0 },
 }

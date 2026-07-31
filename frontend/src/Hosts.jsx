@@ -367,6 +367,138 @@ function Lightbox({ url, onClose }) {
   )
 }
 
+// ── Recon tab (raw tool outputs) ──────────────────────────────────────────────
+
+function formatBytes(n) {
+  if (!n || n < 1024) return `${n || 0} B`
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`
+  return `${(n / (1024 * 1024)).toFixed(1)} MB`
+}
+
+function ReconViewer({ title, content, onClose }) {
+  useEffect(() => {
+    const handler = (e) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [onClose])
+
+  return (
+    <div style={S.reconOverlay} onClick={onClose} role="dialog" aria-modal="true" aria-label={title}>
+      <div style={S.reconModal} onClick={e => e.stopPropagation()}>
+        <div style={S.reconModalHead}>
+          <h3 style={S.reconModalTitle}>{title}</h3>
+          <button type="button" style={S.reconModalClose} onClick={onClose} aria-label="Close">×</button>
+        </div>
+        <pre style={S.reconModalBody}>{content || '(empty)'}</pre>
+      </div>
+    </div>
+  )
+}
+
+function ReconTab({ projectId }) {
+  const [artifacts, setArtifacts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [viewer, setViewer] = useState(null)
+  const [loadingKey, setLoadingKey] = useState(null)
+  const [expandedShodan, setExpandedShodan] = useState(false)
+
+  const fetchRecon = useCallback(() => {
+    if (!projectId) return
+    api.projects.recon(projectId)
+      .then(data => setArtifacts(Array.isArray(data) ? data : []))
+      .catch(() => setArtifacts([]))
+      .finally(() => setLoading(false))
+  }, [projectId])
+
+  useEffect(() => { fetchRecon() }, [fetchRecon])
+  useEffect(() => {
+    const t = setInterval(fetchRecon, 8000)
+    return () => clearInterval(t)
+  }, [fetchRecon])
+
+  const openArtifact = async (key, child, label) => {
+    const loadId = child ? `${key}:${child}` : key
+    setLoadingKey(loadId)
+    try {
+      const data = await api.projects.reconContent(projectId, key, child)
+      setViewer({ title: data?.label || label || key, content: data?.content || '' })
+    } catch (e) {
+      window.alert(e?.body?.detail || e?.message || 'Failed to load recon output')
+    } finally {
+      setLoadingKey(null)
+    }
+  }
+
+  if (loading) {
+    return <div style={{ color: 'var(--text-muted)', padding: 24, fontSize: '0.875rem' }}>Loading recon…</div>
+  }
+
+  const availableCount = artifacts.filter(a => a.available).length
+
+  return (
+    <>
+      {availableCount === 0 && (
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0 0 16px' }}>
+          Run recon checklist items (WHOIS, Subfinder, Shodan, …) to populate these outputs.
+        </p>
+      )}
+      <div style={S.reconGrid}>
+        {artifacts.map(a => {
+          const isShodan = a.key === 'shodan'
+          return (
+            <div key={a.key} style={{ ...S.reconCard, ...(a.available ? {} : S.reconCardEmpty) }}>
+              <button
+                type="button"
+                style={S.reconCardBtn}
+                disabled={!a.available || (isShodan && !a.children?.length)}
+                onClick={() => {
+                  if (isShodan) { setExpandedShodan(v => !v); return }
+                  openArtifact(a.key, null, a.label)
+                }}
+                title={a.available ? `Open ${a.label}` : 'Not run yet'}
+              >
+                <div style={S.reconCardIcon} aria-hidden>
+                  {isShodan ? '◎' : a.key === 'whois' ? '¶' : '▤'}
+                </div>
+                <div style={S.reconCardText}>
+                  <span style={S.reconCardLabel}>{a.label}</span>
+                  <span style={S.reconCardDesc}>{a.description}</span>
+                  <span style={S.reconCardMeta}>
+                    {a.available
+                      ? (isShodan ? `${a.children?.length || 0} IPs · ${formatBytes(a.size)}` : formatBytes(a.size))
+                      : 'Not available'}
+                    {loadingKey === a.key ? ' · loading…' : ''}
+                    {isShodan && a.available ? (expandedShodan ? ' · hide' : ' · expand') : ''}
+                  </span>
+                </div>
+              </button>
+              {isShodan && expandedShodan && a.children?.length > 0 && (
+                <div style={S.shodanChildren}>
+                  {a.children.map(c => (
+                    <button
+                      key={c.key}
+                      type="button"
+                      style={S.shodanChildBtn}
+                      disabled={loadingKey === `shodan:${c.key}`}
+                      onClick={() => openArtifact('shodan', c.key, c.label)}
+                    >
+                      <code style={S.shodanChildIp}>{c.label}</code>
+                      <span style={S.shodanChildSize}>{formatBytes(c.size)}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+      {viewer && (
+        <ReconViewer title={viewer.title} content={viewer.content} onClose={() => setViewer(null)} />
+      )}
+    </>
+  )
+}
+
 // ── Host detail panel ─────────────────────────────────────────────────────────
 
 function HostDetail({ host, projectId, onExclude, onLightbox }) {
@@ -481,6 +613,7 @@ function HostDetail({ host, projectId, onExclude, onLightbox }) {
 // ── Main Hosts component ──────────────────────────────────────────────────────
 
 export default function Hosts({ projectId }) {
+  const [pageTab, setPageTab]           = useState('recon')
   const [hosts, setHosts]               = useState([])
   const [selectedIndex, setSelectedIndex] = useState(null)
   const [filter, setFilter]             = useState('')
@@ -537,102 +670,101 @@ export default function Hosts({ projectId }) {
     }
   }
 
-  if (loading) return <div style={{ color: 'var(--text-muted)', padding: 24, fontSize: '0.875rem' }}>Loading hosts…</div>
-
-  if (!hosts.length) {
-    return (
-      <div style={{ textAlign: 'center', padding: '56px 24px' }}>
-        <p style={{ fontWeight: 600, fontSize: '0.95rem', marginBottom: 6, color: 'var(--text)' }}>No hosts yet</p>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Run Nmap to populate the host list.</p>
-      </div>
-    )
-  }
+  const pageTabs = [
+    { id: 'recon', label: 'Recon' },
+    { id: 'hosts', label: 'Hosts', count: hosts.length },
+  ]
 
   return (
     <>
-      <div style={S.layout}>
-        {/* ── Left: host list ── */}
-        <aside style={S.sidebar}>
-          <div style={S.sidebarHead}>
-            <span style={S.sidebarLabel}>Hosts</span>
-            <span style={S.sidebarCount}>{hosts.length}</span>
-          </div>
-
-          <div style={S.filterWrap}>
-            <input
-              type="search"
-              placeholder="Filter hosts…"
-              value={filter}
-              onChange={e => setFilter(e.target.value)}
-              style={S.filterInput}
-              aria-label="Filter hosts"
-            />
-          </div>
-
-          <ul style={S.hostList} role="listbox" aria-label="Host list">
-            {filtered.length === 0
-              ? <li style={{ padding: '12px 14px', color: 'var(--text-faint)', fontSize: '0.82rem' }}>No match.</li>
-              : filtered.map(({ h, i }) => {
-                  const active    = selectedIndex === i
-                  const riskColor = hostRisk(h)
-                  const nCount    = allNessusFindings(h).length
-                  const nucCount  = allNucleiFindings(h).length
-                  const pCount    = h?.ports_detail?.length ?? 0
-
-                  return (
-                    <li key={`${h.host}-${i}`} role="option" aria-selected={active}>
-                      <button
-                        type="button"
-                        style={{ ...S.hostBtn, ...(active ? S.hostBtnActive : {}) }}
-                        onClick={() => setSelectedIndex(i)}
-                      >
-                        <div style={S.hostBtnLeft}>
-                          <span
-                            style={{
-                              width: 7, height: 7, borderRadius: '50%', flexShrink: 0,
-                              background: riskColor, marginTop: 1,
-                            }}
-                          />
-                          <div style={S.hostBtnText}>
-                            <span style={S.hostName}>{h.host}</span>
-                            {/* Clean sub-labels — no emoji, no abbrevations */}
-                            <span style={S.hostSub}>
-                              {pCount > 0 && (
-                                <span style={S.hostSubItem}>{pCount} {pCount === 1 ? 'port' : 'ports'}</span>
-                              )}
-                              {nucCount > 0 && (
-                                <span style={{ ...S.hostSubItem, color: '#fbbf24' }}>
-                                  {nucCount} Nuclei
-                                </span>
-                              )}
-                              {nCount > 0 && (
-                                <span style={{ ...S.hostSubItem, color: '#f87171' }}>
-                                  {nCount} Nessus
-                                </span>
-                              )}
-                            </span>
-                          </div>
-                        </div>
-                      </button>
-                    </li>
-                  )
-                })
-            }
-          </ul>
-        </aside>
-
-        {/* ── Right: detail ── */}
-        <main style={S.main}>
-          <HostDetail
-            host={current}
-            projectId={projectId}
-            onExclude={setExcludeTarget}
-            onLightbox={setLightboxUrl}
-          />
-        </main>
+      <div style={S.pageTabStrip}>
+        {pageTabs.map(t => (
+          <button
+            key={t.id}
+            type="button"
+            style={{ ...S.pageTabBtn, ...(pageTab === t.id ? S.pageTabBtnActive : {}) }}
+            onClick={() => setPageTab(t.id)}
+          >
+            {t.label}
+            {t.count != null && t.count > 0 && (
+              <span style={{
+                ...S.tabCount,
+                ...(pageTab === t.id ? S.tabCountActive : {}),
+              }}>
+                {t.count}
+              </span>
+            )}
+          </button>
+        ))}
       </div>
 
-      {/* Confirm remove */}
+      {pageTab === 'recon' && (
+        <div style={S.reconWrap}>
+          <ReconTab projectId={projectId} />
+        </div>
+      )}
+
+      {pageTab === 'hosts' && (
+        loading ? (
+          <div style={{ color: 'var(--text-muted)', padding: 24, fontSize: '0.875rem' }}>Loading hosts…</div>
+        ) : !hosts.length ? (
+          <div style={{ textAlign: 'center', padding: '56px 24px' }}>
+            <p style={{ fontWeight: 600, fontSize: '0.95rem', marginBottom: 6, color: 'var(--text)' }}>No hosts yet</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Run Nmap to populate the host list.</p>
+          </div>
+        ) : (
+          <div style={S.layout}>
+            <aside style={S.sidebar}>
+              <div style={S.sidebarHead}>
+                <span style={S.sidebarLabel}>Hosts</span>
+                <span style={S.sidebarCount}>{hosts.length}</span>
+              </div>
+
+              <div style={S.filterWrap}>
+                <input
+                  type="search"
+                  placeholder="Filter hosts…"
+                  value={filter}
+                  onChange={e => setFilter(e.target.value)}
+                  style={S.filterInput}
+                  aria-label="Filter hosts"
+                />
+              </div>
+
+              <ul style={S.hostList} className="hosts-sidebar-list" role="listbox" aria-label="Host list">
+                {filtered.length === 0
+                  ? <li style={{ padding: '12px 14px', color: 'var(--text-faint)', fontSize: '0.82rem' }}>No match.</li>
+                  : filtered.map(({ h, i }) => {
+                      const active = selectedIndex === i
+
+                      return (
+                        <li key={`${h.host}-${i}`} role="option" aria-selected={active}>
+                          <button
+                            type="button"
+                            style={{ ...S.hostBtn, ...(active ? S.hostBtnActive : {}) }}
+                            onClick={() => setSelectedIndex(i)}
+                          >
+                            <span style={S.hostName}>{h.host}</span>
+                          </button>
+                        </li>
+                      )
+                    })
+                }
+              </ul>
+            </aside>
+
+            <main style={S.main}>
+              <HostDetail
+                host={current}
+                projectId={projectId}
+                onExclude={setExcludeTarget}
+                onLightbox={setLightboxUrl}
+              />
+            </main>
+          </div>
+        )
+      )}
+
       <ConfirmModal
         open={!!excludeTarget}
         title="Remove host from list?"
@@ -645,7 +777,6 @@ export default function Hosts({ projectId }) {
         onCancel={() => setExcludeTarget(null)}
       />
 
-      {/* Lightbox */}
       {lightboxUrl && <Lightbox url={lightboxUrl} onClose={() => setLightboxUrl(null)} />}
     </>
   )
@@ -696,24 +827,23 @@ const S = {
     overflowY: 'auto', flex: 1,
   },
   hostBtn: {
-    display: 'flex', alignItems: 'center', width: '100%',
+    display: 'flex', alignItems: 'center', gap: 8, width: '100%',
     padding: '8px 10px', background: 'transparent',
-    border: '1px solid transparent', borderRadius: 'var(--radius-sm)',
+    border: '1px solid transparent', borderRadius: 0,
     cursor: 'pointer', textAlign: 'left', marginBottom: 1,
-    transition: 'background 0.1s, border-color 0.1s',
+    transition: 'background 0.1s',
+    outline: 'none',
+    boxShadow: 'none',
   },
   hostBtnActive: {
     background: 'var(--accent-soft)',
-    borderColor: 'var(--accent)',
+    borderColor: 'transparent',
   },
-  hostBtnLeft: { display: 'flex', alignItems: 'flex-start', gap: 8, minWidth: 0, flex: 1 },
-  hostBtnText: { display: 'flex', flexDirection: 'column', gap: 3, minWidth: 0 },
   hostName: {
     fontFamily: 'var(--font-mono)', fontSize: '0.8rem', fontWeight: 600,
     color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+    minWidth: 0,
   },
-  hostSub: { display: 'flex', gap: 8, flexWrap: 'wrap' },
-  hostSubItem: { fontSize: '0.68rem', color: 'var(--text-faint)' },
 
   // Detail panel
   main: { display: 'flex', flexDirection: 'column', minWidth: 0, overflow: 'hidden' },
@@ -854,5 +984,96 @@ const S = {
     maxWidth: '95vw', maxHeight: '92vh',
     objectFit: 'contain', borderRadius: 6,
     boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
+  },
+
+  pageTabStrip: {
+    display: 'flex', gap: 0, borderBottom: '1px solid var(--border)',
+    marginBottom: 16, flexShrink: 0,
+  },
+  pageTabBtn: {
+    display: 'flex', alignItems: 'center', gap: 6,
+    padding: '10px 16px', background: 'transparent', border: 'none',
+    borderBottom: '2px solid transparent', color: 'var(--text-muted)',
+    fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer',
+    borderRadius: 0, marginBottom: -1,
+  },
+  pageTabBtnActive: {
+    color: 'var(--accent)',
+    borderBottomColor: 'var(--accent)',
+    fontWeight: 600,
+  },
+  reconWrap: {
+    border: '1px solid var(--border)',
+    background: 'var(--surface)',
+    minHeight: 320,
+    padding: 20,
+  },
+  reconGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+    gap: 14,
+  },
+  reconCard: {
+    border: '1px solid var(--border)',
+    background: 'var(--bg)',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  reconCardEmpty: { opacity: 0.45 },
+  reconCardBtn: {
+    display: 'flex', alignItems: 'flex-start', gap: 12, width: '100%',
+    padding: 14, background: 'transparent', border: 'none', borderRadius: 0,
+    cursor: 'pointer', textAlign: 'left', color: 'var(--text)',
+  },
+  reconCardIcon: {
+    width: 36, height: 36, flexShrink: 0, display: 'flex',
+    alignItems: 'center', justifyContent: 'center',
+    background: 'var(--surface-muted)', border: '1px solid var(--border)',
+    fontSize: '1rem', color: 'var(--accent)',
+  },
+  reconCardText: { display: 'flex', flexDirection: 'column', gap: 3, minWidth: 0 },
+  reconCardLabel: { fontWeight: 600, fontSize: '0.9rem', color: 'var(--text)' },
+  reconCardDesc: { fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: 1.35 },
+  reconCardMeta: { fontSize: '0.7rem', color: 'var(--text-faint)', fontFamily: 'var(--font-mono)', marginTop: 4 },
+  shodanChildren: {
+    display: 'flex', flexDirection: 'column',
+    borderTop: '1px solid var(--border)', maxHeight: 220, overflowY: 'auto',
+  },
+  shodanChildBtn: {
+    display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8,
+    padding: '8px 14px', background: 'transparent', border: 'none',
+    borderBottom: '1px solid var(--border)', borderRadius: 0, cursor: 'pointer',
+    textAlign: 'left', color: 'var(--text)',
+  },
+  shodanChildIp: { fontFamily: 'var(--font-mono)', fontSize: '0.78rem' },
+  shodanChildSize: { fontSize: '0.68rem', color: 'var(--text-faint)', fontFamily: 'var(--font-mono)' },
+  reconOverlay: {
+    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.72)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    zIndex: 1000, padding: 24,
+  },
+  reconModal: {
+    width: 'min(860px, 96vw)', maxHeight: '88vh',
+    background: 'var(--surface)', border: '1px solid var(--border)',
+    display: 'flex', flexDirection: 'column',
+    boxShadow: '0 24px 64px rgba(0,0,0,0.45)',
+  },
+  reconModalHead: {
+    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+    gap: 12, padding: '12px 16px', borderBottom: '1px solid var(--border)', flexShrink: 0,
+  },
+  reconModalTitle: {
+    margin: 0, fontSize: '0.95rem', fontWeight: 600,
+    fontFamily: 'var(--font-mono)', color: 'var(--text)',
+  },
+  reconModalClose: {
+    background: 'transparent', border: '1px solid var(--border)',
+    color: 'var(--text-muted)', width: 32, height: 32, borderRadius: 0,
+    cursor: 'pointer', fontSize: '1.25rem', lineHeight: 1,
+  },
+  reconModalBody: {
+    margin: 0, padding: 16, overflow: 'auto', flex: 1,
+    fontFamily: 'var(--font-mono)', fontSize: '0.78rem', lineHeight: 1.5,
+    color: 'var(--text)', background: 'var(--bg)', whiteSpace: 'pre-wrap', wordBreak: 'break-word',
   },
 }

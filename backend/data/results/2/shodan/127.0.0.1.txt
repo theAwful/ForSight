@@ -1,0 +1,4 @@
+Shodan host report: 127.0.0.1
+============================================================
+Status: 404
+Detail: No information available for this IP in Shodan

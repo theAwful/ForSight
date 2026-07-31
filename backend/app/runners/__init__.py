@@ -12,6 +12,7 @@ from app.runners.recon import (
     run_recon_theharvester,
     run_recon_whois,
 )
+from app.runners.shodan import run_recon_shodan
 from app.runners.legacy import (
     run_legacy_nmap,
     run_legacy_snmp,
@@ -31,6 +32,7 @@ RUNNERS = {
     "recon_amass": run_recon_amass,
     "recon_theharvester": run_recon_theharvester,
     "recon_whois": run_recon_whois,
+    "recon_shodan": run_recon_shodan,
     "recon_cloud": run_recon_cloud,
     "recon_leaked": run_recon_leaked,
     # Enumeration

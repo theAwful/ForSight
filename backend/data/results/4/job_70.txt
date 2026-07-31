@@ -1,0 +1,24 @@
+=== web_nuclei ===
+Targets: 0 IPs, 1 domains
+=== nuclei ===
+
+                     __     _
+   ____  __  _______/ /__  (_)
+  / __ \/ / / / ___/ / _ \/ /
+ / / / / /_/ / /__/ /  __/ /
+/_/ /_/\__,_/\___/_/\___/_/   v3.7.0
+
+		projectdiscovery.io
+
+[[34mINF[0m] Current nuclei version: v3.7.0 ([91moutdated[0m)
+[[34mINF[0m] Current nuclei-templates version: v10.4.1 ([92mlatest[0m)
+[[34mINF[0m] New templates added in latest release: 76
+[[34mINF[0m] Templates loaded for current scan: 9976
+[[34mINF[0m] Executing 9959 signed templates from projectdiscovery/nuclei-templates
+[[93mWRN[0m] Loading 17 unsigned templates for scan. Use with caution.
+[[34mINF[0m] Targets loaded for current scan: 2
+[[34mINF[0m] Templates clustered: 2260 (Reduced 4268 Requests)
+[[34mINF[0m] Skipped awfulsecurity.org:443 from target list as found unresponsive permanently: cause="no address found for host" chain="got err while executing https://awfulsecurity.org/WEB_VMS/LEVEL15/"
+[[34mINF[0m] Skipped awfulsecurity.org:80 from target list as found unresponsive permanently: cause="no address found for host" chain="got err while executing http://awfulsecurity.org/servlet/codesettree?flag=c&status=1&codesetid=1&parentid=-1&categories=~31~27~20union~20all~20select~20~27hongjing~27~2c~40~40version~2d~2d"
+[[34mINF[0m] Using Interactsh Server: oast.site
+[[34mINF[0m] Scan completed in 28.145304882s. No results found.

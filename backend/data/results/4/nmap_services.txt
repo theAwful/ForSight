@@ -1,0 +1,79 @@
+# Nmap 7.98 scan initiated Fri Jul 31 01:57:07 2026 as: /usr/lib/nmap/nmap --privileged -sV -T4 -oN data/results/4/nmap_services.txt awfulsecurity.org
+Nmap scan report for awfulsecurity.org (185.199.109.153)
+Host is up (0.0036s latency).
+Other addresses for awfulsecurity.org (not scanned): 185.199.111.153 185.199.110.153 185.199.108.153
+rDNS record for 185.199.109.153: cdn-185-199-109-153.github.com
+Not shown: 998 filtered tcp ports (no-response)
+PORT    STATE SERVICE   VERSION
+80/tcp  open  http      GitHub.com
+443/tcp open  ssl/https GitHub.com
+2 services unrecognized despite returning data. If you know the service/version, please submit the following fingerprints at https://nmap.org/cgi-bin/submit.cgi?new-service :
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port80-TCP:V=7.98%I=7%D=7/31%Time=6A6C396A%P=x86_64-pc-linux-gnu%r(GetR
+SF:equest,A1,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20close\r
+SF:\nContent-Length:\x2017\r\ncontent-type:\x20text/plain;\x20charset=utf-
+SF:8\r\nx-served-by:\x20cache-pdk-kfty8610082\r\n\r\nmissing\x20authority"
+SF:)%r(HTTPOptions,A1,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x
+SF:20close\r\nContent-Length:\x2017\r\ncontent-type:\x20text/plain;\x20cha
+SF:rset=utf-8\r\nx-served-by:\x20cache-pdk-kfty8610050\r\n\r\nmissing\x20a
+SF:uthority")%r(RTSPRequest,9B,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConn
+SF:ection:\x20close\r\nContent-Length:\x2011\r\ncontent-type:\x20text/plai
+SF:n;\x20charset=utf-8\r\nx-served-by:\x20cache-pdk-kpdk2140073\r\n\r\nBad
+SF:\x20Request")%r(X11Probe,9B,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConn
+SF:ection:\x20close\r\nContent-Length:\x2011\r\ncontent-type:\x20text/plai
+SF:n;\x20charset=utf-8\r\nx-served-by:\x20cache-pdk-kpdk2140045\r\n\r\nBad
+SF:\x20Request")%r(FourOhFourRequest,A1,"HTTP/1\.1\x20400\x20Bad\x20Reques
+SF:t\r\nConnection:\x20close\r\nContent-Length:\x2017\r\ncontent-type:\x20
+SF:text/plain;\x20charset=utf-8\r\nx-served-by:\x20cache-pdk-kpdk2140056\r
+SF:\n\r\nmissing\x20authority")%r(RPCCheck,9B,"HTTP/1\.1\x20400\x20Bad\x20
+SF:Request\r\nConnection:\x20close\r\nContent-Length:\x2011\r\ncontent-typ
+SF:e:\x20text/plain;\x20charset=utf-8\r\nx-served-by:\x20cache-pdk-kpdk214
+SF:0030\r\n\r\nBad\x20Request")%r(DNSVersionBindReqTCP,9B,"HTTP/1\.1\x2040
+SF:0\x20Bad\x20Request\r\nConnection:\x20close\r\nContent-Length:\x2011\r\
+SF:ncontent-type:\x20text/plain;\x20charset=utf-8\r\nx-served-by:\x20cache
+SF:-pdk-kpdk2140081\r\n\r\nBad\x20Request")%r(DNSStatusRequestTCP,9B,"HTTP
+SF:/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20close\r\nContent-Lengt
+SF:h:\x2011\r\ncontent-type:\x20text/plain;\x20charset=utf-8\r\nx-served-b
+SF:y:\x20cache-pdk-kfty8610081\r\n\r\nBad\x20Request")%r(Help,9B,"HTTP/1\.
+SF:1\x20400\x20Bad\x20Request\r\nConnection:\x20close\r\nContent-Length:\x
+SF:2011\r\ncontent-type:\x20text/plain;\x20charset=utf-8\r\nx-served-by:\x
+SF:20cache-pdk-kfty8610076\r\n\r\nBad\x20Request")%r(SSLSessionReq,9B,"HTT
+SF:P/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20close\r\nContent-Leng
+SF:th:\x2011\r\ncontent-type:\x20text/plain;\x20charset=utf-8\r\nx-served-
+SF:by:\x20cache-pdk-kpdk2140093\r\n\r\nBad\x20Request");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port443-TCP:V=7.98%T=SSL%I=7%D=7/31%Time=6A6C3970%P=x86_64-pc-linux-gnu
+SF:%r(GetRequest,A1,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20
+SF:close\r\nContent-Length:\x2017\r\ncontent-type:\x20text/plain;\x20chars
+SF:et=utf-8\r\nx-served-by:\x20cache-pdk-kpdk2140096\r\n\r\nmissing\x20aut
+SF:hority")%r(HTTPOptions,A1,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnec
+SF:tion:\x20close\r\nContent-Length:\x2017\r\ncontent-type:\x20text/plain;
+SF:\x20charset=utf-8\r\nx-served-by:\x20cache-pdk-kpdk2140094\r\n\r\nmissi
+SF:ng\x20authority")%r(FourOhFourRequest,A1,"HTTP/1\.1\x20400\x20Bad\x20Re
+SF:quest\r\nConnection:\x20close\r\nContent-Length:\x2017\r\ncontent-type:
+SF:\x20text/plain;\x20charset=utf-8\r\nx-served-by:\x20cache-pdk-kfty86100
+SF:33\r\n\r\nmissing\x20authority")%r(tor-versions,9B,"HTTP/1\.1\x20400\x2
+SF:0Bad\x20Request\r\nConnection:\x20close\r\nContent-Length:\x2011\r\ncon
+SF:tent-type:\x20text/plain;\x20charset=utf-8\r\nx-served-by:\x20cache-pdk
+SF:-kpdk2140044\r\n\r\nBad\x20Request")%r(RTSPRequest,9B,"HTTP/1\.1\x20400
+SF:\x20Bad\x20Request\r\nConnection:\x20close\r\nContent-Length:\x2011\r\n
+SF:content-type:\x20text/plain;\x20charset=utf-8\r\nx-served-by:\x20cache-
+SF:pdk-kpdk2140081\r\n\r\nBad\x20Request")%r(RPCCheck,9B,"HTTP/1\.1\x20400
+SF:\x20Bad\x20Request\r\nConnection:\x20close\r\nContent-Length:\x2011\r\n
+SF:content-type:\x20text/plain;\x20charset=utf-8\r\nx-served-by:\x20cache-
+SF:pdk-kpdk2140049\r\n\r\nBad\x20Request")%r(DNSVersionBindReqTCP,9B,"HTTP
+SF:/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20close\r\nContent-Lengt
+SF:h:\x2011\r\ncontent-type:\x20text/plain;\x20charset=utf-8\r\nx-served-b
+SF:y:\x20cache-pdk-kfty8610071\r\n\r\nBad\x20Request")%r(DNSStatusRequestT
+SF:CP,9B,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20close\r\nCo
+SF:ntent-Length:\x2011\r\ncontent-type:\x20text/plain;\x20charset=utf-8\r\
+SF:nx-served-by:\x20cache-pdk-kfty8610041\r\n\r\nBad\x20Request")%r(Help,9
+SF:B,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20close\r\nConten
+SF:t-Length:\x2011\r\ncontent-type:\x20text/plain;\x20charset=utf-8\r\nx-s
+SF:erved-by:\x20cache-pdk-kfty8610072\r\n\r\nBad\x20Request")%r(SSLSession
+SF:Req,9B,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConnection:\x20close\r\nC
+SF:ontent-Length:\x2011\r\ncontent-type:\x20text/plain;\x20charset=utf-8\r
+SF:\nx-served-by:\x20cache-pdk-kfty8610087\r\n\r\nBad\x20Request");
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Fri Jul 31 01:58:11 2026 -- 1 IP address (1 host up) scanned in 64.66 seconds

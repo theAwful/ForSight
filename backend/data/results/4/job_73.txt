@@ -1,0 +1,4 @@
+=== web_gowitness ===
+Targets: 0 IPs, 1 domains
+=== gowitness scan file ===
+2026/07/31 01:57:13 WARN no writers have been configured. to persist probe results, add writers using --write-* flags

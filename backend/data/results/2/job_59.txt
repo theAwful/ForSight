@@ -1,0 +1,8 @@
+=== recon_shodan ===
+Targets: 2 IPs, 2 domains
+=== Shodan ===
+Querying 2 IP(s) → data/results/2/shodan/
+[1/2] 165.245.137.16 … ok → 165.245.137.16.txt
+[2/2] 127.0.0.1 … no data → 127.0.0.1.txt
+
+Done. 1 with data, 1 not found, 0 errors. Files in shodan/

@@ -64,6 +64,11 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ host }),
       }),
+    recon: (id) => request(`/projects/${id}/recon`),
+    reconContent: (id, key, child) => {
+      const q = child ? `?child=${encodeURIComponent(child)}` : ''
+      return request(`/projects/${id}/recon/${encodeURIComponent(key)}${q}`)
+    },
   },
   health: () => request('/health'),
   checklist: {

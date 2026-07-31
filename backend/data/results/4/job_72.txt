@@ -1,0 +1,48 @@
+=== web_dirb ===
+Targets: 0 IPs, 1 domains
+--- dirb https://awfulsecurity.org ---
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Fri Jul 31 01:57:12 2026
+URL_BASE: https://awfulsecurity.org/
+WORDLIST_FILES: data/wordlists/dirb-small.txt
+
+-----------------
+
+*** Generating Wordlist...                                                                               GENERATED WORDS: 22
+
+---- Scanning URL: https://awfulsecurity.org/ ----
+*** Calculating NOT_FOUND code...                                                                               
+(!) FATAL: Too many errors connecting to host
+    (Possible cause: COULDNT RESOLVE HOST)
+                                                                               
+-----------------
+END_TIME: Fri Jul 31 01:57:32 2026
+DOWNLOADED: 0 - FOUND: 0
+--- dirb http://awfulsecurity.org ---
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Fri Jul 31 01:57:32 2026
+URL_BASE: http://awfulsecurity.org/
+WORDLIST_FILES: data/wordlists/dirb-small.txt
+
+-----------------
+
+*** Generating Wordlist...                                                                               GENERATED WORDS: 22
+
+---- Scanning URL: http://awfulsecurity.org/ ----
+*** Calculating NOT_FOUND code...                                                                               
+(!) FATAL: Too many errors connecting to host
+    (Possible cause: COULDNT RESOLVE HOST)
+                                                                               
+-----------------
+END_TIME: Fri Jul 31 01:57:50 2026
+DOWNLOADED: 0 - FOUND: 0

@@ -48,6 +48,7 @@ CHECKLIST = [
     ChecklistItem("recon_amass", Phase.RECON, "DNS enumeration", runner_key="recon_amass", tools=["amass"]),
     ChecklistItem("recon_theharvester", Phase.RECON, "OSINT & emails", runner_key="recon_theharvester", tools=["theHarvester"]),
     ChecklistItem("recon_whois", Phase.RECON, "WHOIS", runner_key="recon_whois", tools=["whois"]),
+    ChecklistItem("recon_shodan", Phase.RECON, "Shodan host intel", runner_key="recon_shodan", tools=["Shodan"]),
     ChecklistItem("recon_cloud", Phase.RECON, "Cloud object storage", runner_key="recon_cloud", tools=["CloudEnum"]),
     ChecklistItem("recon_leaked", Phase.RECON, "Leaked credentials", runner_key="recon_leaked", tools=["Dehashed", "H8mail", "TCM"]),
     # 3. Nmap

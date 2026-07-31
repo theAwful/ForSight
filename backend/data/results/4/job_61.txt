@@ -1,0 +1,25 @@
+=== recon_dnsrecon ===
+Targets: 0 IPs, 1 domains
+=== dnsrecon -d awfulsecurity.org ===
+
+2026-07-31T01:57:05.277215-0400 INFO No dictionary file has been specified.
+2026-07-31T01:57:05.278603-0400 INFO Using the dictionary file: /usr/share/dnsrecon/dnsrecon/data/namelist.txt (provided by tool)
+2026-07-31T01:57:05.278730-0400 INFO Starting enumeration for domain: awfulsecurity.org
+2026-07-31T01:57:05.278930-0400 INFO brt: Performing host and subdomain brute force against awfulsecurity.org...
+2026-07-31T01:57:57.488856-0400 INFO 	 CNAME email.awfulsecurity.org mailgun.org
+2026-07-31T01:57:57.489047-0400 INFO 	 A mailgun.org 34.102.239.211
+2026-07-31T01:58:00.140800-0400 INFO 	 A mail.awfulsecurity.org 3.231.72.153
+2026-07-31T01:58:10.844956-0400 INFO 	 CNAME www.awfulsecurity.org theawful.github.io
+2026-07-31T01:58:10.845236-0400 INFO 	 A theawful.github.io 185.199.110.153
+2026-07-31T01:58:10.845340-0400 INFO 	 A theawful.github.io 185.199.111.153
+2026-07-31T01:58:10.845387-0400 INFO 	 A theawful.github.io 185.199.108.153
+2026-07-31T01:58:10.845458-0400 INFO 	 A theawful.github.io 185.199.109.153
+2026-07-31T01:58:10.845502-0400 INFO 	 CNAME www.awfulsecurity.org theawful.github.io
+2026-07-31T01:58:10.845569-0400 INFO 	 AAAA theawful.github.io 2606:50c0:8003::153
+2026-07-31T01:58:10.845608-0400 INFO 	 AAAA theawful.github.io 2606:50c0:8000::153
+2026-07-31T01:58:10.845674-0400 INFO 	 AAAA theawful.github.io 2606:50c0:8001::153
+2026-07-31T01:58:10.845713-0400 INFO 	 AAAA theawful.github.io 2606:50c0:8002::153
+2026-07-31T01:58:11.058485-0400 INFO 13 Records Found
+2026-07-31T01:58:11.059226-0400 INFO Completed enumeration for domain: awfulsecurity.org
+
+

@@ -1,0 +1,10 @@
+=== web_nikto ===
+Targets: 0 IPs, 1 domains
+--- nikto https://awfulsecurity.org ---
+- Nikto v2.5.0
+---------------------------------------------------------------------------
++ 0 host(s) tested
+--- nikto http://awfulsecurity.org ---
+- Nikto v2.5.0
+---------------------------------------------------------------------------
++ 0 host(s) tested

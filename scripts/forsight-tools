@@ -1,0 +1,266 @@
+#!/usr/bin/env bash
+#
+# ForSight — install / update / verify external CLI tools used by the backend runners.
+# Manifest: scripts/tools.manifest.json (keep aligned with backend/Dockerfile).
+#
+# Usage:
+#   ./scripts/forsight-tools install [--user]      # all tools (apt + pip + cloud_enum)
+#   ./scripts/forsight-tools update [target]     # all | apt | pip | cloud_enum | nuclei
+#   ./scripts/forsight-tools verify              # PATH checks from manifest
+#   ./scripts/forsight-tools list                # manifest summary
+#
+# Environment:
+#   FORSIGHT_TOOLS_ROOT — git clones (default /opt/forsight-tools or ~/.forsight/tools with --user)
+#   FORSIGHT_BIN_DIR    — wrappers (default /usr/local/bin or ~/.local/bin with --user)
+#
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+MANIFEST="$ROOT/scripts/tools.manifest.json"
+PYTHON="${PYTHON:-python3}"
+
+die() { echo "forsight-tools: $*" >&2; exit 1; }
+have() { command -v "$1" >/dev/null 2>&1; }
+
+require_python() { have "$PYTHON" || die "Need $PYTHON to read $MANIFEST"; }
+
+USER_INSTALL=false
+SUDO=""
+
+parse_install_mode() {
+  if [[ "${1:-}" == "--user" ]]; then
+    USER_INSTALL=true
+    export FORSIGHT_TOOLS_ROOT="${FORSIGHT_TOOLS_ROOT:-$HOME/.forsight/tools}"
+    export FORSIGHT_BIN_DIR="${FORSIGHT_BIN_DIR:-$HOME/.local/bin}"
+  else
+    export FORSIGHT_TOOLS_ROOT="${FORSIGHT_TOOLS_ROOT:-/opt/forsight-tools}"
+    export FORSIGHT_BIN_DIR="${FORSIGHT_BIN_DIR:-/usr/local/bin}"
+  fi
+}
+
+use_sudo() {
+  if [[ "$USER_INSTALL" == true ]]; then
+    SUDO=""
+    mkdir -p "$FORSIGHT_TOOLS_ROOT" "$FORSIGHT_BIN_DIR" 2>/dev/null || true
+    return
+  fi
+  if [[ "${EUID:-0}" -eq 0 ]]; then
+    SUDO=""
+  elif have sudo; then
+    SUDO="sudo"
+  else
+    die "Need root for system paths, or use: $0 install --user"
+  fi
+}
+
+apt_install() {
+  use_sudo
+  local pkgs
+  pkgs="$("$PYTHON" -c "import json; print(' '.join(json.load(open('$MANIFEST'))['apt']['packages']))")"
+  echo "==> apt: installing packages (${#pkgs} chars list)"
+  $SUDO apt-get update -qq
+  $SUDO DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends $pkgs
+}
+
+apt_update() {
+  use_sudo
+  local pkgs
+  pkgs="$("$PYTHON" -c "import json; print(' '.join(json.load(open('$MANIFEST'))['apt']['packages']))")"
+  echo "==> apt: upgrade installed tool packages"
+  $SUDO apt-get update -qq
+  $SUDO DEBIAN_FRONTEND=noninteractive apt-get install -y --only-upgrade $pkgs || true
+}
+
+pip_install_upgrade() {
+  local pkgs
+  pkgs="$("$PYTHON" -c "import json; print(' '.join(json.load(open('$MANIFEST'))['pip_user']['packages']))")"
+  [[ -z "${pkgs// }" ]] && return 0
+  echo "==> pip: $pkgs"
+  if [[ "$USER_INSTALL" == true ]]; then
+    "$PYTHON" -m pip install --user --upgrade $pkgs
+  elif [[ -n "$SUDO" ]]; then
+    $SUDO "$PYTHON" -m pip install --upgrade $pkgs
+  else
+    "$PYTHON" -m pip install --user --upgrade $pkgs
+  fi
+}
+
+install_cloud_enum() {
+  have git || die "git not installed (apt install git)"
+  require_python
+  local repo branch entry req wrap dir tmp_wrapper
+  repo="$("$PYTHON" -c "import json; g=json.load(open('$MANIFEST'))['git_tools'][0]; print(g['repo'])")"
+  branch="$("$PYTHON" -c "import json; g=json.load(open('$MANIFEST'))['git_tools'][0]; print(g['branch'])")"
+  entry="$("$PYTHON" -c "import json; g=json.load(open('$MANIFEST'))['git_tools'][0]; print(g['entry_script'])")"
+  req="$("$PYTHON" -c "import json; g=json.load(open('$MANIFEST'))['git_tools'][0]; print(g['requirements_file'])")"
+  wrap="$("$PYTHON" -c "import json; g=json.load(open('$MANIFEST'))['git_tools'][0]; print(g['wrapper_name'])")"
+  dir="$FORSIGHT_TOOLS_ROOT/cloud_enum"
+  echo "==> cloud_enum: $dir"
+  mkdir -p "$FORSIGHT_TOOLS_ROOT"
+  if [[ -d "$dir/.git" ]]; then
+    git -C "$dir" fetch origin "$branch"
+    git -C "$dir" checkout "$branch"
+    git -C "$dir" reset --hard "origin/$branch"
+  else
+    rm -rf "$dir"
+    git clone --depth 1 --branch "$branch" "$repo" "$dir"
+  fi
+  if [[ -f "$dir/$req" ]]; then
+    if [[ "$USER_INSTALL" == true ]]; then
+      "$PYTHON" -m pip install --user -r "$dir/$req"
+    else
+      $SUDO "$PYTHON" -m pip install -r "$dir/$req" 2>/dev/null || "$PYTHON" -m pip install --user -r "$dir/$req"
+    fi
+  fi
+  mkdir -p "$FORSIGHT_BIN_DIR"
+  tmp_wrapper="$(mktemp)"
+  cat > "$tmp_wrapper" <<EOF
+#!/usr/bin/env sh
+exec "$PYTHON" "$dir/$entry" "\$@"
+EOF
+  chmod +x "$tmp_wrapper"
+  if [[ -n "$SUDO" ]] && [[ "$USER_INSTALL" != true ]]; then
+    $SUDO install -m 0755 "$tmp_wrapper" "$FORSIGHT_BIN_DIR/$wrap"
+  else
+    install -m 0755 "$tmp_wrapper" "$FORSIGHT_BIN_DIR/$wrap"
+  fi
+  rm -f "$tmp_wrapper"
+  echo "==> wrapper: $FORSIGHT_BIN_DIR/$wrap"
+}
+
+cmd_install() {
+  require_python
+  if [[ "${1:-}" == "--user" ]]; then
+    shift || true
+    parse_install_mode --user
+  else
+    parse_install_mode
+  fi
+  if ! have apt-get; then
+    die "This script expects apt (Debian/Ubuntu/Kali). See scripts/tools.manifest.json for package names on other distros, or use Docker."
+  fi
+  use_sudo
+  apt_install
+  pip_install_upgrade
+  install_cloud_enum
+  echo ""
+  echo "Done. Ensure $FORSIGHT_BIN_DIR is on PATH:"
+  echo "  export PATH=\"$FORSIGHT_BIN_DIR:\$PATH\""
+  echo "Optional: nuclei -update-templates"
+}
+
+cmd_update() {
+  require_python
+  local what="all"
+  parse_install_mode ""
+  local pos=()
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --user)
+        shift || true
+        parse_install_mode --user
+        ;;
+      *)
+        pos+=("$1")
+        shift || true
+        ;;
+    esac
+  done
+  if [[ ${#pos[@]} -gt 0 ]]; then
+    what="${pos[0]}"
+  fi
+  [[ ${#pos[@]} -gt 1 ]] && die "too many arguments: ${pos[*]}"
+  use_sudo
+  case "$what" in
+    all)
+      have apt-get && apt_update || true
+      pip_install_upgrade
+      install_cloud_enum
+      if have nuclei; then
+        echo "==> nuclei: -update-templates"
+        nuclei -update-templates 2>/dev/null || true
+        nuclei -update 2>/dev/null || true
+      fi
+      echo "Done."
+      ;;
+    apt)
+      have apt-get || die "apt not available"
+      apt_update
+      ;;
+    pip|pip_user|droopescan)
+      pip_install_upgrade
+      ;;
+    cloud_enum|cloudenum)
+      install_cloud_enum
+      ;;
+    nuclei)
+      have nuclei || die "nuclei not on PATH"
+      nuclei -update-templates
+      nuclei -update 2>/dev/null || true
+      ;;
+    *)
+      die "Unknown target: $what — use: all, apt, pip, cloud_enum, nuclei"
+      ;;
+  esac
+}
+
+cmd_list() {
+  require_python
+  "$PYTHON" -c "
+import json
+m=json.load(open('$MANIFEST'))
+print('ForSight tools manifest v', m.get('version'))
+print()
+print('[apt]', len(m['apt']['packages']), 'packages —', ', '.join(m['apt']['packages'][:8]), '…')
+print('[pip_user]', m['pip_user']['packages'])
+print('[git_tools]', [g['id'] for g in m['git_tools']])
+"
+}
+
+cmd_verify() {
+  require_python
+  echo "ForSight tool checks (from manifest path_checks)"
+  echo "--------------------------------------------"
+  local failed=0
+  while IFS= read -r line; do
+    [[ -z "$line" ]] && continue
+    local name bin
+    name="${line%%:*}"
+    bin="${line#*: }"
+    [[ "$name" == "description" ]] && continue
+    if have "$bin"; then
+      echo "OK     $name → $bin"
+    else
+      echo "MISSING $name → expected: $bin"
+      failed=1
+    fi
+  done < <("$PYTHON" -c "
+import json
+m=json.load(open('$MANIFEST'))
+for k,v in m['path_checks'].items():
+    if k=='description': continue
+    print(f'{k}:{v}')
+")
+  if [[ "$failed" -ne 0 ]]; then
+    echo >&2 ""
+    echo >&2 "Install:  $ROOT/scripts/forsight-tools install [--user]"
+    exit 1
+  fi
+}
+
+main() {
+  local cmd="${1:-help}"
+  shift || true
+  case "$cmd" in
+    install) cmd_install "$@" ;;
+    update) cmd_update "$@" ;;
+    verify|check) cmd_verify ;;
+    list|manifest) cmd_list ;;
+    help|-h|--help)
+      sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//'
+      ;;
+    *) die "unknown command: $cmd (install | update | verify | list | help)" ;;
+  esac
+}
+
+main "$@"

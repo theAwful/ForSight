@@ -1,0 +1,1195 @@
+Shodan host report: 165.245.137.16
+============================================================
+IP:            165.245.137.16
+Organization:  DigitalOcean, LLC
+ISP:           —
+ASN:           —
+OS:            Ubuntu
+Country:       United States
+City:          Broomfield
+Last update:   2026-07-29T08:46:03.627150
+Hostnames:     intragin.awfulsecurity.org
+Domains:       awfulsecurity.org
+Tags:          eol-product, cloud
+
+Vulnerabilities:
+  - CVE-2023-44487
+  - CVE-2025-23419
+
+Open ports (3): 22, 80, 443
+
+Services
+------------------------------------------------------------
+[22/tcp] OpenSSH 9.6p1 Ubuntu 3ubuntu13.18
+  SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.18
+  Key type: ecdsa-sha2-nistp256
+  Key: AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBPfj1tltPppdp3ix5Kf0fpPv
+  gHebtxgJSw5jX0fRrvekrjOL8ZJyI1Jrp8WO0v1DhhzAux2rZY+eUoV3gF0mA4M=
+  Fingerprint: a3:e3:5e:05:30:c4:2e:fc:ed:99:55:16:31:11:68:f8
+  
+  Kex Algorithms:
+  	sntrup761x25519-sha512@openssh.com
+  	curve25519-sha256
+  	curve25519-sha256@libssh.org
+  	ecdh-sha2-nistp256
+  	ecdh-sha2-nistp384
+  	ecdh-sha2-nistp521
+  	diffie-hellman-group-exchange-sha256
+  	diffie-hellman-group16-sha512
+  	diffie-hellman-group18-sha512
+  	diffie-hellman-group14-sha256
+  	ext-info-s
+  	kex-strict-s-v00@openssh.com
+  
+  Server Host Key Algorithms:
+  	rsa-sha2-512
+  	rsa-sha2-256
+  	ecdsa-sha2-nistp256
+  	ssh-ed25519
+  
+  Encryption Algorithms:
+  	chacha20-poly1305@openssh.com
+  	aes128-ctr
+  	aes192-ctr
+  	aes256-ctr
+  	aes128-gcm@openssh.com
+  	aes256-gcm@openssh.com
+  
+  MAC Algorithms:
+  	umac-64-etm@openssh.com
+  	umac-128-etm@openssh.com
+  	hmac-sha2-256-etm@openssh.com
+  	hmac-sha2-512-etm@openssh.com
+  	hmac-sha1-etm@openssh.com
+  	umac-64@openssh.com
+  	umac-128@openssh.com
+  	hmac-sha2-256
+  	hmac-sha2-512
+  	hmac-sha1
+  
+  Compression Algorithms:
+  	none
+  	zlib@openssh.com
+
+[80/tcp] nginx 1.24.0
+  HTTP/1.1 200 OK
+  Server: nginx/1.24.0 (Ubuntu)
+  Date: Wed, 29 Jul 2026 08:46:03 GMT
+  Content-Type: text/html
+  Content-Length: 10671
+  Last-Modified: Fri, 30 Jan 2026 06:22:49 GMT
+  Connection: keep-alive
+  ETag: "697c4e39-29af"
+  Accept-Ranges: bytes
+
+[443/tcp] nginx 1.24.0
+  HTTP/1.1 200 OK
+  Server: nginx/1.24.0 (Ubuntu)
+  Date: Fri, 03 Jul 2026 01:18:43 GMT
+  Content-Type: text/html
+  Content-Length: 21277
+  Last-Modified: Mon, 23 Mar 2026 15:32:40 GMT
+  Connection: keep-alive
+  ETag: "69c15d18-531d"
+  Accept-Ranges: bytes
+
+
+Raw JSON
+------------------------------------------------------------
+{
+  "region_code": "CO",
+  "tags": [
+    "eol-product",
+    "cloud"
+  ],
+  "ip": 2784332048,
+  "area_code": null,
+  "domains": [
+    "awfulsecurity.org"
+  ],
+  "hostnames": [
+    "intragin.awfulsecurity.org"
+  ],
+  "country_code": "US",
+  "org": "DigitalOcean, LLC",
+  "data": [
+    {
+      "ip": 2784332048,
+      "port": 22,
+      "transport": "tcp",
+      "version": "9.6p1 Ubuntu 3ubuntu13.18",
+      "cloud": {
+        "region": "us-ga",
+        "service": null,
+        "provider": "DigitalOcean"
+      },
+      "location": {
+        "city": "Broomfield",
+        "region_code": "CO",
+        "area_code": null,
+        "longitude": -105.1139,
+        "latitude": 39.8854,
+        "country_code": "US",
+        "country_name": "United States"
+      },
+      "product": "OpenSSH",
+      "hash": -1613332750,
+      "tags": [
+        "cloud"
+      ],
+      "timestamp": "2026-07-23T05:46:54.378309",
+      "hostnames": [],
+      "ssh": {
+        "type": "ecdsa-sha2-nistp256",
+        "fingerprint": "a3:e3:5e:05:30:c4:2e:fc:ed:99:55:16:31:11:68:f8",
+        "mac": "hmac-sha2-256",
+        "cipher": "aes128-ctr",
+        "key": "AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBPfj1tltPppdp3ix5Kf0fpPv\ngHebtxgJSw5jX0fRrvekrjOL8ZJyI1Jrp8WO0v1DhhzAux2rZY+eUoV3gF0mA4M=\n",
+        "kex": {
+          "unused": 0,
+          "server_host_key_algorithms": [
+            "rsa-sha2-512",
+            "rsa-sha2-256",
+            "ecdsa-sha2-nistp256",
+            "ssh-ed25519"
+          ],
+          "encryption_algorithms": [
+            "chacha20-poly1305@openssh.com",
+            "aes128-ctr",
+            "aes192-ctr",
+            "aes256-ctr",
+            "aes128-gcm@openssh.com",
+            "aes256-gcm@openssh.com"
+          ],
+          "kex_follows": false,
+          "languages": [
+            ""
+          ],
+          "kex_algorithms": [
+            "sntrup761x25519-sha512@openssh.com",
+            "curve25519-sha256",
+            "curve25519-sha256@libssh.org",
+            "ecdh-sha2-nistp256",
+            "ecdh-sha2-nistp384",
+            "ecdh-sha2-nistp521",
+            "diffie-hellman-group-exchange-sha256",
+            "diffie-hellman-group16-sha512",
+            "diffie-hellman-group18-sha512",
+            "diffie-hellman-group14-sha256",
+            "ext-info-s",
+            "kex-strict-s-v00@openssh.com"
+          ],
+          "compression_algorithms": [
+            "none",
+            "zlib@openssh.com"
+          ],
+          "mac_algorithms": [
+            "umac-64-etm@openssh.com",
+            "umac-128-etm@openssh.com",
+            "hmac-sha2-256-etm@openssh.com",
+            "hmac-sha2-512-etm@openssh.com",
+            "hmac-sha1-etm@openssh.com",
+            "umac-64@openssh.com",
+            "umac-128@openssh.com",
+            "hmac-sha2-256",
+            "hmac-sha2-512",
+            "hmac-sha1"
+          ]
+        },
+        "hassh": "e42184b06d45385a906f0803d04c83da"
+      },
+      "org": "DigitalOcean, LLC",
+      "data": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.18\nKey type: ecdsa-sha2-nistp256\nKey: AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBPfj1tltPppdp3ix5Kf0fpPv\ngHebtxgJSw5jX0fRrvekrjOL8ZJyI1Jrp8WO0v1DhhzAux2rZY+eUoV3gF0mA4M=\nFingerprint: a3:e3:5e:05:30:c4:2e:fc:ed:99:55:16:31:11:68:f8\n\nKex Algorithms:\n\tsntrup761x25519-sha512@openssh.com\n\tcurve25519-sha256\n\tcurve25519-sha256@libssh.org\n\tecdh-sha2-nistp256\n\tecdh-sha2-nistp384\n\tecdh-sha2-nistp521\n\tdiffie-hellman-group-exchange-sha256\n\tdiffie-hellman-group16-sha512\n\tdiffie-hellman-group18-sha512\n\tdiffie-hellman-group14-sha256\n\text-info-s\n\tkex-strict-s-v00@openssh.com\n\nServer Host Key Algorithms:\n\trsa-sha2-512\n\trsa-sha2-256\n\tecdsa-sha2-nistp256\n\tssh-ed25519\n\nEncryption Algorithms:\n\tchacha20-poly1305@openssh.com\n\taes128-ctr\n\taes192-ctr\n\taes256-ctr\n\taes128-gcm@openssh.com\n\taes256-gcm@openssh.com\n\nMAC Algorithms:\n\tumac-64-etm@openssh.com\n\tumac-128-etm@openssh.com\n\thmac-sha2-256-etm@openssh.com\n\thmac-sha2-512-etm@openssh.com\n\thmac-sha1-etm@openssh.com\n\tumac-64@openssh.com\n\tumac-128@openssh.com\n\thmac-sha2-256\n\thmac-sha2-512\n\thmac-sha1\n\nCompression Algorithms:\n\tnone\n\tzlib@openssh.com\n",
+      "cpe23": [
+        "cpe:2.3:a:openbsd:openssh:9.6p1",
+        "cpe:2.3:o:canonical:ubuntu_linux"
+      ],
+      "info": "protocol 2.0",
+      "isp": null,
+      "cpe": [
+        "cpe:/a:openbsd:openssh:9.6p1",
+        "cpe:/o:canonical:ubuntu_linux"
+      ],
+      "domains": [],
+      "ip_str": "165.245.137.16",
+      "os": "Linux",
+      "_shodan": {
+        "region": "eu",
+        "module": "ssh",
+        "ptr": true,
+        "options": {},
+        "id": "91cdbe43-d7d9-4c94-b4bb-5d04aac9ad74",
+        "crawler": "78039f81a0245caa8ab71c98182f0eff0ce52aab"
+      },
+      "opts": {}
+    },
+    {
+      "ip": 2784332048,
+      "http": {
+        "status": 200,
+        "robots_hash": null,
+        "redirects": [],
+        "title_hash": -22151114,
+        "securitytxt": null,
+        "title": "Apache2 Ubuntu Default Page: It works",
+        "sitemap_hash": null,
+        "robots": null,
+        "dom_hash": 1804521491,
+        "components_hash": 1723476431,
+        "headers_hash": 1245094173,
+        "host": "165.245.137.16",
+        "html": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n  <!--\n    Modified from the Debian original for Ubuntu\n    Last updated: 2022-03-22\n    See: https://launchpad.net/bugs/1966004\n  -->\n  <head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n    <title>Apache2 Ubuntu Default Page: It works</title>\n    <style type=\"text/css\" media=\"screen\">\n  * {\n    margin: 0px 0px 0px 0px;\n    padding: 0px 0px 0px 0px;\n  }\n\n  body, html {\n    padding: 3px 3px 3px 3px;\n\n    background-color: #D8DBE2;\n\n    font-family: Ubuntu, Verdana, sans-serif;\n    font-size: 11pt;\n    text-align: center;\n  }\n\n  div.main_page {\n    position: relative;\n    display: table;\n\n    width: 800px;\n\n    margin-bottom: 3px;\n    margin-left: auto;\n    margin-right: auto;\n    padding: 0px 0px 0px 0px;\n\n    border-width: 2px;\n    border-color: #212738;\n    border-style: solid;\n\n    background-color: #FFFFFF;\n\n    text-align: center;\n  }\n\n  div.page_header {\n    height: 180px;\n    width: 100%;\n\n    background-color: #F5F6F7;\n  }\n\n  div.page_header span {\n    margin: 15px 0px 0px 50px;\n\n    font-size: 180%;\n    font-weight: bold;\n  }\n\n  div.page_header img {\n    margin: 3px 0px 0px 40px;\n\n    border: 0px 0px 0px;\n  }\n\n  div.banner {\n    padding: 9px 6px 9px 6px;\n    background-color: #E9510E;\n    color: #FFFFFF;\n    font-weight: bold;\n    font-size: 112%;\n    text-align: center;\n    position: absolute;\n    left: 40%;\n    bottom: 30px;\n    width: 20%;\n  }\n\n  div.table_of_contents {\n    clear: left;\n\n    min-width: 200px;\n\n    margin: 3px 3px 3px 3px;\n\n    background-color: #FFFFFF;\n\n    text-align: left;\n  }\n\n  div.table_of_contents_item {\n    clear: left;\n\n    width: 100%;\n\n    margin: 4px 0px 0px 0px;\n\n    background-color: #FFFFFF;\n\n    color: #000000;\n    text-align: left;\n  }\n\n  div.table_of_contents_item a {\n    margin: 6px 0px 0px 6px;\n  }\n\n  div.content_section {\n    margin: 3px 3px 3px 3px;\n\n    background-color: #FFFFFF;\n\n    text-align: left;\n  }\n\n  div.content_section_text {\n    padding: 4px 8px 4px 8px;\n\n    color: #000000;\n    font-size: 100%;\n  }\n\n  div.content_section_text pre {\n    margin: 8px 0px 8px 0px;\n    padding: 8px 8px 8px 8px;\n\n    border-width: 1px;\n    border-style: dotted;\n    border-color: #000000;\n\n    background-color: #F5F6F7;\n\n    font-style: italic;\n  }\n\n  div.content_section_text p {\n    margin-bottom: 6px;\n  }\n\n  div.content_section_text ul, div.content_section_text li {\n    padding: 4px 8px 4px 16px;\n  }\n\n  div.section_header {\n    padding: 3px 6px 3px 6px;\n\n    background-color: #8E9CB2;\n\n    color: #FFFFFF;\n    font-weight: bold;\n    font-size: 112%;\n    text-align: center;\n  }\n\n  div.section_header_grey {\n    background-color: #9F9386;\n  }\n\n  .floating_element {\n    position: relative;\n    float: left;\n  }\n\n  div.table_of_contents_item a,\n  div.content_section_text a {\n    text-decoration: none;\n    font-weight: bold;\n  }\n\n  div.table_of_contents_item a:link,\n  div.table_of_contents_item a:visited,\n  div.table_of_contents_item a:active {\n    color: #000000;\n  }\n\n  div.table_of_contents_item a:hover {\n    background-color: #000000;\n\n    color: #FFFFFF;\n  }\n\n  div.content_section_text a:link,\n  div.content_section_text a:visited,\n   div.content_section_text a:active {\n    background-color: #DCDFE6;\n\n    color: #000000;\n  }\n\n  div.content_section_text a:hover {\n    background-color: #000000;\n\n    color: #DCDFE6;\n  }\n\n  div.validator {\n  }\n    </style>\n  </head>\n  <body>\n    <div class=\"main_page\">\n      <div class=\"page_header floating_element\">\n        <img src=\"icons/ubuntu-logo.png\" alt=\"Ubuntu Logo\"\n             style=\"width:184px;height:146px;\" class=\"floating_element\" />\n        <div>\n          <span style=\"margin-top: 1.5em;\" class=\"floating_element\">\n            Apache2 Default Page\n          </span>\n        </div>\n        <div class=\"banner\">\n          <div id=\"about\"></div>\n          It works!\n        </div>\n\n      </div>\n      <div class=\"content_section floating_element\">\n        <div class=\"content_section_text\">\n          <p>\n                This is the default welcome page used to test the correct \n                operation of the Apache2 server after installation on Ubuntu systems.\n                It is based on the equivalent page on Debian, from which the Ubuntu Apache\n                packaging is derived.\n                If you can read this page, it means that the Apache HTTP server installed at\n                this site is working properly. You should <b>replace this file</b> (located at\n                <tt>/var/www/html/index.html</tt>) before continuing to operate your HTTP server.\n          </p>\n\n          <p>\n                If you are a normal user of this web site and don't know what this page is\n                about, this probably means that the site is currently unavailable due to\n                maintenance.\n                If the problem persists, please contact the site's administrator.\n          </p>\n\n        </div>\n        <div class=\"section_header\">\n          <div id=\"changes\"></div>\n                Configuration Overview\n        </div>\n        <div class=\"content_section_text\">\n          <p>\n                Ubuntu's Apache2 default configuration is different from the\n                upstream default configuration, and split into several files optimized for\n                interaction with Ubuntu tools. The configuration system is\n                <b>fully documented in\n                /usr/share/doc/apache2/README.Debian.gz</b>. Refer to this for the full\n                documentation. Documentation for the web server itself can be\n                found by accessing the <a href=\"/manual\">manual</a> if the <tt>apache2-doc</tt>\n                package was installed on this server.\n          </p>\n          <p>\n                The configuration layout for an Apache2 web server installation on Ubuntu systems is as follows:\n          </p>\n          <pre>\n/etc/apache2/\n|-- apache2.conf\n|       `--  ports.conf\n|-- mods-enabled\n|       |-- *.load\n|       `-- *.conf\n|-- conf-enabled\n|       `-- *.conf\n|-- sites-enabled\n|       `-- *.conf\n          </pre>\n          <ul>\n                        <li>\n                           <tt>apache2.conf</tt> is the main configuration\n                           file. It puts the pieces together by including all remaining configuration\n                           files when starting up the web server.\n                        </li>\n\n                        <li>\n                           <tt>ports.conf</tt> is always included from the\n                           main configuration file. It is used to determine the listening ports for\n                           incoming connections, and this file can be customized anytime.\n                        </li>\n\n                        <li>\n                           Configuration files in the <tt>mods-enabled/</tt>,\n                           <tt>conf-enabled/</tt> and <tt>sites-enabled/</tt> directories contain\n                           particular configuration snippets which manage modules, global configuration\n                           fragments, or virtual host configurations, respectively.\n                        </li>\n\n                        <li>\n                           They are activated by symlinking available\n                           configuration files from their respective\n                           *-available/ counterparts. These should be managed\n                           by using our helpers\n                           <tt>\n                                a2enmod,\n                                a2dismod,\n                           </tt>\n                           <tt>\n                                a2ensite,\n                                a2dissite,\n                            </tt>\n                                and\n                           <tt>\n                                a2enconf,\n                                a2disconf\n                           </tt>. See their respective man pages for detailed information.\n                        </li>\n\n                        <li>\n                           The binary is called apache2 and is managed using systemd, so to\n                           start/stop the service use <tt>systemctl start apache2</tt> and\n                           <tt>systemctl stop apache2</tt>, and use <tt>systemctl status apache2</tt>\n                           and <tt>journalctl -u apache2</tt> to check status.  <tt>system</tt>\n                           and <tt>apache2ctl</tt> can also be used for service management if\n                           desired.\n                           <b>Calling <tt>/usr/bin/apache2</tt> directly will not work</b> with the\n                           default configuration.\n                        </li>\n          </ul>\n        </div>\n\n        <div class=\"section_header\">\n            <div id=\"docroot\"></div>\n                Document Roots\n        </div>\n\n        <div class=\"content_section_text\">\n            <p>\n                By default, Ubuntu does not allow access through the web browser to\n                <em>any</em> file outside of those located in <tt>/var/www</tt>,\n                <a href=\"http://httpd.apache.org/docs/2.4/mod/mod_userdir.html\" rel=\"nofollow\">public_html</a>\n                directories (when enabled) and <tt>/usr/share</tt> (for web\n                applications). If your site is using a web document root\n                located elsewhere (such as in <tt>/srv</tt>) you may need to whitelist your\n                document root directory in <tt>/etc/apache2/apache2.conf</tt>.\n            </p>\n            <p>\n                The default Ubuntu document root is <tt>/var/www/html</tt>. You\n                can make your own virtual hosts under /var/www.\n            </p>\n        </div>\n\n        <div class=\"section_header\">\n          <div id=\"bugs\"></div>\n                Reporting Problems\n        </div>\n        <div class=\"content_section_text\">\n          <p>\n                Please use the <tt>ubuntu-bug</tt> tool to report bugs in the\n                Apache2 package with Ubuntu. However, check <a\n                href=\"https://bugs.launchpad.net/ubuntu/+source/apache2\"\n                rel=\"nofollow\">existing bug reports</a> before reporting a new bug.\n          </p>\n          <p>\n                Please report bugs specific to modules (such as PHP and others)\n                to their respective packages, not to the web server itself.\n          </p>\n        </div>\n\n      </div>\n    </div>\n    <div class=\"validator\">\n    </div>\n  </body>\n</html>\n",
+        "server_hash": 1186221244,
+        "location": "/",
+        "components": {
+          "Nginx": {
+            "categories": [
+              "Web servers",
+              "Reverse proxies"
+            ],
+            "versions": [
+              "1.24.0"
+            ]
+          },
+          "Ubuntu": {
+            "categories": [
+              "Operating systems"
+            ]
+          }
+        },
+        "securitytxt_hash": null,
+        "headers": {
+          "content-length": "10671",
+          "accept-ranges": "bytes",
+          "server": "nginx/1.24.0 (Ubuntu)",
+          "last-modified": "Fri, 30 Jan 2026 06:22:49 GMT",
+          "connection": "keep-alive",
+          "etag": "\"697c4e39-29af\"",
+          "date": "Wed, 29 Jul 2026 08:46:03 GMT",
+          "content-type": "text/html"
+        },
+        "server": "nginx/1.24.0 (Ubuntu)",
+        "sitemap": null,
+        "html_hash": 1410093119
+      },
+      "port": 80,
+      "transport": "tcp",
+      "cpe23_hash": 649212503,
+      "version": "1.24.0",
+      "cloud": {
+        "region": "us-ga",
+        "service": null,
+        "provider": "DigitalOcean"
+      },
+      "vulns": {
+        "CVE-2023-44487": {
+          "verified": false,
+          "ransomware_campaign": "Unknown",
+          "ranking_epss": 0.99997,
+          "cvss_v2": null,
+          "cvss_version": 3.0,
+          "summary": "The HTTP/2 protocol allows a denial of service (server resource consumption) because request cancellation can reset many streams quickly, as exploited in the wild in August through October 2023.",
+          "references": [
+            "http://www.openwall.com/lists/oss-security/2023/10/10/6",
+            "http://www.openwall.com/lists/oss-security/2023/10/10/7",
+            "http://www.openwall.com/lists/oss-security/2023/10/13/4",
+            "http://www.openwall.com/lists/oss-security/2023/10/13/9",
+            "http://www.openwall.com/lists/oss-security/2023/10/18/4",
+            "http://www.openwall.com/lists/oss-security/2023/10/18/8",
+            "http://www.openwall.com/lists/oss-security/2023/10/19/6",
+            "http://www.openwall.com/lists/oss-security/2023/10/20/8",
+            "https://access.redhat.com/security/cve/cve-2023-44487",
+            "https://arstechnica.com/security/2023/10/how-ddosers-used-the-http-2-protocol-to-deliver-attacks-of-unprecedented-size/",
+            "https://aws.amazon.com/security/security-bulletins/AWS-2023-011/",
+            "https://blog.cloudflare.com/technical-breakdown-http2-rapid-reset-ddos-attack/",
+            "https://blog.cloudflare.com/zero-day-rapid-reset-http2-record-breaking-ddos-attack/",
+            "https://blog.litespeedtech.com/2023/10/11/rapid-reset-http-2-vulnerablilty/",
+            "https://blog.qualys.com/vulnerabilities-threat-research/2023/10/10/cve-2023-44487-http-2-rapid-reset-attack",
+            "https://blog.vespa.ai/cve-2023-44487/",
+            "https://bugzilla.proxmox.com/show_bug.cgi?id=4988",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2242803",
+            "https://bugzilla.suse.com/show_bug.cgi?id=1216123",
+            "https://cgit.freebsd.org/ports/commit/?id=c64c329c2c1752f46b73e3e6ce9f4329be6629f9",
+            "https://cloud.google.com/blog/products/identity-security/google-cloud-mitigated-largest-ddos-attack-peaking-above-398-million-rps/",
+            "https://cloud.google.com/blog/products/identity-security/how-it-works-the-novel-http2-rapid-reset-ddos-attack",
+            "https://community.traefik.io/t/is-traefik-vulnerable-to-cve-2023-44487/20125",
+            "https://discuss.hashicorp.com/t/hcsec-2023-32-vault-consul-and-boundary-affected-by-http-2-rapid-reset-denial-of-service-vulnerability-cve-2023-44487/59715",
+            "https://edg.io/lp/blog/resets-leaks-ddos-and-the-tale-of-a-hidden-cve",
+            "https://forums.swift.org/t/swift-nio-http2-security-update-cve-2023-44487-http-2-dos/67764",
+            "https://gist.github.com/adulau/7c2bfb8e9cdbe4b35a5e131c66a0c088",
+            "https://github.com/Azure/AKS/issues/3947",
+            "https://github.com/Kong/kong/discussions/11741",
+            "https://github.com/advisories/GHSA-qppj-fm5r-hxr3",
+            "https://github.com/advisories/GHSA-vx74-f528-fxqg",
+            "https://github.com/advisories/GHSA-xpw8-rcwv-8f8p",
+            "https://github.com/akka/akka-http/issues/4323",
+            "https://github.com/alibaba/tengine/issues/1872",
+            "https://github.com/apache/apisix/issues/10320",
+            "https://github.com/apache/httpd-site/pull/10",
+            "https://github.com/apache/httpd/blob/afcdbeebbff4b0c50ea26cdd16e178c0d1f24152/modules/http2/h2_mplx.c#L1101-L1113",
+            "https://github.com/apache/tomcat/tree/main/java/org/apache/coyote/http2",
+            "https://github.com/apache/trafficserver/pull/10564",
+            "https://github.com/arkrwn/PoC/tree/main/CVE-2023-44487",
+            "https://github.com/bcdannyboy/CVE-2023-44487",
+            "https://github.com/caddyserver/caddy/issues/5877",
+            "https://github.com/caddyserver/caddy/releases/tag/v2.7.5",
+            "https://github.com/dotnet/announcements/issues/277",
+            "https://github.com/dotnet/core/blob/e4613450ea0da7fd2fc6b61dfb2c1c1dec1ce9ec/release-notes/6.0/6.0.23/6.0.23.md?plain=1#L73",
+            "https://github.com/eclipse/jetty.project/issues/10679",
+            "https://github.com/envoyproxy/envoy/pull/30055",
+            "https://github.com/etcd-io/etcd/issues/16740",
+            "https://github.com/facebook/proxygen/pull/466",
+            "https://github.com/golang/go/issues/63417",
+            "https://github.com/grpc/grpc-go/pull/6703",
+            "https://github.com/grpc/grpc/releases/tag/v1.59.2",
+            "https://github.com/h2o/h2o/pull/3291",
+            "https://github.com/h2o/h2o/security/advisories/GHSA-2m7v-gc89-fjqf",
+            "https://github.com/haproxy/haproxy/issues/2312",
+            "https://github.com/icing/mod_h2/blob/0a864782af0a942aa2ad4ed960a6b32cd35bcf0a/mod_http2/README.md?plain=1#L239-L244",
+            "https://github.com/junkurihara/rust-rpxy/issues/97",
+            "https://github.com/kazu-yamamoto/http2/commit/f61d41a502bd0f60eb24e1ce14edc7b6df6722a1",
+            "https://github.com/kazu-yamamoto/http2/issues/93",
+            "https://github.com/kubernetes/kubernetes/pull/121120",
+            "https://github.com/line/armeria/pull/5232",
+            "https://github.com/linkerd/website/pull/1695/commits/4b9c6836471bc8270ab48aae6fd2181bc73fd632",
+            "https://github.com/micrictor/http2-rst-stream",
+            "https://github.com/microsoft/CBL-Mariner/pull/6381",
+            "https://github.com/netty/netty/commit/58f75f665aa81a8cbcf6ffa74820042a285c5e61",
+            "https://github.com/nghttp2/nghttp2/pull/1961",
+            "https://github.com/nghttp2/nghttp2/releases/tag/v1.57.0",
+            "https://github.com/ninenines/cowboy/issues/1615",
+            "https://github.com/nodejs/node/pull/50121",
+            "https://github.com/openresty/openresty/issues/930",
+            "https://github.com/opensearch-project/data-prepper/issues/3474",
+            "https://github.com/oqtane/oqtane.framework/discussions/3367",
+            "https://github.com/projectcontour/contour/pull/5826",
+            "https://github.com/tempesta-tech/tempesta/issues/1986",
+            "https://github.com/varnishcache/varnish-cache/issues/3996",
+            "https://groups.google.com/g/golang-announce/c/iNNxDTCjZvo",
+            "https://istio.io/latest/news/security/istio-security-2023-004/",
+            "https://linkerd.io/2023/10/12/linkerd-cve-2023-44487/",
+            "https://lists.apache.org/thread/5py8h42mxfsn8l1wy6o41xwhsjlsd87q",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00020.html",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00023.html",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00024.html",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00045.html",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00047.html",
+            "https://lists.debian.org/debian-lts-announce/2023/11/msg00001.html",
+            "https://lists.debian.org/debian-lts-announce/2023/11/msg00012.html",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/2MBEPPC36UBVOZZNAXFHKLFGSLCMN5LI/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/3N4NJ7FR4X4FPZUGNTQAPSTVB2HB2Y4A/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/BFQD3KUEMFBHPAPBGLWQC34L4OWL5HAZ/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/CLB4TW7KALB3EEQWNWCN7OUIWWVWWCG2/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/E72T67UPDRXHIDLO3OROR25YAMN4GGW5/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/FNA62Q767CFAFHBCDKYNPBMZWB7TWYVU/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/HT7T2R4MQKLIF4ODV4BDLPARWFPCJ5CZ/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/JIZSEFC3YKCGABA2BZW6ZJRMDZJMB7PJ/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/JMEXY22BFG5Q64HQCM5CK2Q7KDKVV4TY/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/KSEGD2IWKNUO3DWY4KQGUQM5BISRWHQE/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/LKYHSZQFDNR7RSA7LHVLLIAQMVYCUGBG/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/LNMZJCDHGLJJLXO4OXWJMTVQRNWOC7UL/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/VHUHTSXLXGXS7JYKBXTA3VINUPHTNGVU/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/VSRDIV77HNKUSM7SJC5BKE5JSHLHU2NK/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/WE2I52RHNNU42PX6NZ2RBUHSFFJ2LVZX/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/WLPRQ5TWUQQXYWBJM7ECYDAIL2YVKIUH/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/X6QXN4ORIVF6XBW4WWFE7VNPVC74S45Y/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/XFOIBB4YFICHDM7IBOP7PWXW3FX4HLL2/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/ZB43REMKRQR62NJEI7I5NQ4FSXNLBKRT/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/ZKQSIKIAT5TJ3WSLU3RDBQ35YX4GY4V3/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/ZLU6U2R2IC2K64NDPNMV55AUAO65MAF4/",
+            "https://lists.w3.org/Archives/Public/ietf-http-wg/2023OctDec/0025.html",
+            "https://mailman.nginx.org/pipermail/nginx-devel/2023-October/S36Q5HBXR7CAIMPLLPRSSSYR4PCMWILK.html",
+            "https://martinthomson.github.io/h2-stream-limits/draft-thomson-httpbis-h2-stream-limits.html",
+            "https://msrc.microsoft.com/blog/2023/10/microsoft-response-to-distributed-denial-of-service-ddos-attacks-against-http/2/",
+            "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2023-44487",
+            "https://my.f5.com/manage/s/article/K000137106",
+            "https://netty.io/news/2023/10/10/4-1-100-Final.html",
+            "https://news.ycombinator.com/item?id=37830987",
+            "https://news.ycombinator.com/item?id=37830998",
+            "https://news.ycombinator.com/item?id=37831062",
+            "https://news.ycombinator.com/item?id=37837043",
+            "https://openssf.org/blog/2023/10/10/http-2-rapid-reset-vulnerability-highlights-need-for-rapid-response/",
+            "https://seanmonstar.com/post/730794151136935936/hyper-http2-rapid-reset-unaffected",
+            "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-http2-reset-d8Kf32vZ",
+            "https://security.gentoo.org/glsa/202311-09",
+            "https://security.netapp.com/advisory/ntap-20231016-0001/",
+            "https://security.netapp.com/advisory/ntap-20240426-0007/",
+            "https://security.netapp.com/advisory/ntap-20240621-0006/",
+            "https://security.netapp.com/advisory/ntap-20240621-0007/",
+            "https://security.paloaltonetworks.com/CVE-2023-44487",
+            "https://tomcat.apache.org/security-10.html#Fixed_in_Apache_Tomcat_10.1.14",
+            "https://ubuntu.com/security/CVE-2023-44487",
+            "https://www.bleepingcomputer.com/news/security/new-http-2-rapid-reset-zero-day-attack-breaks-ddos-records/",
+            "https://www.cisa.gov/news-events/alerts/2023/10/10/http2-rapid-reset-vulnerability-cve-2023-44487",
+            "https://www.darkreading.com/cloud/internet-wide-zero-day-bug-fuels-largest-ever-ddos-event",
+            "https://www.debian.org/security/2023/dsa-5521",
+            "https://www.debian.org/security/2023/dsa-5522",
+            "https://www.debian.org/security/2023/dsa-5540",
+            "https://www.debian.org/security/2023/dsa-5549",
+            "https://www.debian.org/security/2023/dsa-5558",
+            "https://www.debian.org/security/2023/dsa-5570",
+            "https://www.haproxy.com/blog/haproxy-is-not-affected-by-the-http-2-rapid-reset-attack-cve-2023-44487",
+            "https://www.netlify.com/blog/netlify-successfully-mitigates-cve-2023-44487/",
+            "https://www.nginx.com/blog/http-2-rapid-reset-attack-impacting-f5-nginx-products/",
+            "https://www.openwall.com/lists/oss-security/2023/10/10/6",
+            "https://www.phoronix.com/news/HTTP2-Rapid-Reset-Attack",
+            "https://www.theregister.com/2023/10/10/http2_rapid_reset_zeroday/",
+            "http://www.openwall.com/lists/oss-security/2023/10/13/4",
+            "http://www.openwall.com/lists/oss-security/2023/10/13/9",
+            "http://www.openwall.com/lists/oss-security/2023/10/18/4",
+            "http://www.openwall.com/lists/oss-security/2023/10/18/8",
+            "http://www.openwall.com/lists/oss-security/2023/10/19/6",
+            "http://www.openwall.com/lists/oss-security/2023/10/20/8",
+            "http://www.openwall.com/lists/oss-security/2025/08/13/6",
+            "https://access.redhat.com/security/cve/cve-2023-44487",
+            "https://arstechnica.com/security/2023/10/how-ddosers-used-the-http-2-protocol-to-deliver-attacks-of-unprecedented-size/",
+            "https://aws.amazon.com/security/security-bulletins/AWS-2023-011/",
+            "https://blog.cloudflare.com/technical-breakdown-http2-rapid-reset-ddos-attack/",
+            "https://blog.cloudflare.com/zero-day-rapid-reset-http2-record-breaking-ddos-attack/",
+            "https://blog.litespeedtech.com/2023/10/11/rapid-reset-http-2-vulnerablilty/",
+            "https://blog.qualys.com/vulnerabilities-threat-research/2023/10/10/cve-2023-44487-http-2-rapid-reset-attack",
+            "https://blog.vespa.ai/cve-2023-44487/",
+            "https://bugzilla.proxmox.com/show_bug.cgi?id=4988",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2242803",
+            "https://bugzilla.suse.com/show_bug.cgi?id=1216123",
+            "https://cgit.freebsd.org/ports/commit/?id=c64c329c2c1752f46b73e3e6ce9f4329be6629f9",
+            "https://cloud.google.com/blog/products/identity-security/google-cloud-mitigated-largest-ddos-attack-peaking-above-398-million-rps/",
+            "https://cloud.google.com/blog/products/identity-security/how-it-works-the-novel-http2-rapid-reset-ddos-attack",
+            "https://community.traefik.io/t/is-traefik-vulnerable-to-cve-2023-44487/20125",
+            "https://discuss.hashicorp.com/t/hcsec-2023-32-vault-consul-and-boundary-affected-by-http-2-rapid-reset-denial-of-service-vulnerability-cve-2023-44487/59715",
+            "https://edg.io/lp/blog/resets-leaks-ddos-and-the-tale-of-a-hidden-cve",
+            "https://forums.swift.org/t/swift-nio-http2-security-update-cve-2023-44487-http-2-dos/67764",
+            "https://gist.github.com/adulau/7c2bfb8e9cdbe4b35a5e131c66a0c088",
+            "https://github.com/Azure/AKS/issues/3947",
+            "https://github.com/Kong/kong/discussions/11741",
+            "https://github.com/advisories/GHSA-qppj-fm5r-hxr3",
+            "https://github.com/advisories/GHSA-vx74-f528-fxqg",
+            "https://github.com/advisories/GHSA-xpw8-rcwv-8f8p",
+            "https://github.com/akka/akka-http/issues/4323",
+            "https://github.com/alibaba/tengine/issues/1872",
+            "https://github.com/apache/apisix/issues/10320",
+            "https://github.com/apache/httpd-site/pull/10",
+            "https://github.com/apache/httpd/blob/afcdbeebbff4b0c50ea26cdd16e178c0d1f24152/modules/http2/h2_mplx.c#L1101-L1113",
+            "https://github.com/apache/tomcat/tree/main/java/org/apache/coyote/http2",
+            "https://github.com/apache/trafficserver/pull/10564",
+            "https://github.com/arkrwn/PoC/tree/main/CVE-2023-44487",
+            "https://github.com/bcdannyboy/CVE-2023-44487",
+            "https://github.com/caddyserver/caddy/issues/5877",
+            "https://github.com/caddyserver/caddy/releases/tag/v2.7.5",
+            "https://github.com/dotnet/announcements/issues/277",
+            "https://github.com/dotnet/core/blob/e4613450ea0da7fd2fc6b61dfb2c1c1dec1ce9ec/release-notes/6.0/6.0.23/6.0.23.md?plain=1#L73",
+            "https://github.com/eclipse/jetty.project/issues/10679",
+            "https://github.com/envoyproxy/envoy/pull/30055",
+            "https://github.com/etcd-io/etcd/issues/16740",
+            "https://github.com/facebook/proxygen/pull/466",
+            "https://github.com/golang/go/issues/63417",
+            "https://github.com/grpc/grpc-go/pull/6703",
+            "https://github.com/h2o/h2o/pull/3291",
+            "https://github.com/h2o/h2o/security/advisories/GHSA-2m7v-gc89-fjqf",
+            "https://github.com/haproxy/haproxy/issues/2312",
+            "https://github.com/icing/mod_h2/blob/0a864782af0a942aa2ad4ed960a6b32cd35bcf0a/mod_http2/README.md?plain=1#L239-L244",
+            "https://github.com/junkurihara/rust-rpxy/issues/97",
+            "https://github.com/kazu-yamamoto/http2/commit/f61d41a502bd0f60eb24e1ce14edc7b6df6722a1",
+            "https://github.com/kazu-yamamoto/http2/issues/93",
+            "https://github.com/kubernetes/kubernetes/pull/121120",
+            "https://github.com/line/armeria/pull/5232",
+            "https://github.com/linkerd/website/pull/1695/commits/4b9c6836471bc8270ab48aae6fd2181bc73fd632",
+            "https://github.com/micrictor/http2-rst-stream",
+            "https://github.com/microsoft/CBL-Mariner/pull/6381",
+            "https://github.com/netty/netty/commit/58f75f665aa81a8cbcf6ffa74820042a285c5e61",
+            "https://github.com/nghttp2/nghttp2/pull/1961",
+            "https://github.com/nghttp2/nghttp2/releases/tag/v1.57.0",
+            "https://github.com/ninenines/cowboy/issues/1615",
+            "https://github.com/nodejs/node/pull/50121",
+            "https://github.com/openresty/openresty/issues/930",
+            "https://github.com/opensearch-project/data-prepper/issues/3474",
+            "https://github.com/oqtane/oqtane.framework/discussions/3367",
+            "https://github.com/projectcontour/contour/pull/5826",
+            "https://github.com/tempesta-tech/tempesta/issues/1986",
+            "https://github.com/varnishcache/varnish-cache/issues/3996",
+            "https://groups.google.com/g/golang-announce/c/iNNxDTCjZvo",
+            "https://istio.io/latest/news/security/istio-security-2023-004/",
+            "https://linkerd.io/2023/10/12/linkerd-cve-2023-44487/",
+            "https://lists.apache.org/thread/5py8h42mxfsn8l1wy6o41xwhsjlsd87q",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00020.html",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00023.html",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00024.html",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00045.html",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00047.html",
+            "https://lists.debian.org/debian-lts-announce/2023/11/msg00001.html",
+            "https://lists.debian.org/debian-lts-announce/2023/11/msg00012.html",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/2MBEPPC36UBVOZZNAXFHKLFGSLCMN5LI/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/3N4NJ7FR4X4FPZUGNTQAPSTVB2HB2Y4A/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/BFQD3KUEMFBHPAPBGLWQC34L4OWL5HAZ/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/CLB4TW7KALB3EEQWNWCN7OUIWWVWWCG2/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/E72T67UPDRXHIDLO3OROR25YAMN4GGW5/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/FNA62Q767CFAFHBCDKYNPBMZWB7TWYVU/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/HT7T2R4MQKLIF4ODV4BDLPARWFPCJ5CZ/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/JIZSEFC3YKCGABA2BZW6ZJRMDZJMB7PJ/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/JMEXY22BFG5Q64HQCM5CK2Q7KDKVV4TY/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/KSEGD2IWKNUO3DWY4KQGUQM5BISRWHQE/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/LKYHSZQFDNR7RSA7LHVLLIAQMVYCUGBG/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/LNMZJCDHGLJJLXO4OXWJMTVQRNWOC7UL/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/VHUHTSXLXGXS7JYKBXTA3VINUPHTNGVU/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/VSRDIV77HNKUSM7SJC5BKE5JSHLHU2NK/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/WE2I52RHNNU42PX6NZ2RBUHSFFJ2LVZX/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/WLPRQ5TWUQQXYWBJM7ECYDAIL2YVKIUH/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/X6QXN4ORIVF6XBW4WWFE7VNPVC74S45Y/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/XFOIBB4YFICHDM7IBOP7PWXW3FX4HLL2/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/ZB43REMKRQR62NJEI7I5NQ4FSXNLBKRT/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/ZKQSIKIAT5TJ3WSLU3RDBQ35YX4GY4V3/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/ZLU6U2R2IC2K64NDPNMV55AUAO65MAF4/",
+            "https://lists.w3.org/Archives/Public/ietf-http-wg/2023OctDec/0025.html",
+            "https://mailman.nginx.org/pipermail/nginx-devel/2023-October/S36Q5HBXR7CAIMPLLPRSSSYR4PCMWILK.html",
+            "https://martinthomson.github.io/h2-stream-limits/draft-thomson-httpbis-h2-stream-limits.html",
+            "https://msrc.microsoft.com/blog/2023/10/microsoft-response-to-distributed-denial-of-service-ddos-attacks-against-http/2/",
+            "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2023-44487",
+            "https://my.f5.com/manage/s/article/K000137106",
+            "https://netty.io/news/2023/10/10/4-1-100-Final.html",
+            "https://news.ycombinator.com/item?id=37830987",
+            "https://news.ycombinator.com/item?id=37830998",
+            "https://news.ycombinator.com/item?id=37831062",
+            "https://news.ycombinator.com/item?id=37837043",
+            "https://openssf.org/blog/2023/10/10/http-2-rapid-reset-vulnerability-highlights-need-for-rapid-response/",
+            "https://seanmonstar.com/post/730794151136935936/hyper-http2-rapid-reset-unaffected",
+            "https://security.gentoo.org/glsa/202311-09",
+            "https://security.netapp.com/advisory/ntap-20231016-0001/",
+            "https://security.netapp.com/advisory/ntap-20240426-0007/",
+            "https://security.netapp.com/advisory/ntap-20240621-0006/",
+            "https://security.netapp.com/advisory/ntap-20240621-0007/",
+            "https://security.paloaltonetworks.com/CVE-2023-44487",
+            "https://tomcat.apache.org/security-10.html#Fixed_in_Apache_Tomcat_10.1.14",
+            "https://ubuntu.com/security/CVE-2023-44487",
+            "https://www.bleepingcomputer.com/news/security/new-http-2-rapid-reset-zero-day-attack-breaks-ddos-records/",
+            "https://www.cisa.gov/news-events/alerts/2023/10/10/http2-rapid-reset-vulnerability-cve-2023-44487",
+            "https://www.darkreading.com/cloud/internet-wide-zero-day-bug-fuels-largest-ever-ddos-event",
+            "https://www.debian.org/security/2023/dsa-5521",
+            "https://www.debian.org/security/2023/dsa-5522",
+            "https://www.debian.org/security/2023/dsa-5540",
+            "https://www.debian.org/security/2023/dsa-5549",
+            "https://www.debian.org/security/2023/dsa-5558",
+            "https://www.debian.org/security/2023/dsa-5570",
+            "https://www.haproxy.com/blog/haproxy-is-not-affected-by-the-http-2-rapid-reset-attack-cve-2023-44487",
+            "https://www.netlify.com/blog/netlify-successfully-mitigates-cve-2023-44487/",
+            "https://www.nginx.com/blog/http-2-rapid-reset-attack-impacting-f5-nginx-products/",
+            "https://www.openwall.com/lists/oss-security/2023/10/10/6",
+            "https://www.phoronix.com/news/HTTP2-Rapid-Reset-Attack",
+            "https://www.theregister.com/2023/10/10/http2_rapid_reset_zeroday/",
+            "https://www.vicarius.io/vsociety/posts/rapid-reset-cve-2023-44487-dos-in-http2-understanding-the-root-cause",
+            "https://cert-portal.siemens.com/productcert/html/ssa-082556.html",
+            "https://cert-portal.siemens.com/productcert/html/ssa-341067.html",
+            "https://cert-portal.siemens.com/productcert/html/ssa-784301.html",
+            "https://cert-portal.siemens.com/productcert/html/ssa-832273.html",
+            "https://cert-portal.siemens.com/productcert/html/ssa-915275.html",
+            "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2023-44487"
+          ],
+          "epss": 0.99999,
+          "kev": true,
+          "cvss": 7.5
+        },
+        "CVE-2025-23419": {
+          "verified": false,
+          "ranking_epss": 0.61975,
+          "cvss_v2": null,
+          "cvss_version": 4.0,
+          "summary": "When multiple server blocks are configured to share the same IP address and port, an attacker can use session resumption to bypass client certificate authentication requirements on these servers. This vulnerability arises when  TLS Session Tickets https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_session_ticket_key  are used and/or the  SSL session cache https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_session_cache  are used in the default server and the default server is performing client certificate authentication.  \n\nNote: Software versions which have reached End of Technical Support (EoTS) are not evaluated.",
+          "references": [
+            "https://my.f5.com/manage/s/article/K000149173",
+            "http://www.openwall.com/lists/oss-security/2025/02/05/8",
+            "https://lists.debian.org/debian-lts-announce/2025/03/msg00017.html"
+          ],
+          "epss": 0.01092,
+          "cvss": 5.3
+        }
+      },
+      "location": {
+        "city": "Broomfield",
+        "region_code": "CO",
+        "area_code": null,
+        "longitude": -105.1139,
+        "latitude": 39.8854,
+        "country_code": "US",
+        "country_name": "United States"
+      },
+      "product": "nginx",
+      "hash": 723418579,
+      "tags": [
+        "cloud",
+        "eol-product"
+      ],
+      "timestamp": "2026-07-29T08:46:03.627150",
+      "hostnames": [],
+      "org": "DigitalOcean, LLC",
+      "data": "HTTP/1.1 200 OK\r\nServer: nginx/1.24.0 (Ubuntu)\r\nDate: Wed, 29 Jul 2026 08:46:03 GMT\r\nContent-Type: text/html\r\nContent-Length: 10671\r\nLast-Modified: Fri, 30 Jan 2026 06:22:49 GMT\r\nConnection: keep-alive\r\nETag: \"697c4e39-29af\"\r\nAccept-Ranges: bytes\r\n\r\n",
+      "cpe23": [
+        "cpe:2.3:a:f5:nginx:1.24.0",
+        "cpe:2.3:o:canonical:ubuntu_linux",
+        "cpe:2.3:o:linux:linux_kernel"
+      ],
+      "isp": null,
+      "cpe": [
+        "cpe:/a:f5:nginx:1.24.0",
+        "cpe:/o:canonical:ubuntu_linux",
+        "cpe:/o:linux:linux_kernel"
+      ],
+      "domains": [],
+      "ip_str": "165.245.137.16",
+      "os": "Ubuntu",
+      "_shodan": {
+        "region": "na",
+        "module": "http",
+        "ptr": true,
+        "options": {},
+        "id": "cac3a024-6b80-4e89-ba30-2eebc30125b3",
+        "crawler": "85a5be66a1913a867d4f8cd62bd10fb79f410a2a"
+      },
+      "opts": {}
+    },
+    {
+      "ip": 2784332048,
+      "http": {
+        "status": 200,
+        "robots_hash": null,
+        "redirects": [],
+        "securitytxt": null,
+        "title": "Intragin – Your Partner in Construction and Renewable Energy",
+        "sitemap_hash": null,
+        "robots": null,
+        "dom_hash": 34753920,
+        "headers_hash": 1245094173,
+        "host": "165.245.137.16",
+        "html": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=1200\" />\n  <title>Intragin – Your Partner in Construction and Renewable Energy</title>\n  <meta name=\"description\" content=\"Staffing and safety management solutions for industrial construction, wind, and solar. Transforming jobsites one person at a time.\" />\n  <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" />\n  <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin />\n  <link href=\"https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Inter:wght@600;700;800&family=Oswald:wght@500;600;700&family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap\" rel=\"stylesheet\" />\n  <script type=\"module\" crossorigin src=\"/assets/main-BJJw79xC.js\"></script>\n  <link rel=\"stylesheet\" crossorigin href=\"/assets/main-9Uj1Irki.css\">\n</head>\n<body>\n  <div class=\"noise\" aria-hidden=\"true\"></div>\n\n  <header class=\"site-header\" id=\"site-header\">\n    <div class=\"header-inner\">\n      <a href=\"index.html\" class=\"logo-wrap\">\n        <img class=\"logo-img\" src=\"/assets/intragin-BYVXRA0U.png\" alt=\"Intragin\" />\n      </a>\n      <button type=\"button\" class=\"nav-toggle\" id=\"nav-toggle\" aria-label=\"Toggle menu\">\n        <span></span><span></span><span></span>\n      </button>\n      <nav class=\"nav\" id=\"nav\">\n        <a href=\"index.html\" class=\"nav-link\">Home</a>\n        <div class=\"nav-dropdown\" id=\"nav-staffing-dropdown\">\n          <button type=\"button\" class=\"nav-link nav-dropdown-trigger\" id=\"nav-staffing-trigger\" aria-expanded=\"false\" aria-haspopup=\"true\" aria-controls=\"nav-staffing-menu\">\n            Staffing\n            <svg class=\"nav-dropdown-chevron\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"6 9 12 15 18 9\"/></svg>\n          </button>\n          <div class=\"nav-dropdown-menu\" id=\"nav-staffing-menu\" role=\"menu\" aria-label=\"Staffing\">\n            <a href=\"staffing.html\" class=\"nav-dropdown-link\" role=\"menuitem\">Workforce</a>\n            <a href=\"staffing.html#industrial-construction\" class=\"nav-dropdown-link\" role=\"menuitem\">Industrial Construction</a>\n            <a href=\"staffing.html#renewable-energy\" class=\"nav-dropdown-link\" role=\"menuitem\">Renewable Energy</a>\n            <a href=\"staffing.html#turn-key-crews\" class=\"nav-dropdown-link\" role=\"menuitem\">Turn‑key Crews</a>\n          </div>\n        </div>\n        <a href=\"safety-consulting.html\" class=\"nav-link\">Safety Consulting</a>\n        <a href=\"about.html\" class=\"nav-link\">About</a>\n        <a href=\"join-our-team.html\" class=\"nav-link\">Join Our Team</a>\n        <a href=\"contact.html\" class=\"nav-link nav-link-cta\">Contact</a>\n      </nav>\n    </div>\n    <div class=\"nav-mobile-overlay\" id=\"nav-mobile-overlay\" aria-hidden=\"true\">\n      <div class=\"nav-mobile-inner\">\n        <a href=\"index.html\" class=\"nav-mobile-link\">Home</a>\n        <div class=\"nav-mobile-group\">\n          <span class=\"nav-mobile-label\">Staffing</span>\n          <a href=\"staffing.html\" class=\"nav-mobile-sublink\">Workforce</a>\n          <a href=\"staffing.html#industrial-construction\" class=\"nav-mobile-sublink\">Industrial Construction</a>\n          <a href=\"staffing.html#renewable-energy\" class=\"nav-mobile-sublink\">Renewable Energy</a>\n          <a href=\"staffing.html#turn-key-crews\" class=\"nav-mobile-sublink\">Turn‑key Crews</a>\n        </div>\n        <a href=\"safety-consulting.html\" class=\"nav-mobile-link\">Safety Consulting</a>\n        <a href=\"about.html\" class=\"nav-mobile-link\">About</a>\n        <a href=\"join-our-team.html\" class=\"nav-mobile-link\">Join Our Team</a>\n        <a href=\"contact.html\" class=\"nav-mobile-link nav-mobile-link-cta\">Contact</a>\n      </div>\n    </div>\n  </header>\n\n  <main>\n    <section class=\"hero\" id=\"hero\">\n      <div class=\"hero-bg\">\n        <img class=\"hero-image\" src=\"https://img1.wsimg.com/isteam/ip/a0b514a8-1cd9-4692-a197-666cb36a0f4d/received_2288876827835976.jpeg/:/cr=t:0%25,l:0%25,w:100%25,h:100%25\" alt=\"Wind turbines – renewable energy\" />\n        <div class=\"hero-gradient\"></div>\n        <div class=\"hero-grid\" aria-hidden=\"true\"></div>\n        <div class=\"hero-orbs\" aria-hidden=\"true\">\n          <span class=\"orb orb-1\"></span>\n          <span class=\"orb orb-2\"></span>\n          <span class=\"orb orb-3\"></span>\n        </div>\n      </div>\n      <div class=\"hero-content\">\n        <div class=\"hero-brand\" aria-hidden=\"true\">\n          <img class=\"hero-brand-img\" src=\"https://img1.wsimg.com/isteam/ip/a0b514a8-1cd9-4692-a197-666cb36a0f4d/Orange_Black_Construction_Logo__10_-removebg-p.png/:/rs=w:800,cg:true\" alt=\"Intragin\" />\n        </div>\n        <p class=\"hero-tag\">Your partner in construction and renewable energy</p>\n        <h1 class=\"hero-title hero-title--tagline\">\n          <span class=\"line\">Transforming jobsites</span>\n          <span class=\"line\">one person at a time</span>\n        </h1>\n        <a href=\"contact.html\" class=\"btn btn-primary\">Let's Get Started</a>\n      </div>\n      <div class=\"hero-scroll\" aria-hidden=\"true\">\n        <span class=\"scroll-dot\"></span>\n      </div>\n      <a href=\"#welcome\" data-scroll-to=\"welcome\" class=\"section-arrow section-arrow--down section-arrow--flow\" aria-label=\"Next section\">\n        <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"6 9 12 15 18 9\"/></svg>\n      </a>\n    </section>\n\n    <section class=\"welcome section welcome--video-bg\" id=\"welcome\">\n      <div class=\"welcome-bg-video\" aria-hidden=\"true\">\n        <video src=\"/Images/windmill.mp4\" autoplay muted loop playsinline></video>\n        <span class=\"welcome-bg-video-overlay\"></span>\n      </div>\n      <div class=\"container\">\n        <div class=\"welcome-grid\">\n          <div class=\"welcome-text reveal\">\n            <h2 class=\"section-title\">Welcome to Intragin</h2>\n            <p class=\"lead\">We get the right people on your jobsite.</p>\n            <p>Intragin sources and places qualified tradespeople on wind, solar, and industrial projects nationwide. Led by people who've spent decades in the industry — not behind a desk.</p>\n            <a href=\"staffing.html\" class=\"btn btn-secondary\">Request Workers</a>\n            <a href=\"about.html\" class=\"btn btn-secondary\" style=\"margin-left: 0.5rem;\">About Us</a>\n          </div>\n          <div class=\"welcome-visual reveal\">\n            <div class=\"welcome-industries\">\n              <div class=\"welcome-industry-card\">\n                <img src=\"https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=400&q=80\" alt=\"Renewable energy\" />\n                <span class=\"welcome-industry-label\">Renewable Energy</span>\n              </div>\n              <div class=\"welcome-industry-card\">\n                <img src=\"https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&q=80\" alt=\"Industrial construction\" />\n                <span class=\"welcome-industry-label\">Industrial Construction</span>\n              </div>\n              <div class=\"welcome-industry-card\">\n                <img src=\"https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=400&q=80\" alt=\"Turn-key crews\" />\n                <span class=\"welcome-industry-label\">Turn-key Crews</span>\n              </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </section>\n\n    <section class=\"apart section section--dark apart--statement\" id=\"about\">\n      <div class=\"apart-bg\" aria-hidden=\"true\">\n        <div class=\"apart-bg-gradient\"></div>\n        <div class=\"apart-bg-image\" style=\"background-image: url(https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&q=80);\"></div>\n      </div>\n      <div class=\"container apart-inner\">\n        <header class=\"apart-header reveal\">\n          <p class=\"apart-label\">What sets us apart</p>\n          <h2 class=\"apart-title\">We don’t just fill positions—we build safer, stronger teams.</h2>\n          <p class=\"apart-statement\">Safety and expertise in every placement. That’s the Intragin difference.</p>\n        </header>\n        <div class=\"apart-pillars\">\n          <article class=\"apart-pillar reveal\">\n            <a href=\"staffing.html\" class=\"apart-pillar-link\">\n              <span class=\"apart-pillar-number\" aria-hidden=\"true\">01</span>\n              <span class=\"apart-pillar-icon\" aria-hidden=\"true\">\n                <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><path d=\"M23 21v-2a4 4 0 0 0-3-3.87\"/><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"/></svg>\n              </span>\n              <h3 class=\"apart-pillar-title\">Qualified Tradespeople – Fast</h3>\n              <p class=\"apart-pillar-text\">We don't scramble when you call. Intragin keeps an active network of qualified, credentialed tradespeople ready to mobilize — so the right worker gets to your site fast, without the guesswork.</p>\n              <span class=\"apart-pillar-cta\">Request workers</span>\n            </a>\n          </article>\n          <article class=\"apart-pillar reveal\">\n            <a href=\"safety-consulting.html\" class=\"apart-pillar-link\">\n              <span class=\"apart-pillar-number\" aria-hidden=\"true\">02</span>\n              <span class=\"apart-pillar-icon\" aria-hidden=\"true\">\n                <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z\"/></svg>\n              </span>\n              <h3 class=\"apart-pillar-title\">Most staffing companies fill seats. We protect sites.</h3>\n              <p class=\"apart-pillar-text\">Most staffing companies stop at placement. We don't. Intragin's leadership comes from the trades and from safety consulting — which means the workers we send aren't just qualified, they're vetted through the eyes of people who know exactly what a safe, productive jobsite requires.</p>\n              <span class=\"apart-pillar-cta\">Learn more</span>\n            </a>\n          </article>\n          <article class=\"apart-pillar reveal\">\n            <a href=\"staffing.html\" class=\"apart-pillar-link\">\n              <span class=\"apart-pillar-number\" aria-hidden=\"true\">03</span>\n              <span class=\"apart-pillar-icon\" aria-hidden=\"true\">\n                <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"23 6 13.5 15.5 8.5 10.5 1 18\"/><polyline points=\"17 6 23 6 23 12\"/></svg>\n              </span>\n              <h3 class=\"apart-pillar-title\">We've done the work. We know the work.</h3>\n              <p class=\"apart-pillar-text\">Because our team has spent decades in the field, we know the difference between someone who can do the job and someone who owns it. That's the standard we hold every placement to.</p>\n              <span class=\"apart-pillar-cta\">Learn more</span>\n            </a>\n          </article>\n        </div>\n      </div>\n    </section>\n\n    <section class=\"safety section section--alt safety-accent\" id=\"safety\">\n      <div class=\"safety-accent-shapes\" aria-hidden=\"true\">\n        <span class=\"safety-accent-flare safety-accent-flare--bottom\"></span>\n      </div>\n      <div class=\"container\">\n        <h2 class=\"section-title reveal\">Commitment to safety</h2>\n        <p class=\"safety-section-subtitle reveal\">Safety Consulting Done Right.</p>\n        <p class=\"safety-section-lead reveal\">Intragin's safety team isn't a side service — it's led by experienced, well-credentialed professionals who have managed safety on major construction and industrial projects. We protect your workforce and keep your project compliant.</p>\n        <div class=\"safety-grid\">\n          <div class=\"safety-card reveal\">\n            <span class=\"safety-card-icon\" aria-hidden=\"true\">\n              <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M2 18a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-2z\"/><path d=\"M6 18V10a6 6 0 0 1 12 0v8\"/><line x1=\"8\" y1=\"10\" x2=\"8\" y2=\"18\"/><line x1=\"16\" y1=\"10\" x2=\"16\" y2=\"18\"/></svg>\n            </span>\n            <h3>It's not a policy. It's personal.</h3>\n            <p>When the people leading your organization have stood on the same jobsites, worn the same gear, and faced the same hazards as the workers they represent — safety isn't a program. It's personal.</p>\n          </div>\n          <div class=\"safety-card reveal\">\n            <span class=\"safety-card-icon\" aria-hidden=\"true\">\n              <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"/><polyline points=\"14 2 14 8 20 8\"/><line x1=\"16\" y1=\"13\" x2=\"8\" y2=\"13\"/><line x1=\"16\" y1=\"17\" x2=\"8\" y2=\"17\"/><polyline points=\"10 9 9 9 8 9\"/></svg>\n            </span>\n            <h3>Job-Ready Before They Arrive</h3>\n            <p>Every worker is pre-screened, drug-tested, and safety-oriented before they ever set foot on your site.</p>\n          </div>\n          <div class=\"safety-card reveal\">\n            <span class=\"safety-card-icon\" aria-hidden=\"true\">\n              <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z\"/></svg>\n            </span>\n            <h3>Certified Expertise</h3>\n            <p>Our team of safety experts are certified and continuously updated on the latest safety regulations and best practices.</p>\n          </div>\n        </div>\n      </div>\n    </section>\n\n    <section class=\"solutions section solutions--bg\" id=\"staffing\">\n      <div class=\"solutions-bg\" aria-hidden=\"true\">\n        <video class=\"solutions-bg-video\" src=\"/Images/panel.mp4\" autoplay muted loop playsinline></video>\n        <div class=\"solutions-bg-overlay\"></div>\n      </div>\n      <div class=\"container\">\n        <h2 class=\"section-title reveal\">Flexible and customizable solutions</h2>\n        <div class=\"solutions-grid\">\n          <div class=\"solution-card reveal\">\n            <span class=\"solution-card-icon\" aria-hidden=\"true\">\n              <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><line x1=\"4\" y1=\"21\" x2=\"4\" y2=\"14\"/><line x1=\"4\" y1=\"10\" x2=\"4\" y2=\"3\"/><line x1=\"12\" y1=\"21\" x2=\"12\" y2=\"12\"/><line x1=\"12\" y1=\"8\" x2=\"12\" y2=\"3\"/><line x1=\"20\" y1=\"21\" x2=\"20\" y2=\"16\"/><line x1=\"20\" y1=\"12\" x2=\"20\" y2=\"3\"/><line x1=\"1\" y1=\"14\" x2=\"7\" y2=\"14\"/><line x1=\"9\" y1=\"8\" x2=\"15\" y2=\"8\"/><line x1=\"17\" y1=\"16\" x2=\"23\" y2=\"16\"/></svg>\n            </span>\n            <span class=\"solution-number\">01</span>\n            <h3>Tailored Approach</h3>\n            <p>We understand that every client's needs are unique. Our solutions are designed to be flexible and adaptable to your specific needs.</p>\n          </div>\n          <div class=\"solution-card reveal\">\n            <span class=\"solution-card-icon\" aria-hidden=\"true\">\n              <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><path d=\"M23 21v-2a4 4 0 0 0-3-3.87\"/><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"/></svg>\n            </span>\n            <span class=\"solution-number\">02</span>\n            <h3>Collaborative Partnerships</h3>\n            <p>We work closely with you to understand your challenges and co-create the optimal solution, ensuring a seamless and successful partnership.</p>\n          </div>\n          <div class=\"solution-card reveal\">\n            <span class=\"solution-card-icon\" aria-hidden=\"true\">\n              <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"23 6 13.5 15.5 8.5 10.5 1 18\"/><polyline points=\"17 6 23 6 23 12\"/></svg>\n            </span>\n            <span class=\"solution-number\">03</span>\n            <h3>Scalable Services</h3>\n            <p>Whether you need a comprehensive safety program or targeted staffing assistance, we can scale our services to meet the demands of your organization.</p>\n          </div>\n          <div class=\"solution-card reveal\">\n            <span class=\"solution-card-icon\" aria-hidden=\"true\">\n              <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"23 4 23 10 17 10\"/><polyline points=\"1 20 1 14 7 14\"/><path d=\"M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15\"/></svg>\n            </span>\n            <span class=\"solution-number\">04</span>\n            <h3>Continuous Improvement</h3>\n            <p>Our team continuously monitors and adapts our services to keep pace with your evolving needs and industry best practices.</p>\n          </div>\n        </div>\n      </div>\n    </section>\n\n    <hr class=\"section-separator\" aria-hidden=\"true\" />\n\n    <section class=\"contact section contact--cta\" id=\"contact\">\n      <div class=\"container\">\n        <h2 class=\"contact-heading section-title reveal\">How can we help you?</h2>\n        <p class=\"contact-heading-lead reveal\">Reach out for staffing solutions, safety consulting, or to join our team.</p>\n        <div class=\"home-cta-box reveal\">\n          <p class=\"home-cta-phone\">\n            <span class=\"home-cta-phone-label\">Call us</span>\n            <a href=\"tel:7318198444\" class=\"home-cta-phone-number\">731-819-8444</a>\n          </p>\n          <a href=\"join-our-team.html\" class=\"btn btn-primary btn-lg home-cta-apply\">Apply here</a>\n        </div>\n      </div>\n    </section>\n\n    <div class=\"section-flow section-flow--bottom\">\n      <a href=\"#contact\" data-scroll-to=\"contact\" class=\"section-arrow section-arrow--up section-arrow--flow\" aria-label=\"Previous section\">\n        <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"18 15 12 9 6 15\"/></svg>\n      </a>\n    </div>\n  </main>\n\n  <footer class=\"site-footer\">\n    <div class=\"container\">\n      <div class=\"footer-subscribe\" id=\"subscribe\">\n        <div class=\"subscribe-inner\">\n          <h3>Stay in the loop</h3>\n          <p class=\"subscribe-lead\">Get updates on jobs, safety news, and company updates.</p>\n          <form class=\"subscribe-form\" id=\"subscribe-form\" novalidate>\n            <label for=\"subscribe-email\" class=\"sr-only\">Email</label>\n            <input type=\"email\" id=\"subscribe-email\" name=\"email\" placeholder=\"Your email\" required autocomplete=\"email\" />\n            <button type=\"submit\" class=\"btn btn-primary\">Sign up</button>\n          </form>\n        </div>\n      </div>\n      <div class=\"footer-inner\">\n        <div class=\"footer-brand-wrap\">\n          <p class=\"footer-brand\">Intragin, Inc.</p>\n          <div class=\"footer-social\" aria-label=\"Social media\">\n            <a href=\"https://www.facebook.com/intragin\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"footer-social-link\" aria-label=\"Facebook\">Facebook</a>\n            <a href=\"https://www.linkedin.com/company/intragin\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"footer-social-link\" aria-label=\"LinkedIn\">LinkedIn</a>\n            <a href=\"https://twitter.com/intragin\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"footer-social-link\" aria-label=\"X (Twitter)\">X</a>\n          </div>\n        </div>\n        <nav class=\"footer-nav\" aria-label=\"Footer\">\n          <a href=\"staffing.html\">Staffing</a>\n          <a href=\"safety-consulting.html\">Safety Consulting</a>\n          <a href=\"about.html\">Who We Are</a>\n          <a href=\"about.html#partners\">Our Partners</a>\n        </nav>\n        <p class=\"footer-phone\"><a href=\"tel:7318198444\">731-819-8444</a></p>\n        <p class=\"footer-copy\">Copyright © 2009 – 2025 Intragin – All Rights Reserved.</p>\n        <a href=\"contact.html\" class=\"footer-link\">Contact Us</a>\n      </div>\n    </div>\n  </footer>\n\n  <div class=\"cookie-banner\" id=\"cookie-banner\" hidden>\n    <div class=\"cookie-inner\">\n      <p><strong>This website uses cookies.</strong> We use cookies to analyze website traffic and optimize your experience. By accepting, your data will be aggregated with all other user data.</p>\n      <button type=\"button\" class=\"btn btn-primary\" id=\"cookie-accept\">Accept</button>\n    </div>\n  </div>\n\n</body>\n</html>\n",
+        "server_hash": 1186221244,
+        "location": "/",
+        "securitytxt_hash": null,
+        "server": "nginx/1.24.0 (Ubuntu)",
+        "sitemap": null,
+        "html_hash": -1696050676
+      },
+      "port": 443,
+      "transport": "tcp",
+      "version": "1.24.0",
+      "cloud": {
+        "region": "us-ga",
+        "service": null,
+        "provider": "DigitalOcean"
+      },
+      "vulns": {
+        "CVE-2023-44487": {
+          "verified": false,
+          "ransomware_campaign": "Unknown",
+          "ranking_epss": 0.99996,
+          "cvss_v2": null,
+          "cvss_version": 3.0,
+          "summary": "The HTTP/2 protocol allows a denial of service (server resource consumption) because request cancellation can reset many streams quickly, as exploited in the wild in August through October 2023.",
+          "references": [
+            "http://www.openwall.com/lists/oss-security/2023/10/10/6",
+            "http://www.openwall.com/lists/oss-security/2023/10/10/7",
+            "http://www.openwall.com/lists/oss-security/2023/10/13/4",
+            "http://www.openwall.com/lists/oss-security/2023/10/13/9",
+            "http://www.openwall.com/lists/oss-security/2023/10/18/4",
+            "http://www.openwall.com/lists/oss-security/2023/10/18/8",
+            "http://www.openwall.com/lists/oss-security/2023/10/19/6",
+            "http://www.openwall.com/lists/oss-security/2023/10/20/8",
+            "https://access.redhat.com/security/cve/cve-2023-44487",
+            "https://arstechnica.com/security/2023/10/how-ddosers-used-the-http-2-protocol-to-deliver-attacks-of-unprecedented-size/",
+            "https://aws.amazon.com/security/security-bulletins/AWS-2023-011/",
+            "https://blog.cloudflare.com/technical-breakdown-http2-rapid-reset-ddos-attack/",
+            "https://blog.cloudflare.com/zero-day-rapid-reset-http2-record-breaking-ddos-attack/",
+            "https://blog.litespeedtech.com/2023/10/11/rapid-reset-http-2-vulnerablilty/",
+            "https://blog.qualys.com/vulnerabilities-threat-research/2023/10/10/cve-2023-44487-http-2-rapid-reset-attack",
+            "https://blog.vespa.ai/cve-2023-44487/",
+            "https://bugzilla.proxmox.com/show_bug.cgi?id=4988",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2242803",
+            "https://bugzilla.suse.com/show_bug.cgi?id=1216123",
+            "https://cgit.freebsd.org/ports/commit/?id=c64c329c2c1752f46b73e3e6ce9f4329be6629f9",
+            "https://cloud.google.com/blog/products/identity-security/google-cloud-mitigated-largest-ddos-attack-peaking-above-398-million-rps/",
+            "https://cloud.google.com/blog/products/identity-security/how-it-works-the-novel-http2-rapid-reset-ddos-attack",
+            "https://community.traefik.io/t/is-traefik-vulnerable-to-cve-2023-44487/20125",
+            "https://discuss.hashicorp.com/t/hcsec-2023-32-vault-consul-and-boundary-affected-by-http-2-rapid-reset-denial-of-service-vulnerability-cve-2023-44487/59715",
+            "https://edg.io/lp/blog/resets-leaks-ddos-and-the-tale-of-a-hidden-cve",
+            "https://forums.swift.org/t/swift-nio-http2-security-update-cve-2023-44487-http-2-dos/67764",
+            "https://gist.github.com/adulau/7c2bfb8e9cdbe4b35a5e131c66a0c088",
+            "https://github.com/Azure/AKS/issues/3947",
+            "https://github.com/Kong/kong/discussions/11741",
+            "https://github.com/advisories/GHSA-qppj-fm5r-hxr3",
+            "https://github.com/advisories/GHSA-vx74-f528-fxqg",
+            "https://github.com/advisories/GHSA-xpw8-rcwv-8f8p",
+            "https://github.com/akka/akka-http/issues/4323",
+            "https://github.com/alibaba/tengine/issues/1872",
+            "https://github.com/apache/apisix/issues/10320",
+            "https://github.com/apache/httpd-site/pull/10",
+            "https://github.com/apache/httpd/blob/afcdbeebbff4b0c50ea26cdd16e178c0d1f24152/modules/http2/h2_mplx.c#L1101-L1113",
+            "https://github.com/apache/tomcat/tree/main/java/org/apache/coyote/http2",
+            "https://github.com/apache/trafficserver/pull/10564",
+            "https://github.com/arkrwn/PoC/tree/main/CVE-2023-44487",
+            "https://github.com/bcdannyboy/CVE-2023-44487",
+            "https://github.com/caddyserver/caddy/issues/5877",
+            "https://github.com/caddyserver/caddy/releases/tag/v2.7.5",
+            "https://github.com/dotnet/announcements/issues/277",
+            "https://github.com/dotnet/core/blob/e4613450ea0da7fd2fc6b61dfb2c1c1dec1ce9ec/release-notes/6.0/6.0.23/6.0.23.md?plain=1#L73",
+            "https://github.com/eclipse/jetty.project/issues/10679",
+            "https://github.com/envoyproxy/envoy/pull/30055",
+            "https://github.com/etcd-io/etcd/issues/16740",
+            "https://github.com/facebook/proxygen/pull/466",
+            "https://github.com/golang/go/issues/63417",
+            "https://github.com/grpc/grpc-go/pull/6703",
+            "https://github.com/grpc/grpc/releases/tag/v1.59.2",
+            "https://github.com/h2o/h2o/pull/3291",
+            "https://github.com/h2o/h2o/security/advisories/GHSA-2m7v-gc89-fjqf",
+            "https://github.com/haproxy/haproxy/issues/2312",
+            "https://github.com/icing/mod_h2/blob/0a864782af0a942aa2ad4ed960a6b32cd35bcf0a/mod_http2/README.md?plain=1#L239-L244",
+            "https://github.com/junkurihara/rust-rpxy/issues/97",
+            "https://github.com/kazu-yamamoto/http2/commit/f61d41a502bd0f60eb24e1ce14edc7b6df6722a1",
+            "https://github.com/kazu-yamamoto/http2/issues/93",
+            "https://github.com/kubernetes/kubernetes/pull/121120",
+            "https://github.com/line/armeria/pull/5232",
+            "https://github.com/linkerd/website/pull/1695/commits/4b9c6836471bc8270ab48aae6fd2181bc73fd632",
+            "https://github.com/micrictor/http2-rst-stream",
+            "https://github.com/microsoft/CBL-Mariner/pull/6381",
+            "https://github.com/netty/netty/commit/58f75f665aa81a8cbcf6ffa74820042a285c5e61",
+            "https://github.com/nghttp2/nghttp2/pull/1961",
+            "https://github.com/nghttp2/nghttp2/releases/tag/v1.57.0",
+            "https://github.com/ninenines/cowboy/issues/1615",
+            "https://github.com/nodejs/node/pull/50121",
+            "https://github.com/openresty/openresty/issues/930",
+            "https://github.com/opensearch-project/data-prepper/issues/3474",
+            "https://github.com/oqtane/oqtane.framework/discussions/3367",
+            "https://github.com/projectcontour/contour/pull/5826",
+            "https://github.com/tempesta-tech/tempesta/issues/1986",
+            "https://github.com/varnishcache/varnish-cache/issues/3996",
+            "https://groups.google.com/g/golang-announce/c/iNNxDTCjZvo",
+            "https://istio.io/latest/news/security/istio-security-2023-004/",
+            "https://linkerd.io/2023/10/12/linkerd-cve-2023-44487/",
+            "https://lists.apache.org/thread/5py8h42mxfsn8l1wy6o41xwhsjlsd87q",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00020.html",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00023.html",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00024.html",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00045.html",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00047.html",
+            "https://lists.debian.org/debian-lts-announce/2023/11/msg00001.html",
+            "https://lists.debian.org/debian-lts-announce/2023/11/msg00012.html",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/2MBEPPC36UBVOZZNAXFHKLFGSLCMN5LI/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/3N4NJ7FR4X4FPZUGNTQAPSTVB2HB2Y4A/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/BFQD3KUEMFBHPAPBGLWQC34L4OWL5HAZ/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/CLB4TW7KALB3EEQWNWCN7OUIWWVWWCG2/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/E72T67UPDRXHIDLO3OROR25YAMN4GGW5/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/FNA62Q767CFAFHBCDKYNPBMZWB7TWYVU/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/HT7T2R4MQKLIF4ODV4BDLPARWFPCJ5CZ/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/JIZSEFC3YKCGABA2BZW6ZJRMDZJMB7PJ/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/JMEXY22BFG5Q64HQCM5CK2Q7KDKVV4TY/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/KSEGD2IWKNUO3DWY4KQGUQM5BISRWHQE/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/LKYHSZQFDNR7RSA7LHVLLIAQMVYCUGBG/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/LNMZJCDHGLJJLXO4OXWJMTVQRNWOC7UL/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/VHUHTSXLXGXS7JYKBXTA3VINUPHTNGVU/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/VSRDIV77HNKUSM7SJC5BKE5JSHLHU2NK/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/WE2I52RHNNU42PX6NZ2RBUHSFFJ2LVZX/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/WLPRQ5TWUQQXYWBJM7ECYDAIL2YVKIUH/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/X6QXN4ORIVF6XBW4WWFE7VNPVC74S45Y/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/XFOIBB4YFICHDM7IBOP7PWXW3FX4HLL2/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/ZB43REMKRQR62NJEI7I5NQ4FSXNLBKRT/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/ZKQSIKIAT5TJ3WSLU3RDBQ35YX4GY4V3/",
+            "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/ZLU6U2R2IC2K64NDPNMV55AUAO65MAF4/",
+            "https://lists.w3.org/Archives/Public/ietf-http-wg/2023OctDec/0025.html",
+            "https://mailman.nginx.org/pipermail/nginx-devel/2023-October/S36Q5HBXR7CAIMPLLPRSSSYR4PCMWILK.html",
+            "https://martinthomson.github.io/h2-stream-limits/draft-thomson-httpbis-h2-stream-limits.html",
+            "https://msrc.microsoft.com/blog/2023/10/microsoft-response-to-distributed-denial-of-service-ddos-attacks-against-http/2/",
+            "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2023-44487",
+            "https://my.f5.com/manage/s/article/K000137106",
+            "https://netty.io/news/2023/10/10/4-1-100-Final.html",
+            "https://news.ycombinator.com/item?id=37830987",
+            "https://news.ycombinator.com/item?id=37830998",
+            "https://news.ycombinator.com/item?id=37831062",
+            "https://news.ycombinator.com/item?id=37837043",
+            "https://openssf.org/blog/2023/10/10/http-2-rapid-reset-vulnerability-highlights-need-for-rapid-response/",
+            "https://seanmonstar.com/post/730794151136935936/hyper-http2-rapid-reset-unaffected",
+            "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-http2-reset-d8Kf32vZ",
+            "https://security.gentoo.org/glsa/202311-09",
+            "https://security.netapp.com/advisory/ntap-20231016-0001/",
+            "https://security.netapp.com/advisory/ntap-20240426-0007/",
+            "https://security.netapp.com/advisory/ntap-20240621-0006/",
+            "https://security.netapp.com/advisory/ntap-20240621-0007/",
+            "https://security.paloaltonetworks.com/CVE-2023-44487",
+            "https://tomcat.apache.org/security-10.html#Fixed_in_Apache_Tomcat_10.1.14",
+            "https://ubuntu.com/security/CVE-2023-44487",
+            "https://www.bleepingcomputer.com/news/security/new-http-2-rapid-reset-zero-day-attack-breaks-ddos-records/",
+            "https://www.cisa.gov/news-events/alerts/2023/10/10/http2-rapid-reset-vulnerability-cve-2023-44487",
+            "https://www.darkreading.com/cloud/internet-wide-zero-day-bug-fuels-largest-ever-ddos-event",
+            "https://www.debian.org/security/2023/dsa-5521",
+            "https://www.debian.org/security/2023/dsa-5522",
+            "https://www.debian.org/security/2023/dsa-5540",
+            "https://www.debian.org/security/2023/dsa-5549",
+            "https://www.debian.org/security/2023/dsa-5558",
+            "https://www.debian.org/security/2023/dsa-5570",
+            "https://www.haproxy.com/blog/haproxy-is-not-affected-by-the-http-2-rapid-reset-attack-cve-2023-44487",
+            "https://www.netlify.com/blog/netlify-successfully-mitigates-cve-2023-44487/",
+            "https://www.nginx.com/blog/http-2-rapid-reset-attack-impacting-f5-nginx-products/",
+            "https://www.openwall.com/lists/oss-security/2023/10/10/6",
+            "https://www.phoronix.com/news/HTTP2-Rapid-Reset-Attack",
+            "https://www.theregister.com/2023/10/10/http2_rapid_reset_zeroday/",
+            "http://www.openwall.com/lists/oss-security/2023/10/13/4",
+            "http://www.openwall.com/lists/oss-security/2023/10/13/9",
+            "http://www.openwall.com/lists/oss-security/2023/10/18/4",
+            "http://www.openwall.com/lists/oss-security/2023/10/18/8",
+            "http://www.openwall.com/lists/oss-security/2023/10/19/6",
+            "http://www.openwall.com/lists/oss-security/2023/10/20/8",
+            "http://www.openwall.com/lists/oss-security/2025/08/13/6",
+            "https://access.redhat.com/security/cve/cve-2023-44487",
+            "https://arstechnica.com/security/2023/10/how-ddosers-used-the-http-2-protocol-to-deliver-attacks-of-unprecedented-size/",
+            "https://aws.amazon.com/security/security-bulletins/AWS-2023-011/",
+            "https://blog.cloudflare.com/technical-breakdown-http2-rapid-reset-ddos-attack/",
+            "https://blog.cloudflare.com/zero-day-rapid-reset-http2-record-breaking-ddos-attack/",
+            "https://blog.litespeedtech.com/2023/10/11/rapid-reset-http-2-vulnerablilty/",
+            "https://blog.qualys.com/vulnerabilities-threat-research/2023/10/10/cve-2023-44487-http-2-rapid-reset-attack",
+            "https://blog.vespa.ai/cve-2023-44487/",
+            "https://bugzilla.proxmox.com/show_bug.cgi?id=4988",
+            "https://bugzilla.redhat.com/show_bug.cgi?id=2242803",
+            "https://bugzilla.suse.com/show_bug.cgi?id=1216123",
+            "https://cgit.freebsd.org/ports/commit/?id=c64c329c2c1752f46b73e3e6ce9f4329be6629f9",
+            "https://cloud.google.com/blog/products/identity-security/google-cloud-mitigated-largest-ddos-attack-peaking-above-398-million-rps/",
+            "https://cloud.google.com/blog/products/identity-security/how-it-works-the-novel-http2-rapid-reset-ddos-attack",
+            "https://community.traefik.io/t/is-traefik-vulnerable-to-cve-2023-44487/20125",
+            "https://discuss.hashicorp.com/t/hcsec-2023-32-vault-consul-and-boundary-affected-by-http-2-rapid-reset-denial-of-service-vulnerability-cve-2023-44487/59715",
+            "https://edg.io/lp/blog/resets-leaks-ddos-and-the-tale-of-a-hidden-cve",
+            "https://forums.swift.org/t/swift-nio-http2-security-update-cve-2023-44487-http-2-dos/67764",
+            "https://gist.github.com/adulau/7c2bfb8e9cdbe4b35a5e131c66a0c088",
+            "https://github.com/Azure/AKS/issues/3947",
+            "https://github.com/Kong/kong/discussions/11741",
+            "https://github.com/advisories/GHSA-qppj-fm5r-hxr3",
+            "https://github.com/advisories/GHSA-vx74-f528-fxqg",
+            "https://github.com/advisories/GHSA-xpw8-rcwv-8f8p",
+            "https://github.com/akka/akka-http/issues/4323",
+            "https://github.com/alibaba/tengine/issues/1872",
+            "https://github.com/apache/apisix/issues/10320",
+            "https://github.com/apache/httpd-site/pull/10",
+            "https://github.com/apache/httpd/blob/afcdbeebbff4b0c50ea26cdd16e178c0d1f24152/modules/http2/h2_mplx.c#L1101-L1113",
+            "https://github.com/apache/tomcat/tree/main/java/org/apache/coyote/http2",
+            "https://github.com/apache/trafficserver/pull/10564",
+            "https://github.com/arkrwn/PoC/tree/main/CVE-2023-44487",
+            "https://github.com/bcdannyboy/CVE-2023-44487",
+            "https://github.com/caddyserver/caddy/issues/5877",
+            "https://github.com/caddyserver/caddy/releases/tag/v2.7.5",
+            "https://github.com/dotnet/announcements/issues/277",
+            "https://github.com/dotnet/core/blob/e4613450ea0da7fd2fc6b61dfb2c1c1dec1ce9ec/release-notes/6.0/6.0.23/6.0.23.md?plain=1#L73",
+            "https://github.com/eclipse/jetty.project/issues/10679",
+            "https://github.com/envoyproxy/envoy/pull/30055",
+            "https://github.com/etcd-io/etcd/issues/16740",
+            "https://github.com/facebook/proxygen/pull/466",
+            "https://github.com/golang/go/issues/63417",
+            "https://github.com/grpc/grpc-go/pull/6703",
+            "https://github.com/h2o/h2o/pull/3291",
+            "https://github.com/h2o/h2o/security/advisories/GHSA-2m7v-gc89-fjqf",
+            "https://github.com/haproxy/haproxy/issues/2312",
+            "https://github.com/icing/mod_h2/blob/0a864782af0a942aa2ad4ed960a6b32cd35bcf0a/mod_http2/README.md?plain=1#L239-L244",
+            "https://github.com/junkurihara/rust-rpxy/issues/97",
+            "https://github.com/kazu-yamamoto/http2/commit/f61d41a502bd0f60eb24e1ce14edc7b6df6722a1",
+            "https://github.com/kazu-yamamoto/http2/issues/93",
+            "https://github.com/kubernetes/kubernetes/pull/121120",
+            "https://github.com/line/armeria/pull/5232",
+            "https://github.com/linkerd/website/pull/1695/commits/4b9c6836471bc8270ab48aae6fd2181bc73fd632",
+            "https://github.com/micrictor/http2-rst-stream",
+            "https://github.com/microsoft/CBL-Mariner/pull/6381",
+            "https://github.com/netty/netty/commit/58f75f665aa81a8cbcf6ffa74820042a285c5e61",
+            "https://github.com/nghttp2/nghttp2/pull/1961",
+            "https://github.com/nghttp2/nghttp2/releases/tag/v1.57.0",
+            "https://github.com/ninenines/cowboy/issues/1615",
+            "https://github.com/nodejs/node/pull/50121",
+            "https://github.com/openresty/openresty/issues/930",
+            "https://github.com/opensearch-project/data-prepper/issues/3474",
+            "https://github.com/oqtane/oqtane.framework/discussions/3367",
+            "https://github.com/projectcontour/contour/pull/5826",
+            "https://github.com/tempesta-tech/tempesta/issues/1986",
+            "https://github.com/varnishcache/varnish-cache/issues/3996",
+            "https://groups.google.com/g/golang-announce/c/iNNxDTCjZvo",
+            "https://istio.io/latest/news/security/istio-security-2023-004/",
+            "https://linkerd.io/2023/10/12/linkerd-cve-2023-44487/",
+            "https://lists.apache.org/thread/5py8h42mxfsn8l1wy6o41xwhsjlsd87q",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00020.html",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00023.html",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00024.html",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00045.html",
+            "https://lists.debian.org/debian-lts-announce/2023/10/msg00047.html",
+            "https://lists.debian.org/debian-lts-announce/2023/11/msg00001.html",
+            "https://lists.debian.org/debian-lts-announce/2023/11/msg00012.html",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/2MBEPPC36UBVOZZNAXFHKLFGSLCMN5LI/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/3N4NJ7FR4X4FPZUGNTQAPSTVB2HB2Y4A/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/BFQD3KUEMFBHPAPBGLWQC34L4OWL5HAZ/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/CLB4TW7KALB3EEQWNWCN7OUIWWVWWCG2/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/E72T67UPDRXHIDLO3OROR25YAMN4GGW5/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/FNA62Q767CFAFHBCDKYNPBMZWB7TWYVU/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/HT7T2R4MQKLIF4ODV4BDLPARWFPCJ5CZ/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/JIZSEFC3YKCGABA2BZW6ZJRMDZJMB7PJ/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/JMEXY22BFG5Q64HQCM5CK2Q7KDKVV4TY/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/KSEGD2IWKNUO3DWY4KQGUQM5BISRWHQE/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/LKYHSZQFDNR7RSA7LHVLLIAQMVYCUGBG/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/LNMZJCDHGLJJLXO4OXWJMTVQRNWOC7UL/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/VHUHTSXLXGXS7JYKBXTA3VINUPHTNGVU/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/VSRDIV77HNKUSM7SJC5BKE5JSHLHU2NK/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/WE2I52RHNNU42PX6NZ2RBUHSFFJ2LVZX/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/WLPRQ5TWUQQXYWBJM7ECYDAIL2YVKIUH/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/X6QXN4ORIVF6XBW4WWFE7VNPVC74S45Y/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/XFOIBB4YFICHDM7IBOP7PWXW3FX4HLL2/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/ZB43REMKRQR62NJEI7I5NQ4FSXNLBKRT/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/ZKQSIKIAT5TJ3WSLU3RDBQ35YX4GY4V3/",
+            "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/ZLU6U2R2IC2K64NDPNMV55AUAO65MAF4/",
+            "https://lists.w3.org/Archives/Public/ietf-http-wg/2023OctDec/0025.html",
+            "https://mailman.nginx.org/pipermail/nginx-devel/2023-October/S36Q5HBXR7CAIMPLLPRSSSYR4PCMWILK.html",
+            "https://martinthomson.github.io/h2-stream-limits/draft-thomson-httpbis-h2-stream-limits.html",
+            "https://msrc.microsoft.com/blog/2023/10/microsoft-response-to-distributed-denial-of-service-ddos-attacks-against-http/2/",
+            "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2023-44487",
+            "https://my.f5.com/manage/s/article/K000137106",
+            "https://netty.io/news/2023/10/10/4-1-100-Final.html",
+            "https://news.ycombinator.com/item?id=37830987",
+            "https://news.ycombinator.com/item?id=37830998",
+            "https://news.ycombinator.com/item?id=37831062",
+            "https://news.ycombinator.com/item?id=37837043",
+            "https://openssf.org/blog/2023/10/10/http-2-rapid-reset-vulnerability-highlights-need-for-rapid-response/",
+            "https://seanmonstar.com/post/730794151136935936/hyper-http2-rapid-reset-unaffected",
+            "https://security.gentoo.org/glsa/202311-09",
+            "https://security.netapp.com/advisory/ntap-20231016-0001/",
+            "https://security.netapp.com/advisory/ntap-20240426-0007/",
+            "https://security.netapp.com/advisory/ntap-20240621-0006/",
+            "https://security.netapp.com/advisory/ntap-20240621-0007/",
+            "https://security.paloaltonetworks.com/CVE-2023-44487",
+            "https://tomcat.apache.org/security-10.html#Fixed_in_Apache_Tomcat_10.1.14",
+            "https://ubuntu.com/security/CVE-2023-44487",
+            "https://www.bleepingcomputer.com/news/security/new-http-2-rapid-reset-zero-day-attack-breaks-ddos-records/",
+            "https://www.cisa.gov/news-events/alerts/2023/10/10/http2-rapid-reset-vulnerability-cve-2023-44487",
+            "https://www.darkreading.com/cloud/internet-wide-zero-day-bug-fuels-largest-ever-ddos-event",
+            "https://www.debian.org/security/2023/dsa-5521",
+            "https://www.debian.org/security/2023/dsa-5522",
+            "https://www.debian.org/security/2023/dsa-5540",
+            "https://www.debian.org/security/2023/dsa-5549",
+            "https://www.debian.org/security/2023/dsa-5558",
+            "https://www.debian.org/security/2023/dsa-5570",
+            "https://www.haproxy.com/blog/haproxy-is-not-affected-by-the-http-2-rapid-reset-attack-cve-2023-44487",
+            "https://www.netlify.com/blog/netlify-successfully-mitigates-cve-2023-44487/",
+            "https://www.nginx.com/blog/http-2-rapid-reset-attack-impacting-f5-nginx-products/",
+            "https://www.openwall.com/lists/oss-security/2023/10/10/6",
+            "https://www.phoronix.com/news/HTTP2-Rapid-Reset-Attack",
+            "https://www.theregister.com/2023/10/10/http2_rapid_reset_zeroday/",
+            "https://www.vicarius.io/vsociety/posts/rapid-reset-cve-2023-44487-dos-in-http2-understanding-the-root-cause",
+            "https://cert-portal.siemens.com/productcert/html/ssa-082556.html",
+            "https://cert-portal.siemens.com/productcert/html/ssa-341067.html",
+            "https://cert-portal.siemens.com/productcert/html/ssa-784301.html",
+            "https://cert-portal.siemens.com/productcert/html/ssa-832273.html",
+            "https://cert-portal.siemens.com/productcert/html/ssa-915275.html",
+            "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2023-44487"
+          ],
+          "epss": 0.99999,
+          "kev": true,
+          "cvss": 7.5
+        },
+        "CVE-2025-23419": {
+          "verified": false,
+          "ranking_epss": 0.83106,
+          "cvss_v2": null,
+          "cvss_version": 4.0,
+          "summary": "When multiple server blocks are configured to share the same IP address and port, an attacker can use session resumption to bypass client certificate authentication requirements on these servers. This vulnerability arises when  TLS Session Tickets https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_session_ticket_key  are used and/or the  SSL session cache https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_session_cache  are used in the default server and the default server is performing client certificate authentication.  \n\nNote: Software versions which have reached End of Technical Support (EoTS) are not evaluated.",
+          "references": [
+            "https://my.f5.com/manage/s/article/K000149173",
+            "http://www.openwall.com/lists/oss-security/2025/02/05/8",
+            "https://lists.debian.org/debian-lts-announce/2025/03/msg00017.html"
+          ],
+          "epss": 0.02557,
+          "cvss": 5.3
+        }
+      },
+      "location": {
+        "city": "Broomfield",
+        "region_code": "CO",
+        "area_code": null,
+        "longitude": -105.1139,
+        "latitude": 39.8854,
+        "country_code": "US",
+        "country_name": "United States"
+      },
+      "product": "nginx",
+      "hash": -656418360,
+      "tags": [
+        "cloud",
+        "eol-product"
+      ],
+      "timestamp": "2026-07-03T01:16:21.534529",
+      "ssl": {
+        "chain_sha256": [
+          "fafda128aed2c848edf3735b08433ce3cb4e66bdd354b16a31557d474d31bfaa",
+          "97658de8c68dfa98ace1e5028a63d54a1aae911b3e21471076c6850cd08cbab4",
+          "0fc0901cca2bae9e9fdbb02d50d02f1094f7b36672086991b9e897626dc485f0",
+          "ee5f7abd6981bb0255632cd8f49283451b4b18844d12040b44ee00f07b8fe2c6"
+        ],
+        "jarm": "27d40d40d00040d00042d43d000000d2e61cae37a985f75ecafb81b33ca523",
+        "tlsext": [
+          {
+            "id": 43,
+            "name": "supported_versions"
+          },
+          {
+            "id": 51,
+            "name": "key_share"
+          },
+          {
+            "id": 0,
+            "name": "server_name"
+          }
+        ],
+        "chain": [
+          "-----BEGIN CERTIFICATE-----\nMIIDojCCAymgAwIBAgISBlXyMt5NfVgbC/Su7iHhJhw2MAoGCCqGSM49BAMDMDMx\nCzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MQwwCgYDVQQDEwNZ\nRTIwHhcNMjYwNTMwMTk1NTU2WhcNMjYwODI4MTk1NTU1WjAlMSMwIQYDVQQDExpp\nbnRyYWdpbi5hd2Z1bHNlY3VyaXR5Lm9yZzBZMBMGByqGSM49AgEGCCqGSM49AwEH\nA0IABBMT33va50WnrM+FLTbLLg/d706R0hfIQJ0jCdba7v0bx4rUIVhUWW8NXpOt\nVjQeZ4oixVbtZ6xceroyXpER6rijggIpMIICJTAOBgNVHQ8BAf8EBAMCB4AwEwYD\nVR0lBAwwCgYIKwYBBQUHAwEwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQU6OivjDCg\nbSsAAVC9yZHuv17dRRkwHwYDVR0jBBgwFoAUuVnyjs8i8IbTN0j/dhQYuoLYVYcw\nMwYIKwYBBQUHAQEEJzAlMCMGCCsGAQUFBzAChhdodHRwOi8veWUyLmkubGVuY3Iu\nb3JnLzAlBgNVHREEHjAcghppbnRyYWdpbi5hd2Z1bHNlY3VyaXR5Lm9yZzATBgNV\nHSAEDDAKMAgGBmeBDAECATAuBgNVHR8EJzAlMCOgIaAfhh1odHRwOi8veWUyLmMu\nbGVuY3Iub3JnLzU1LmNybDCCAQ0GCisGAQQB1nkCBAIEgf4EgfsA+QB3ANdtfRDR\np/V3wsfpX9cAv/mCyTNaZeHQswFzF8DIxWl3AAABnnqqsEIAAAQDAEgwRgIhAMMi\nzTiP1eY2YJqPGT3fFmHgCgo17u74xIxQvG5EZ0QFAiEAqCSVOQJDJPeAz0hrl4Os\nHS4g6BmdM9vq8XvnvcgfHRAAfgBGr4Y9Oz7ln6V33qgkXTaw2e0ioiP0YXdBIpRS\n7pVQXwAAAZ56qrECAAgAAAUACBqDmQQDAEcwRQIhAKIjqGdNy9IX9waN7abmYXa8\nDKYjR6Zgo5A7dtWFiqKOAiByJY18XhCoWyr3yXAa7ogwzd6g7JkqZ4KAU2yyUBtG\nbDAKBggqhkjOPQQDAwNnADBkAjBiFc2Xq0p4VSfxLyNHv1FqZFtCXJUw2Mfg8psP\n+w+NKX/bd8x/MCUbtRGX6ynea0gCMD7DVee4j1PY2PNE2X097HKkBK9gijVbsGsy\nfbfigzChiEo1qKSFW1wX7v1pKZ1RsQ==\n-----END CERTIFICATE-----\n",
+          "-----BEGIN CERTIFICATE-----\nMIICjDCCAhGgAwIBAgIQTfOxXdbAeExQfNN7WObxFTAKBggqhkjOPQQDAzAuMQsw\nCQYDVQQGEwJVUzENMAsGA1UEChMESVNSRzEQMA4GA1UEAxMHUm9vdCBZRTAeFw0y\nNTA5MDMwMDAwMDBaFw0yODA5MDIyMzU5NTlaMDMxCzAJBgNVBAYTAlVTMRYwFAYD\nVQQKEw1MZXQncyBFbmNyeXB0MQwwCgYDVQQDEwNZRTIwdjAQBgcqhkjOPQIBBgUr\ngQQAIgNiAARxmrQzkdbEEL3MqXt3dJQttYc47axkdDTHud5TPqM2z5uSD5cmk0Wr\nHlWXvnlvqBLqiB34kluxIbmMyAiq3/YD6e80/vV259K8XQIdjFXloYOa0mIU71f7\nHQ09PvYDlw+jge4wgeswDgYDVR0PAQH/BAQDAgGGMBMGA1UdJQQMMAoGCCsGAQUF\nBwMBMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFLlZ8o7PIvCG0zdI/3YU\nGLqC2FWHMB8GA1UdIwQYMBaAFKPIJlqOoUzQNWP8myPIOq5W809WMDIGCCsGAQUF\nBwEBBCYwJDAiBggrBgEFBQcwAoYWaHR0cDovL3llLmkubGVuY3Iub3JnLzATBgNV\nHSAEDDAKMAgGBmeBDAECATAnBgNVHR8EIDAeMBygGqAYhhZodHRwOi8veWUuYy5s\nZW5jci5vcmcvMAoGCCqGSM49BAMDA2kAMGYCMQDIcnw5dcZLN9ffynXnnkLD/itS\nJEycJPb3sRkzeqBowup7vOsAwaqoCnNn/jh9wycCMQCJM6CPlaOC4pQYYbJtVPYb\nDKrIb2EKk5NpOpE6/XttQYZV/3gilB9l+Cc/DOVwmyg=\n-----END CERTIFICATE-----\n",
+          "-----BEGIN CERTIFICATE-----\nMIICpjCCAiugAwIBAgIRAIchZfw0tuX7qK3Vs3BftTowCgYIKoZIzj0EAwMwTzEL\nMAkGA1UEBhMCVVMxKTAnBgNVBAoTIEludGVybmV0IFNlY3VyaXR5IFJlc2VhcmNo\nIEdyb3VwMRUwEwYDVQQDEwxJU1JHIFJvb3QgWDIwHhcNMjYwNTEzMDAwMDAwWhcN\nMzIwOTAyMjM1OTU5WjAuMQswCQYDVQQGEwJVUzENMAsGA1UEChMESVNSRzEQMA4G\nA1UEAxMHUm9vdCBZRTB2MBAGByqGSM49AgEGBSuBBAAiA2IABDwS/6vhrcVqcbBo\n+wgdI3fwn9x7DNJJOY/lTOti0vkwuRN87RhEhTH17E7XyFjWsPYhIPt/wzOqxTd2\nb+4ZJNy9ID04YywF9U5zasDVyGSNErVNtz8uSGh5izW87j77GaOB6zCB6DAOBgNV\nHQ8BAf8EBAMCAQYwEwYDVR0lBAwwCgYIKwYBBQUHAwEwDwYDVR0TAQH/BAUwAwEB\n/zAdBgNVHQ4EFgQUo8gmWo6hTNA1Y/ybI8g6rlbzT1YwHwYDVR0jBBgwFoAUfEKW\nrt5LSDv6kviejM9ti6lyN5UwMgYIKwYBBQUHAQEEJjAkMCIGCCsGAQUFBzAChhZo\ndHRwOi8veDIuaS5sZW5jci5vcmcvMBMGA1UdIAQMMAowCAYGZ4EMAQIBMCcGA1Ud\nHwQgMB4wHKAaoBiGFmh0dHA6Ly94Mi5jLmxlbmNyLm9yZy8wCgYIKoZIzj0EAwMD\naQAwZgIxAMU19WCtmxVND8UHBZRoma49Z7jPs64Dma0eTu1OChVbB/2J7GV3nvYK\nAx54uk1G9QIxAO0miLVJu8PLNiXXXkiE/gsK3CTRTF/aeo4bMX42Zw40csRU6AC2\n6hSW1/IWaas6dg==\n-----END CERTIFICATE-----\n",
+          "-----BEGIN CERTIFICATE-----\nMIIEcDCCAligAwIBAgIQbI8dxyfHEX97r4U6yYD5zTANBgkqhkiG9w0BAQsFADBP\nMQswCQYDVQQGEwJVUzEpMCcGA1UEChMgSW50ZXJuZXQgU2VjdXJpdHkgUmVzZWFy\nY2ggR3JvdXAxFTATBgNVBAMTDElTUkcgUm9vdCBYMTAeFw0yNjA1MTMwMDAwMDBa\nFw0zMjA5MDIyMzU5NTlaME8xCzAJBgNVBAYTAlVTMSkwJwYDVQQKEyBJbnRlcm5l\ndCBTZWN1cml0eSBSZXNlYXJjaCBHcm91cDEVMBMGA1UEAxMMSVNSRyBSb290IFgy\nMHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEzZvVn4CDCuwJSvMWSj5cz3es3mcFDR0H\nttwW+1qLFNvicWDEukWVEYmO6gbf9yoWHKS5xcUy4APgHoIYOIvXRdgKam7mAHf7\nAlF9ItgKbppbd9/w+kHsOdx1ymgHDB/qo4H1MIHyMA4GA1UdDwEB/wQEAwIBBjAd\nBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDwYDVR0TAQH/BAUwAwEB/zAd\nBgNVHQ4EFgQUfEKWrt5LSDv6kviejM9ti6lyN5UwHwYDVR0jBBgwFoAUebRZ5nu2\n5eQBc4AIiMgaWPbpm24wMgYIKwYBBQUHAQEEJjAkMCIGCCsGAQUFBzAChhZodHRw\nOi8veDEuaS5sZW5jci5vcmcvMBMGA1UdIAQMMAowCAYGZ4EMAQIBMCcGA1UdHwQg\nMB4wHKAaoBiGFmh0dHA6Ly94MS5jLmxlbmNyLm9yZy8wDQYJKoZIhvcNAQELBQAD\nggIBAD2/e9frmMxNpCV03qUHegg+MV2wz9644YoXdqtH8RyWYcBO7xfjjGEXdU1e\n/o0OkEFiynUCOSIk/vLLo7ttz6CPAeNlWfC0XNkoGeWgK6jjXvozBaGuGH5n0Ufo\nshMeWTuURqNN5G00sSXDTBrpp2+mgvdZQjb8K11TYMA25QA+YHNfbIEL0BniAhKS\n2gsnJjSzrdZLI+EZ7SEyqdR2rkjd1KutLDU+n3TFyxjniZVGur4YlhMP3mY/dV95\nIruAkkjOZier6hGBdEgZXXvaCz9u9iVEadsIE75pAGL8oHV5vxdARDiotRpul1IN\n/UZwzAbrfUFcw1HkAcYD/mlZfnQ2ieCF2MS7j3Vhv7JPDKp45fmykmzYNSrumRW0\nupFFKDBOoF7hsOb7oLyHS+Uft6jOUfOrogj8YUx38hKb2K20r42OgsSdDdxdeYWc\nMS3Sb6mwJeSZEYxJ2gaXnDSPaKhhrNkYwljyVQyr4Nq+MEJytXNTnHqaAcrNwZlV\npcJL1KBnMrMjP7eanvUwL3FYj3cF17jtboLt7gLoi4+2rWZFvn+w54jmd/FIuhhZ\ncEaU/wvU6BUNMtcVquVGHp7itQeDth5j+XL3j4WJ2SABwzUl6OeYdgpIt/ITZa+p\nTT0mQ/r5XyA4MEAiabn7XJjvCERlF2dcn2wqJw+CreTkkQ2R\n-----END CERTIFICATE-----\n"
+        ],
+        "versions": [
+          "-TLSv1",
+          "-SSLv2",
+          "-SSLv3",
+          "-TLSv1.1",
+          "TLSv1.2",
+          "TLSv1.3"
+        ],
+        "acceptable_cas": [],
+        "alpn": [],
+        "cert": {
+          "sig_alg": "ecdsa-with-SHA384",
+          "issued": "20260530195556Z",
+          "expires": "20260828195555Z",
+          "pubkey": {
+            "bits": 256,
+            "type": "dsa"
+          },
+          "version": 2,
+          "extensions": [
+            {
+              "critical": true,
+              "data": "\\x03\\x02\\x07\\x80",
+              "name": "keyUsage"
+            },
+            {
+              "data": "0\\n\\x06\\x08+\\x06\\x01\\x05\\x05\\x07\\x03\\x01",
+              "name": "extendedKeyUsage"
+            },
+            {
+              "critical": true,
+              "data": "0\\x00",
+              "name": "basicConstraints"
+            },
+            {
+              "data": "\\x04\\x14\\xe8\\xe8\\xaf\\x8c0\\xa0m+\\x00\\x01P\\xbd\\xc9\\x91\\xee\\xbf^\\xddE\\x19",
+              "name": "subjectKeyIdentifier"
+            },
+            {
+              "data": "0\\x16\\x80\\x14\\xb9Y\\xf2\\x8e\\xcf\"\\xf0\\x86\\xd37H\\xffv\\x14\\x18\\xba\\x82\\xd8U\\x87",
+              "name": "authorityKeyIdentifier"
+            },
+            {
+              "data": "0%0#\\x06\\x08+\\x06\\x01\\x05\\x05\\x070\\x02\\x86\\x17http://ye2.i.lencr.org/",
+              "name": "authorityInfoAccess"
+            },
+            {
+              "data": "0\\x1c\\x82\\x1aintragin.awfulsecurity.org",
+              "name": "subjectAltName"
+            },
+            {
+              "data": "0\\n0\\x08\\x06\\x06g\\x81\\x0c\\x01\\x02\\x01",
+              "name": "certificatePolicies"
+            },
+            {
+              "data": "0%0#\\xa0!\\xa0\\x1f\\x86\\x1dhttp://ye2.c.lencr.org/55.crl",
+              "name": "crlDistributionPoints"
+            },
+            {
+              "data": "\\x04\\x81\\xfb\\x00\\xf9\\x00w\\x00\\xd7m}\\x10\\xd1\\xa7\\xf5w\\xc2\\xc7\\xe9_\\xd7\\x00\\xbf\\xf9\\x82\\xc93Ze\\xe1\\xd0\\xb3\\x01s\\x17\\xc0\\xc8\\xc5iw\\x00\\x00\\x01\\x9ez\\xaa\\xb0B\\x00\\x00\\x04\\x03\\x00H0F\\x02!\\x00\\xc3\"\\xcd8\\x8f\\xd5\\xe66`\\x9a\\x8f\\x19=\\xdf\\x16a\\xe0\\n\\n5\\xee\\xee\\xf8\\xc4\\x8cP\\xbcnDgD\\x05\\x02!\\x00\\xa8$\\x959\\x02C$\\xf7\\x80\\xcfHk\\x97\\x83\\xac\\x1d. \\xe8\\x19\\x9d3\\xdb\\xea\\xf1{\\xe7\\xbd\\xc8\\x1f\\x1d\\x10\\x00~\\x00F\\xaf\\x86=;>\\xe5\\x9f\\xa5w\\xde\\xa8$]6\\xb0\\xd9\\xed\"\\xa2#\\xf4awA\"\\x94R\\xee\\x95P_\\x00\\x00\\x01\\x9ez\\xaa\\xb1\\x02\\x00\\x08\\x00\\x00\\x05\\x00\\x08\\x1a\\x83\\x99\\x04\\x03\\x00G0E\\x02!\\x00\\xa2#\\xa8gM\\xcb\\xd2\\x17\\xf7\\x06\\x8d\\xed\\xa6\\xe6av\\xbc\\x0c\\xa6#G\\xa6`\\xa3\\x90;v\\xd5\\x85\\x8a\\xa2\\x8e\\x02 r%\\x8d|^\\x10\\xa8[*\\xf7\\xc9p\\x1a\\xee\\x880\\xcd\\xde\\xa0\\xec\\x99*g\\x82\\x80Sl\\xb2P\\x1bFl",
+              "name": "ct_precert_scts"
+            }
+          ],
+          "fingerprint": {
+            "sha256": "fafda128aed2c848edf3735b08433ce3cb4e66bdd354b16a31557d474d31bfaa",
+            "sha1": "29c544c3507d845771916e6bd8ca4f45285df1a2"
+          },
+          "serial": 551919654077498418320447809325962923220022,
+          "issuer": {
+            "C": "US",
+            "CN": "YE2",
+            "O": "Let's Encrypt"
+          },
+          "expired": false,
+          "subject": {
+            "CN": "intragin.awfulsecurity.org"
+          }
+        },
+        "cipher": {
+          "version": "TLSv1.3",
+          "bits": 256,
+          "name": "TLS_AES_256_GCM_SHA384"
+        },
+        "trust": {
+          "revoked": false,
+          "browser": null
+        },
+        "handshake_states": [
+          "before SSL initialization",
+          "SSLv3/TLS write client hello",
+          "SSLv3/TLS read server hello",
+          "TLSv1.3 read encrypted extensions",
+          "SSLv3/TLS read server certificate",
+          "TLSv1.3 read server certificate verify",
+          "SSLv3/TLS read finished",
+          "SSLv3/TLS write change cipher spec",
+          "SSLv3/TLS write finished",
+          "SSL negotiation finished successfully"
+        ],
+        "ja3s": "574866101f64002c6421cc329e4d5458",
+        "ocsp": {}
+      },
+      "hostnames": [
+        "intragin.awfulsecurity.org"
+      ],
+      "org": "DigitalOcean, LLC",
+      "data": "HTTP/1.1 200 OK\r\nServer: nginx/1.24.0 (Ubuntu)\r\nDate: Fri, 03 Jul 2026 01:18:43 GMT\r\nContent-Type: text/html\r\nContent-Length: 21277\r\nLast-Modified: Mon, 23 Mar 2026 15:32:40 GMT\r\nConnection: keep-alive\r\nETag: \"69c15d18-531d\"\r\nAccept-Ranges: bytes\r\n\r\n",
+      "cpe23": [
+        "cpe:2.3:a:f5:nginx:1.24.0",
+        "cpe:2.3:o:canonical:ubuntu_linux",
+        "cpe:2.3:o:linux:linux_kernel"
+      ],
+      "isp": null,
+      "cpe": [
+        "cpe:/a:f5:nginx:1.24.0",
+        "cpe:/o:canonical:ubuntu_linux",
+        "cpe:/o:linux:linux_kernel"
+      ],
+      "domains": [
+        "awfulsecurity.org"
+      ],
+      "ip_str": "165.245.137.16",
+      "os": "Ubuntu",
+      "_shodan": {
+        "region": "na",
+        "crawler": "f8b5882be6960ab70c37311b10480cd226ec114c",
+        "options": {},
+        "module": "https",
+        "id": "32b0c9ee-76d6-4bd5-bfcc-47daa0a39e44"
+      },
+      "opts": {
+        "vulns": [],
+        "heartbleed": "2026/07/03 01:16:39 165.245.137.16:443 - SAFE\n"
+      }
+    }
+  ],
+  "city": "Broomfield",
+  "latitude": 39.8854,
+  "isp": null,
+  "longitude": -105.1139,
+  "last_update": "2026-07-29T08:46:03.627150",
+  "vulns": [
+    "CVE-2023-44487",
+    "CVE-2025-23419"
+  ],
+  "country_name": "United States",
+  "ip_str": "165.245.137.16",
+  "os": "Ubuntu",
+  "ports": [
+    80,
+    443,
+    22
+  ]
+}

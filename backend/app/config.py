@@ -57,6 +57,10 @@ class Settings(BaseSettings):
     tenable_username: Optional[str] = None
     tenable_password: Optional[str] = None
     tenable_verify_ssl: bool = False  # Set true for production; false skips verification (e.g. Nessus Pro self-signed)
+    # Shodan (recon) — https://account.shodan.io → API Key
+    shodan_api_key: Optional[str] = None
+    # DeHashed (recon leaked creds)
+    dehashed_key: Optional[str] = None
     # CORS: comma-separated extra origins (e.g. https://app.example.com). Defaults include localhost:5173, 3000, 8080.
     cors_origins: Optional[str] = None
     # When true, allow browser Origin matching RFC1918 + localhost (HTTPS or HTTP, any port). Handy for https://<LAN-IP>.

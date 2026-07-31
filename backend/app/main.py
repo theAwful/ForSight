@@ -785,6 +785,37 @@ def get_project_hosts(project_id: int, db: Session = Depends(get_db)):
     return [h for h in hosts if canonical_host(h.get("host") or "") not in excluded]
 
 
+@app.get("/api/projects/{project_id}/recon")
+def list_project_recon(project_id: int, db: Session = Depends(get_db)):
+    """List recon artifacts (WHOIS, subdomains, Shodan, …) for the Hosts → Recon tab."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    from app.recon_artifacts import list_recon_artifacts
+    results_dir = get_project_results_dir(project_id)
+    return list_recon_artifacts(results_dir)
+
+
+@app.get("/api/projects/{project_id}/recon/{key}")
+def get_project_recon_artifact(
+    project_id: int,
+    key: str,
+    child: Optional[str] = None,
+    db: Session = Depends(get_db),
+):
+    """Return text content for a recon artifact. For Shodan, pass ?child=<ip>.txt."""
+    p = db.query(Project).filter(Project.id == project_id).first()
+    if not p:
+        raise HTTPException(404, "Project not found")
+    from app.recon_artifacts import resolve_recon_content
+    results_dir = get_project_results_dir(project_id)
+    try:
+        label, content = resolve_recon_content(results_dir, key, child)
+    except FileNotFoundError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    return {"key": key, "child": child, "label": label, "content": content}
+
+
 class ExcludeHostBody(BaseModel):
     host: str = ""
 
