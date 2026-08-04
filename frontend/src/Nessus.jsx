@@ -709,7 +709,7 @@ function AvailableScans({
   showCreate, handleShowCreateToggle,
   createName, setCreateName,
   createExtraTargets, setCreateExtraTargets,
-  creating, creatingViaWeb, createError, onCreateAPI, onCreateWeb,
+  creatingViaWeb, createError, onCreateWeb,
 }) {
   return (
     <div>
@@ -821,17 +821,10 @@ function AvailableScans({
             </div>
             <div style={S.formActions}>
               <button type="button" style={{ ...S.actionBtn, ...S.primaryBtn }}
-                disabled={creating || !createName.trim()}
-                onClick={onCreateAPI}>
-                {creating ? 'Creating…' : 'Create scan'}
+                disabled={creatingViaWeb || !createName.trim() || !webLaunchInfo?.available}
+                onClick={onCreateWeb}>
+                {creatingViaWeb ? 'Creating…' : 'Create scan'}
               </button>
-              {webLaunchInfo?.available && (
-                <button type="button" style={S.actionBtn}
-                  disabled={creatingViaWeb || !createName.trim()}
-                  onClick={onCreateWeb}>
-                  {creatingViaWeb ? 'Creating…' : 'Create via web'}
-                </button>
-              )}
             </div>
           </div>
         )}
@@ -1077,15 +1070,13 @@ export default function Nessus({ projectId }) {
             webLaunchInfo={webLaunchInfo}
             launching={launching} pausing={pausing} stopping={stopping}
             importing={importing} deleting={deleting}
-            templates={templates}
             onLaunch={handleLaunch} onPause={handlePause} onStop={handleStop}
             onImport={handleImport} onDelete={handleDelete}
             showCreate={showCreate} handleShowCreateToggle={handleShowCreateToggle}
             createName={createName} setCreateName={setCreateName}
-            createTemplateUuid={createTemplateUuid} setCreateTemplateUuid={setCreateTemplateUuid}
             createExtraTargets={createExtraTargets} setCreateExtraTargets={setCreateExtraTargets}
-            creating={creating} creatingViaWeb={creatingViaWeb}
-            createError={createError} onCreateAPI={handleCreateAPI} onCreateWeb={handleCreateWeb}
+            creatingViaWeb={creatingViaWeb}
+            createError={createError} onCreateWeb={handleCreateWeb}
           />
         )}
       </div>
